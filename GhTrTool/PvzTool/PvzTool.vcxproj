@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FF4F6F48-ACA1-415A-8EE3-A4F87AE8F645}</ProjectGuid>
-    <RootNamespace>PvzTool</RootNamespace>
+    <RootNamespace>GhTrTool</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <Keyword>MFCProj</Keyword>
     <ProjectName>GhTrTool</ProjectName>
