@@ -40,5 +40,7 @@ public:
     VOID Dead();
     // ฮüนึ
     VOID Attract();
+    // ฮüนึ
+    VOID Point();
 };
 

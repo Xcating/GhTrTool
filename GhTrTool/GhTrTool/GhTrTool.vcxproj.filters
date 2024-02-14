@@ -52,17 +52,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="PvzTool.rc">
+    <ResourceCompile Include="GhTrTool.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\PvzTool.rc2">
+    <None Include="res\GhTrTool.rc2">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\PvzTool.ico">
+    <Image Include="res\GhTrTool.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
