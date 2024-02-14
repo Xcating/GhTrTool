@@ -599,6 +599,23 @@ VOID CPvz::Point()
     }
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
     DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    if (baseAddress != 0)
+    {
+        printf("test");
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset = 0xD1358;
+    DWORD targetAddress = baseAddress + offset;
+    // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
+    // 修改后的指令：
+    //    0052AB3E E9 BD63EDFF jmp 00400F00
+    //    0052AB43 90          nop
+    char* patch1 = "\xC7\x85\xF8\x02\x00\x00\x00\x00\x00\x00\x90\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, 12, NULL);
+    /*
     MessageBox(NULL, L"此功能无法使用", L"提示", MB_OK);
     return;
     if (baseAddress != 0)
@@ -648,4 +665,5 @@ VOID CPvz::Point()
     char* patch2 = "\xc7\x86\xac\x00\x00\x00\x00\x10\x00\x00\x0F\x85\xD8\x9C\x12\x00\xE9\x2F\x9C\x12\x00";
     WriteProcessMemory(hProcess, (LPVOID)0x01DE0000, patch2, 21, NULL);
     CloseHandle(hProcess);
+    */
 }
