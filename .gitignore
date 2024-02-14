@@ -33,8 +33,10 @@
 /GhTrTool/Debug
 /GhTrTool/.vs
 /GhTrTool/x64
-/GhTrTool/PvzTool/Debug
+/GhTrTool/GhTrTool/x64/Debug
+/GhTrTool/GhTrTool/x64/Release
 /GhTrTool/ipch
-/GhTrTool/Release
-/GhTrTool/PvzTool/x64
+/GhTrTool/x64/Release
+/GhTrTool/x64/Debug
+/GhTrTool/GhTrTool/x64
 
