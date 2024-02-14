@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Pvz.h"
-
+#include <TlHelp32.h>
+#include <string>
+#include <Psapi.h>
 CPvz::CPvz()
 {
 }
@@ -10,6 +12,17 @@ CPvz::~CPvz()
 {
 }
 
+DWORD_PTR GetBaseAddress(const char* moduleName) {
+    HMODULE hModule = GetModuleHandleA(moduleName);
+
+    if (hModule == NULL) {
+        printf("Failed to get module handle for %s\n", moduleName);
+        return 0;
+    }
+
+    DWORD_PTR baseAddress = (DWORD_PTR)hModule;
+    return baseAddress;
+}
 // 获取游戏的 PID
 DWORD CPvz::GetGamePid()
 {
@@ -25,8 +38,55 @@ DWORD CPvz::GetGamePid()
 
     return dwPid;
 }
+DWORD_PTR GetSectionBaseAddress(HANDLE hProcess, const wchar_t* moduleName, const std::string& sectionName) {
+    HMODULE hModule;
+    if (!GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, reinterpret_cast<LPCWSTR>(GetSectionBaseAddress), &hModule)) {
+        return 0;
+    }
 
+    MODULEINFO moduleInfo;
+    if (!GetModuleInformation(hProcess, hModule, &moduleInfo, sizeof(moduleInfo))) {
+        return 0;
+    }
 
+    IMAGE_DOS_HEADER dosHeader;
+    ReadProcessMemory(hProcess, moduleInfo.lpBaseOfDll, &dosHeader, sizeof(dosHeader), nullptr);
+
+    IMAGE_NT_HEADERS ntHeaders;
+    ReadProcessMemory(hProcess, reinterpret_cast<LPCVOID>(reinterpret_cast<DWORD_PTR>(moduleInfo.lpBaseOfDll) + dosHeader.e_lfanew), &ntHeaders, sizeof(ntHeaders), nullptr);
+
+    IMAGE_SECTION_HEADER sectionHeader;
+    for (int i = 0; i < ntHeaders.FileHeader.NumberOfSections; i++) {
+        ReadProcessMemory(hProcess, reinterpret_cast<LPCVOID>(reinterpret_cast<DWORD_PTR>(moduleInfo.lpBaseOfDll) + dosHeader.e_lfanew + sizeof(IMAGE_NT_HEADERS) + (i * sizeof(IMAGE_SECTION_HEADER))), &sectionHeader, sizeof(sectionHeader), nullptr);
+        std::wstring sectionNameW(reinterpret_cast<const wchar_t*>(sectionHeader.Name));
+        std::string sectionNameA(sectionNameW.begin(), sectionNameW.end());
+
+        if (sectionNameA == sectionName) {
+            return reinterpret_cast<DWORD_PTR>(moduleInfo.lpBaseOfDll) + sectionHeader.VirtualAddress;
+        }
+    }
+
+    return 0;
+}
+DWORD GetModuleBaseAddress(HANDLE hProcess, const wchar_t* moduleName) {
+    MODULEENTRY32W moduleEntry = { sizeof(moduleEntry) };
+    DWORD baseAddress = 0;
+
+    HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, GetProcessId(hProcess));
+    if (hSnapshot != INVALID_HANDLE_VALUE) {
+        if (Module32FirstW(hSnapshot, &moduleEntry)) {
+            do {
+                if (wcscmp(moduleEntry.szModule, moduleName) == 0) {
+                    baseAddress = reinterpret_cast<DWORD>(moduleEntry.modBaseAddr);
+                    break;
+                }
+            } while (Module32NextW(hSnapshot, &moduleEntry));
+        }
+        CloseHandle(hSnapshot);
+    }
+
+    return baseAddress;
+}
 // 修改阳光的值
 VOID CPvz::ModifySunValue(DWORD dwSun)
 {
@@ -36,19 +96,24 @@ VOID CPvz::ModifySunValue(DWORD dwSun)
         MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
         return;
     }
-
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0x29CE88;
+    DWORD targetAddress = baseAddress + offset;
     // 0044BA45 - add[edi + 00005578], eax EDI = 1E4A0B40
     // 00475373 - mov edi, [esi + 00000868] ESI = 0286B490
     // 7794F8
 
     DWORD dwNum = 0;
-    ReadProcessMemory(hProcess, (LPCVOID)0x0051AE28, &dwNum, sizeof(DWORD), NULL);
+    ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL);
     ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL);
-
-    WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x380), &dwSun, sizeof(DWORD), NULL);
-
+    BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x380), &dwSun, sizeof(DWORD), NULL);
+    if (result) {
+        MessageBox(NULL, TEXT("写入成功"), TEXT("提示"), MB_OK);
+    }
+    else {
+        MessageBox(NULL, TEXT("写入失败,请检查权限"), TEXT("错误"), MB_OK | MB_ICONERROR);
+    }
     CloseHandle(hProcess);
 }
 
@@ -62,15 +127,16 @@ VOID CPvz::SunNop()
         MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
         return;
     }
-
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0x95E39;
+    DWORD targetAddress = baseAddress + offset;
     // 原指令：0041BA74 2B F3 sub esi,ebx
     // 修改后的指令：
     //     0041BA74 90 nop 
     //     0041BA75 90 nop
     char *nop = "\x90\x90\x90\x90\x90\x90";
-    WriteProcessMemory(hProcess, (LPVOID)0x00315E39, nop, 6, NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, nop, 6, NULL);
 
     CloseHandle(hProcess);
 }
@@ -87,18 +153,22 @@ VOID CPvz::NoCd()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0xE54A1;
+    DWORD targetAddress = baseAddress + offset;
     // 原指令：00488250 75 24 jne 00488276
     // 修改后的指令：00488250 EB 24 jmp 00488276
     char *patch1 = "\xc7\x41\x20\x00\x00\x00\x00\x90\x90\x90";
-    WriteProcessMemory(hProcess, (LPVOID)0x003654A1, patch1, 10, NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, 10, NULL);
 
     // 原指令：00488688 0F85 79010000 jne 00488807
     // 修改后的指令：
     //     00488688 E9 7A010000 jmp 00488807
     //     0048868D 90          nop
+    offset = 0xE4D91;
+    targetAddress = baseAddress + offset;
     char *patch2 = "\xb8\x00\x00\x00\x00\x90\x90";
-    WriteProcessMemory(hProcess, (LPVOID)0x00364D91, patch2, 7, NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch2, 7, NULL);
 
     CloseHandle(hProcess);
 }
@@ -115,9 +185,11 @@ VOID CPvz::ModifyCoinValue(DWORD dwCoin)
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0x29CE88;
+    DWORD targetAddress = baseAddress + offset;
     DWORD dwNum = 0;
-    ReadProcessMemory(hProcess, (LPCVOID)0x0051AE28, &dwNum, sizeof(DWORD), NULL);
+    ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL);
     ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL);
 
     WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x164), &dwCoin, sizeof(DWORD), NULL);
@@ -137,13 +209,15 @@ VOID CPvz::Build()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0x94C74;
+    DWORD targetAddress = baseAddress + offset;
     // 原指令：0040FE2F 0F84 1F090000 je 00410754
     // 修改后的指令：
     //     0040FE2F E9 20090000 jmp 00410754
     //     0040FE34 90          nop
     char *patch = "\x90\x90\x90\x90\x90\x90\x90";
-    WriteProcessMemory(hProcess, (LPVOID)0x00314C74, patch, 7, NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch, 7, NULL);
 
     CloseHandle(hProcess);
 }
@@ -160,11 +234,13 @@ VOID CPvz::Auto()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0xABD9A;
+    DWORD targetAddress = baseAddress + offset;
     // 原指令：0043158F 75 08 jne 00431599
     // 修改后的指令：0043158F EB 08 jmp 00431599
-    char *patch = "\x90\x90\x90\x90\x90\x90";
-    WriteProcessMemory(hProcess, (LPVOID)0x0032BD9E, patch, 6, NULL);
+    char *patch = "\x90\x90\x90\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch, 4, NULL);
 
     CloseHandle(hProcess);
 }
@@ -181,7 +257,9 @@ VOID CPvz::Card()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0xA552E;
+    DWORD targetAddress = baseAddress + offset;
     // 原指令：00464A96 0F85 98FEFFFF jne 00464934
     // 修改后的指令：
     //     00464A96 90 nop 
@@ -191,7 +269,7 @@ VOID CPvz::Card()
     //     00464A9A 90 nop
     //     00464A9B 90 nop
     char *patch = "\x90\x90\x90\x90";
-    WriteProcessMemory(hProcess, (LPVOID)0x0032552E, patch, 4, NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch, 4, NULL);
     CloseHandle(hProcess);
 }
 
@@ -207,11 +285,13 @@ VOID CPvz::More()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0x996DB;
+    DWORD targetAddress = baseAddress + offset;
     // 原指令：0045FA48 83 47 58 FF add dword ptr [edi+58],-01 { 255 }
     // 修改后的指令：0045FA48 83 47 58 9C add dword ptr [edi+58],-64 { 156 }
     char *patch = "\xC7\x87\xFC\x03\x00\x00\x00\x00\x00\x00\x90";
-    WriteProcessMemory(hProcess, (LPVOID)0x003196DB, patch, 11, NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch, 11, NULL);
 
     CloseHandle(hProcess);
 }
@@ -228,7 +308,9 @@ VOID CPvz::AllScreen()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0x96262;
+    DWORD targetAddress = baseAddress + offset;
     // 原指令：00413FD9 0F85 0D010000 jne 004140EC
     // 修改后的指令：
     //     00413FD9 90 nop 
@@ -238,7 +320,7 @@ VOID CPvz::AllScreen()
     //     00413FDD 90 nop
     //     00413FDE 90 nop
     char *patch = "\x90\x90\x90";
-    WriteProcessMemory(hProcess, (LPVOID)0x00316262, patch, 3, NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch, 3, NULL);
 
     CloseHandle(hProcess);
 }
@@ -255,10 +337,12 @@ VOID CPvz::UnAllScreen()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0x93BF5;
+    DWORD targetAddress = baseAddress + offset;
     // 指令与 AllScreen 相反
     char *patch = "\xC7\x86\xC0\x03\x00\x00\x00\x00\x00\x00\x90";
-    WriteProcessMemory(hProcess, (LPVOID)0x00313BF5, patch, 11, NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch, 11, NULL);
 
     CloseHandle(hProcess);
 }
@@ -275,11 +359,13 @@ VOID CPvz::Cool()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0xBE362;
+    DWORD targetAddress = baseAddress + offset;
     // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
     // 修改后的指令：0052AB3E E9 BD63EDFF jmp 00400F00
     char *patch1 = "\x90\x90\x90\x90\x90\x90\x90\x90";
-    WriteProcessMemory(hProcess, (LPVOID)0x0033E362, patch1, 8, NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, 8, NULL);
     CloseHandle(hProcess);
 }
 
@@ -295,13 +381,15 @@ VOID CPvz::Stop()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0xFEBD0;
+    DWORD targetAddress = baseAddress + offset;
     // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
     // 修改后的指令：
     //    0052AB3E E9 BD63EDFF jmp 00400F00
     //    0052AB43 90          nop
     char *patch1 = "\x6A\x01";
-    WriteProcessMemory(hProcess, (LPVOID)0x0037EBDE, patch1, 2, NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, 2, NULL);
 
     /*
     // 在新申请的空间写入的指令
@@ -352,7 +440,9 @@ VOID CPvz::Dead()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0xC5911;
+    DWORD targetAddress = baseAddress + offset;
 
     // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
     // 修改后的指令：
@@ -375,12 +465,14 @@ VOID CPvz::Attract()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    DWORD offset = 0xC5997;
+    DWORD targetAddress = baseAddress + offset;
     // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
     // 修改后的指令：
     //    0052AB3E E9 BD63EDFF jmp 00400F00
     //    0052AB43 90          nop
     char *patch1 = "\x90\x90";
-    WriteProcessMemory(hProcess, (LPVOID)0x00345997, patch1, 2, NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, 2, NULL);
     CloseHandle(hProcess);
 }

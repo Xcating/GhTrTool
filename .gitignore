@@ -31,9 +31,10 @@
 *.out
 *.app
 /GhTrTool/Debug
-/.vs
+/GhTrTool/.vs
+/GhTrTool/64
 /GhTrTool/PvzTool/Debug
 /GhTrTool/ipch
 /GhTrTool/Release
-/GhTrTool/PvzTool/Release
+/GhTrTool/PvzTool/x64
 

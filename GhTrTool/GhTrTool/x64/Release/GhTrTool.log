@@ -1,0 +1,89 @@
+﻿  Pvz.cpp
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(80,35): warning C4311: “reinterpret_cast”: 从“BYTE *”到“DWORD”的指针截断
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(80,35): warning C4302: “reinterpret_cast”: 从“BYTE *”到“DWORD”截断
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(108,33): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPCVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(109,33): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPCVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(110,48): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(139,34): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(162,34): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(171,34): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(192,33): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPCVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(193,33): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPCVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(195,34): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(220,34): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(243,34): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(272,34): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(294,34): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(323,34): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(392,34): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(476,34): warning C4312: “类型强制转换”: 从“DWORD”转换到更大的“LPVOID”
+  (编译源文件“/Pvz.cpp”)
+  
+D:\VisualStudio\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244: “参数”: 从“wchar_t”转换到“const _Elem”，可能丢失数据
+D:\VisualStudio\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:         with
+D:\VisualStudio\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:         [
+D:\VisualStudio\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:             _Elem=char
+D:\VisualStudio\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:         ]
+  (编译源文件“/Pvz.cpp”)
+  D:\VisualStudio\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53):
+  模板实例化上下文(最早的实例化上下文)为
+  	C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(62,33):
+  	查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+  		C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\GhTrTool\Pvz.cpp(62,33):
+  		请参阅 "GetSectionBaseAddress" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+  	D:\VisualStudio\VC\Tools\MSVC\14.38.33130\include\xstring(2590,17):
+  	查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*,wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=wchar_t *,
+              _Sent=wchar_t *,
+              _Size=unsigned __int64
+          ]
+  
+  正在生成代码
+  14 of 223 functions ( 6.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    8 functions had inline decision re-evaluated but remain unchanged
+  已完成代码的生成
+  GhTrTool.vcxproj -> C:\Users\LENOVO-\source\repos\GhTrTool\GhTrTool\x64\Release\GhTrTool.exe
