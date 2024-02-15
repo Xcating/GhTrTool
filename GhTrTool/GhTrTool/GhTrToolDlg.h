@@ -40,6 +40,7 @@ public:
     afx_msg void OnBnClickedBtnAuto();
     afx_msg void OnBnClickedBtnCard();
     afx_msg void OnBnClickedBtnPoint();
+    afx_msg void OnBnClickedBtnDX();
     afx_msg void OnBnClickedBtnMore();
     afx_msg void OnBnClickedBtnAllScreen();
     afx_msg void OnBnClickedBtnUnAllScreen();

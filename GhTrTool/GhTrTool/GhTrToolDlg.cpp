@@ -79,6 +79,7 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BTN_DEAD, &CGhTrToolDlg::OnBnClickedBtnDead)
     ON_BN_CLICKED(IDC_BTN_Y, &CGhTrToolDlg::OnBnClickedBtnY)
 	ON_BN_CLICKED(IDC_BTN_POINT, &CGhTrToolDlg::OnBnClickedBtnPoint)
+	ON_BN_CLICKED(IDC_BTN_DX, &CGhTrToolDlg::OnBnClickedBtnDX)
 END_MESSAGE_MAP()
 
 
@@ -225,6 +226,11 @@ void CGhTrToolDlg::OnBnClickedBtnPoint()
 {
 	CPvz pvz = CPvz();
 	pvz.Point();
+}
+void CGhTrToolDlg::OnBnClickedBtnDX()
+{
+	CPvz pvz = CPvz();
+	pvz.DX();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnMore()

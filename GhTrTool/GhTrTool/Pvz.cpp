@@ -667,3 +667,93 @@ VOID CPvz::Point()
     CloseHandle(hProcess);
     */
 }
+VOID CPvz::DX()
+{
+    DWORD dwPid = GetGamePid();
+    if (dwPid == -1)
+    {
+        MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        return;
+    }
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    if (baseAddress != 0)
+    {
+        printf("test");
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset = 0x9424E;
+    DWORD targetAddress = baseAddress + offset;
+    // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
+    // 修改后的指令：
+    //    0052AB3E E9 BD63EDFF jmp 00400F00
+    //    0052AB43 90          nop
+    char* patch1 = "\x6A\x09\x90\x90\x90\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, 6, NULL);
+    offset = 0x95077;
+    DWORD targetAddress2 = baseAddress + offset;
+    char* patch2 = "\x6A\x0D";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress2, patch2, 2, NULL);
+    offset = 0xC50F5;
+    DWORD targetAddress3 = baseAddress + offset;
+    char* patch3 = "\x83\x78\xE8\x0D";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress3, patch3, 4, NULL);
+    offset = 0x94F27;
+    DWORD targetAddress4 = baseAddress + offset;
+    char* patch4 = "\x83\x79\x18\x0D";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress4, patch4, 4, NULL);
+    /*
+    MessageBox(NULL, L"此功能无法使用", L"提示", MB_OK);
+    return;
+    if (baseAddress != 0)
+    {
+        MessageBox(NULL, L"游戏未找11到", L"提示", MB_OK);
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset = 0x91FB8;
+    DWORD targetAddress = baseAddress + offset;
+    offset = 0x4196;
+    DWORD targetAddress2 = baseAddress - offset;
+    DWORD dwOldProtect = 0;
+    BOOL result = VirtualProtectEx(hProcess, (LPVOID)0x01DE0000, 64, PAGE_EXECUTE_READWRITE, &dwOldProtect);
+    if (result) {
+        // VirtualProtectEx成功申请到新的空间
+        // 可以进行进一步的操作
+        MEMORY_BASIC_INFORMATION memInfo;
+        VirtualQueryEx(hProcess, (LPVOID)0x01DE0000, &memInfo, sizeof(memInfo));
+        // 检查保护属性是否与设置的相匹配
+        if (memInfo.Protect == PAGE_EXECUTE_READWRITE) {
+            MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        }
+    }
+    else {
+        DWORD error = GetLastError();
+
+        // 转换错误代码为错误消息字符串
+        LPWSTR errorMessage = nullptr;
+        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+            nullptr, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&errorMessage, 0, nullptr);
+
+        // 弹出错误消息框
+        MessageBox(nullptr, errorMessage, L"VirtualProtectEx Error", MB_ICONERROR);
+
+        // 释放错误消息字符串内存
+        LocalFree(errorMessage);
+    }
+    // 原指令：0041BA74 2B F3 sub esi,ebx
+    // 修改后的指令：
+    //     0041BA74 90 nop
+    //     0041BA75 90 nop
+    char* nop = "\xE9\x43\xE0\x33\x05\x66\x0F\x1F\x44\x00\x00";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, nop, 11, NULL);
+    char* patch2 = "\xc7\x86\xac\x00\x00\x00\x00\x10\x00\x00\x0F\x85\xD8\x9C\x12\x00\xE9\x2F\x9C\x12\x00";
+    WriteProcessMemory(hProcess, (LPVOID)0x01DE0000, patch2, 21, NULL);
+    CloseHandle(hProcess);
+    */
+}

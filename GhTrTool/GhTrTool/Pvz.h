@@ -40,7 +40,9 @@ public:
     VOID Dead();
     // 吸怪
     VOID Attract();
-    // 吸怪
+    // 荣光拒绝骄傲
     VOID Point();
+    // 导藓批量种植
+    VOID DX();
 };
 
