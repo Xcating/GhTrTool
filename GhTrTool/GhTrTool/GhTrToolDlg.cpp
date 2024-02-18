@@ -67,20 +67,27 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BTN_SUN, &CGhTrToolDlg::OnBnClickedBtnSun)
     ON_BN_CLICKED(IDC_BTN_SUN_NOP, &CGhTrToolDlg::OnBnClickedBtnSunNop)
     ON_BN_CLICKED(IDC_BTN_NO_CD, &CGhTrToolDlg::OnBnClickedBtnNoCd)
-    ON_BN_CLICKED(IDC_BTN_COIN, &CGhTrToolDlg::OnBnClickedBtnCoin)
+    ON_BN_CLICKED(IDC_BTN_BGId, &CGhTrToolDlg::OnBnClickedBtnBGId)
     ON_BN_CLICKED(IDC_BTN_BUILD, &CGhTrToolDlg::OnBnClickedBtnBuild)
     ON_BN_CLICKED(IDC_BTN_AUTO, &CGhTrToolDlg::OnBnClickedBtnAuto)
     ON_BN_CLICKED(IDC_BTN_CARD, &CGhTrToolDlg::OnBnClickedBtnCard)
-    ON_BN_CLICKED(IDC_BTN_MORE, &CGhTrToolDlg::OnBnClickedBtnMore)
-    ON_BN_CLICKED(IDC_BTN_ALL_SCREEN, &CGhTrToolDlg::OnBnClickedBtnAllScreen)
-    ON_BN_CLICKED(IDC_BTN_UN_ALL_SCREEN, &CGhTrToolDlg::OnBnClickedBtnUnAllScreen)
-    ON_BN_CLICKED(IDC_BTN_COOL, &CGhTrToolDlg::OnBnClickedBtnCool)
-    ON_BN_CLICKED(IDC_BTN_STOP, &CGhTrToolDlg::OnBnClickedBtnStop)
-    ON_BN_CLICKED(IDC_BTN_DEAD, &CGhTrToolDlg::OnBnClickedBtnDead)
-    ON_BN_CLICKED(IDC_BTN_Y, &CGhTrToolDlg::OnBnClickedBtnY)
+    ON_BN_CLICKED(IDC_BTN_Fast, &CGhTrToolDlg::OnBnClickedBtnFast)
+    ON_BN_CLICKED(IDC_BTN_TheWorld, &CGhTrToolDlg::OnBnClickedBtnTheWorld)
+    ON_BN_CLICKED(IDC_BTN_NoModelCD, &CGhTrToolDlg::OnBnClickedBtnNoModelCD)
+    ON_BN_CLICKED(IDC_BTN_Mowers, &CGhTrToolDlg::OnBnClickedBtnMowers)
+	ON_BN_CLICKED(IDC_BTN_PeaSDamage, &CGhTrToolDlg::OnBnClickedBtnPeaSDamage)
+	ON_BN_CLICKED(IDC_BTN_NoBuildTIme, &CGhTrToolDlg::OnBnClickedBtnNoBuildTIme)
+	ON_BN_CLICKED(IDC_BTN_NOSUNMAX, &CGhTrToolDlg::OnBnClickedBtnNoSunMax)
+    ON_BN_CLICKED(IDC_BTN_ZombieDC, &CGhTrToolDlg::OnBnClickedBtnZombieDC)
+    ON_BN_CLICKED(IDC_BTN_NotSubvert, &CGhTrToolDlg::OnBnClickedBtnNotSubvert)
+    ON_BN_CLICKED(IDC_BTN_GodMode, &CGhTrToolDlg::OnBnClickedBtnGodMode)
+	ON_BN_CLICKED(IDC_BTN_LoursMC, &CGhTrToolDlg::OnBnClickedBtnLoursMC)
+	ON_BN_CLICKED(IDC_BTN_MeowFast, &CGhTrToolDlg::OnBnClickedBtnMeowFast)
 	ON_BN_CLICKED(IDC_BTN_POINT, &CGhTrToolDlg::OnBnClickedBtnPoint)
 	ON_BN_CLICKED(IDC_BTN_POINT2, &CGhTrToolDlg::OnBnClickedBtnPoint2)
 	ON_BN_CLICKED(IDC_BTN_DX, &CGhTrToolDlg::OnBnClickedBtnDX)
+	ON_BN_CLICKED(IDC_BTN_CherryFast, &CGhTrToolDlg::OnBnClickedBtnCherryFast)
+	ON_BN_CLICKED(IDC_BTN_CherryNo, &CGhTrToolDlg::OnBnClickedBtnCherryNo)
 END_MESSAGE_MAP()
 
 
@@ -194,12 +201,12 @@ void CGhTrToolDlg::OnBnClickedBtnNoCd()
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnCoin()
+void CGhTrToolDlg::OnBnClickedBtnBGId()
 {
-    DWORD dwCoin = GetDlgItemInt(IDC_EDIT_COIN);
+    DWORD dwBGId = GetDlgItemInt(IDC_EDIT_BGId);
 
     CPvz pvz = CPvz();
-    pvz.ModifyCoinValue(dwCoin);
+    pvz.ModifyBGIdValue(dwBGId);
 }
 
 
@@ -239,50 +246,92 @@ void CGhTrToolDlg::OnBnClickedBtnDX()
 	pvz.DX();
 }
 
-void CGhTrToolDlg::OnBnClickedBtnMore()
+void CGhTrToolDlg::OnBnClickedBtnFast()
 {
     CPvz pvz = CPvz();
-    pvz.More();
+    pvz.Fast();
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnAllScreen()
+void CGhTrToolDlg::OnBnClickedBtnTheWorld()
 {
     CPvz pvz = CPvz();
-    pvz.AllScreen();
+    pvz.TheWorld();
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnUnAllScreen()
+void CGhTrToolDlg::OnBnClickedBtnNoModelCD()
 {
     CPvz pvz = CPvz();
-    pvz.UnAllScreen();
+    pvz.NoModelCD();
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnCool()
+void CGhTrToolDlg::OnBnClickedBtnMowers()
 {
     CPvz pvz = CPvz();
-    pvz.Cool();
+    pvz.Mowers();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPeaSDamage()
+{
+	CPvz pvz = CPvz();
+	pvz.PeaSDamage();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnNoBuildTIme()
+{
+	CPvz pvz = CPvz();
+	pvz.NoBuildTIme();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnNoSunMax()
+{
+	CPvz pvz = CPvz();
+	pvz.NoSunMax();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnZombieDC()
+{
+    CPvz pvz = CPvz();
+    pvz.ZombieDC();
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnStop()
+void CGhTrToolDlg::OnBnClickedBtnNotSubvert()
 {
     CPvz pvz = CPvz();
-    pvz.Stop();
+    pvz.NotSubvert();
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnDead()
+void CGhTrToolDlg::OnBnClickedBtnGodMode()
 {
     CPvz pvz = CPvz();
-    pvz.Dead();
+    pvz.GodMode();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnLoursMC()
+{
+	CPvz pvz = CPvz();
+	pvz.LoursMC();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnMeowFast()
+{
+	CPvz pvz = CPvz();
+	pvz.MeowFast();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnCherryNo()
+{
+	CPvz pvz = CPvz();
+	pvz.CherryNo();
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnY()
+void CGhTrToolDlg::OnBnClickedBtnCherryFast()
 {
-    CPvz pvz = CPvz();
-    pvz.Attract();
+	CPvz pvz = CPvz();
+	pvz.CherryFast();
 }

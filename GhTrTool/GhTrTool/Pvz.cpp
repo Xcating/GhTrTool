@@ -216,7 +216,7 @@ VOID CPvz::NoCd()
 
 
 // 修改金币
-VOID CPvz::ModifyCoinValue(DWORD dwCoin)
+VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
 {
     DWORD dwPid = GetGamePid();
     if (dwPid == -1)
@@ -241,7 +241,7 @@ VOID CPvz::ModifyCoinValue(DWORD dwCoin)
     ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL);
     ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL);
 
-    WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x164), &dwCoin, sizeof(DWORD), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x164), &dwBGId, sizeof(DWORD), NULL);
 
     CloseHandle(hProcess);
 }
@@ -348,7 +348,7 @@ VOID CPvz::Card()
 
 
 // 加速僵尸出动
-VOID CPvz::More()
+VOID CPvz::Fast()
 {
     DWORD dwPid = GetGamePid();
     if (dwPid == -1)
@@ -379,7 +379,7 @@ VOID CPvz::More()
 
 
 // 更好的高级暂停
-VOID CPvz::AllScreen()
+VOID CPvz::TheWorld()
 {
     DWORD dwPid = GetGamePid();
     if (dwPid == -1)
@@ -415,8 +415,8 @@ VOID CPvz::AllScreen()
 }
 
 
-// \技能无冷却
-VOID CPvz::UnAllScreen()
+// 技能无冷却
+VOID CPvz::NoModelCD()
 {
     DWORD dwPid = GetGamePid();
     if (dwPid == -1)
@@ -437,16 +437,72 @@ VOID CPvz::UnAllScreen()
     }
     DWORD offset = 0x93BF5;
     DWORD targetAddress = baseAddress + offset;
-    // 指令与 AllScreen 相反
+    // 指令与 TheWorld 相反
     char *patch = "\xC7\x86\xC0\x03\x00\x00\x00\x00\x00\x00\x90";
     WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch, 11, NULL);
 
     CloseHandle(hProcess);
 }
 
+// 解除阳光限制
+VOID CPvz::NoSunMax()
+{
+    DWORD dwPid = GetGamePid();
+    if (dwPid == -1)
+    {
+        MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        return;
+    }
 
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
+    if (baseAddress != 0)
+    {
+        printf("test");
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset = 0x8E8ED;
+    DWORD targetAddress = baseAddress + offset;
+    // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
+    // 修改后的指令：0052AB3E E9 BD63EDFF jmp 00400F00
+    char* patch1 = "\x90\x90\x90\x90\x90\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, 6, NULL);
+    CloseHandle(hProcess);
+}
+
+// 解除阳光限制
+VOID CPvz::NoBuildTIme()
+{
+    DWORD dwPid = GetGamePid();
+    if (dwPid == -1)
+    {
+        MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        return;
+    }
+
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
+    if (baseAddress != 0)
+    {
+        printf("test");
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset = 0xA2913;
+    DWORD targetAddress = baseAddress + offset;
+    // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
+    // 修改后的指令：0052AB3E E9 BD63EDFF jmp 00400F00
+    char* patch1 = "\xC7\x86\x94\x00\x00\x00\x00\x00\x00\x00\x90\x90\x90\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, 14, NULL);
+    CloseHandle(hProcess);
+}
 // 小推车不动
-VOID CPvz::Cool()
+VOID CPvz::Mowers()
 {
     DWORD dwPid = GetGamePid();
     if (dwPid == -1)
@@ -474,9 +530,117 @@ VOID CPvz::Cool()
     CloseHandle(hProcess);
 }
 
+VOID CPvz::PeaSDamage()
+{
+    DWORD dwPid = GetGamePid();
+    if (dwPid == -1)
+    {
+        MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        return;
+    }
 
-// 磁铁车召唤旗帜
-VOID CPvz::Stop()
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
+    if (baseAddress != 0)
+    {
+        printf("test");
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset = 0xA552E;
+    DWORD targetAddress = baseAddress + offset;
+    DWORD offset2 = 0x52F;
+    DWORD targetAddress2 = baseAddress + offset2;
+    DWORD offset3 = 0x533;
+    DWORD targetAddress3 = baseAddress + offset3;
+    DWORD offset4 = 0xA5534;
+    DWORD targetAddress4 = baseAddress + offset4;
+    DWORD offset5 = 0x53D;
+    DWORD targetAddress5 = baseAddress + offset5;
+    DWORD offset6 = 0x547;
+    DWORD targetAddress6 = baseAddress + offset6;
+    DWORD offset7 = 0x551;
+    DWORD targetAddress7 = baseAddress + offset7;
+    DWORD offset8 = 0xA654A;
+    DWORD targetAddress8 = baseAddress + offset8;
+    DWORD offset9 = 0x557;
+    DWORD targetAddress9 = baseAddress + offset9;
+    DWORD dwOldProtect2 = 0;
+    VirtualProtectEx(hProcess, (LPVOID)targetAddress2, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect2);
+    // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
+    // 修改后的指令：0052AB3E E9 BD63EDFF jmp 00400F00
+    char* patch1 = "\xE9\x00\x00\x00\x00\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, 6, NULL);
+    char patch2[] = "\x80\x7E\x08\x01\x0F\x84\x2A\x55\x9C\xFE\x80\x7E\x08\x02\x0F\x84\x20\x55\x9C\xFE\x80\x7E\x08\x03\x0F\x84\x16\x55\x9C\xFE\xC6\x46\x24\x01\x0F\x85\x22\x55\x9C\xFE\xE9\x07\x55\x9C\xFE";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress2, patch2, sizeof(patch2) - 1, NULL);
+
+    BYTE opCode5[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset5 = targetAddress2 - (targetAddress + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode5[1] = jumpOffset5 & 0xFF;
+    opCode5[2] = (jumpOffset5 >> 8) & 0xFF;
+    opCode5[3] = (jumpOffset5 >> 16) & 0xFF;
+    opCode5[4] = (jumpOffset5 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, opCode5, sizeof(opCode5), NULL);
+    BYTE opCode1[] = { 0x0F, 0x84,0x00, 0x00, 0x00, 0x00 };
+    // 设置第二个偏移值
+    DWORD jumpOffset1 = targetAddress4 - (targetAddress3 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode1[2] = jumpOffset1 & 0xFF;
+    opCode1[3] = (jumpOffset1 >> 8) & 0xFF;
+    opCode1[4] = (jumpOffset1 >> 16) & 0xFF;
+    opCode1[5] = (jumpOffset1 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress3, opCode1, sizeof(opCode1), NULL);
+    BYTE opCode2[] = { 0x0F, 0x84,0x00, 0x00, 0x00, 0x00 };
+    // 设置第二个偏移值
+    DWORD jumpOffset2 = targetAddress4 - (targetAddress5 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode2[2] = jumpOffset2 & 0xFF;
+    opCode2[3] = (jumpOffset2 >> 8) & 0xFF;
+    opCode2[4] = (jumpOffset2 >> 16) & 0xFF;
+    opCode2[5] = (jumpOffset2 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress5, opCode2, sizeof(opCode2), NULL);
+    BYTE opCode3[] = { 0x0F, 0x84,0x00, 0x00, 0x00, 0x00 };
+    // 设置第二个偏移值
+    DWORD jumpOffset3 = targetAddress4 - (targetAddress6 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode3[2] = jumpOffset3 & 0xFF;
+    opCode3[3] = (jumpOffset3 >> 8) & 0xFF;
+    opCode3[4] = (jumpOffset3 >> 16) & 0xFF;
+    opCode3[5] = (jumpOffset3 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress6, opCode3, sizeof(opCode3), NULL);
+    BYTE opCode4[] = { 0x0F, 0x85,0x00, 0x00, 0x00, 0x00 };
+    // 设置第二个偏移值
+    DWORD jumpOffset4 = targetAddress8 - (targetAddress7 + 6);
+
+    // 将第二个偏移值写入操作码数组
+    opCode4[2] = jumpOffset4 & 0xFF;
+    opCode4[3] = (jumpOffset4 >> 8) & 0xFF;
+    opCode4[4] = (jumpOffset4 >> 16) & 0xFF;
+    opCode4[5] = (jumpOffset4 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress7, opCode4, sizeof(opCode4), NULL);
+    BYTE opCode6[] = { 0xE9,0x00, 0x00, 0x00, 0x00 };
+    // 设置第二个偏移值
+    DWORD jumpOffset6 = targetAddress4 - (targetAddress9 + 4);
+
+    // 将第二个偏移值写入操作码数组
+    opCode6[1] = jumpOffset6 & 0xFF;
+    opCode6[2] = (jumpOffset6 >> 8) & 0xFF;
+    opCode6[3] = (jumpOffset6 >> 16) & 0xFF;
+    opCode6[4] = (jumpOffset6 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress9, opCode6, sizeof(opCode6), NULL);
+    CloseHandle(hProcess);
+}
+// 僵尸掉卡(史山)
+VOID CPvz::ZombieDC()
 {
     DWORD dwPid = GetGamePid();
     if (dwPid == -1)
@@ -544,9 +708,9 @@ VOID CPvz::Stop()
     DWORD targetAddress24 = baseAddress + offset24;
     DWORD offset25 = 0xF9C + 4;
     DWORD targetAddress25 = baseAddress + offset25;
-    DWORD offset26 = 0xA7B6C;
+    DWORD offset26 = 0xA8B6C;
     DWORD targetAddress26 = baseAddress + offset26;
-    DWORD offset27 = 0xA7B73;
+    DWORD offset27 = 0xA8B73;
     DWORD targetAddress27 = baseAddress + offset27;
     DWORD offset28 = 0xFAB + 4;
     DWORD targetAddress28 = baseAddress + offset28;
@@ -576,6 +740,8 @@ VOID CPvz::Stop()
     DWORD targetAddress40 = baseAddress + offset40;
     DWORD offset41 = 0x4E7;
     DWORD targetAddress41 = baseAddress + offset41;
+    DWORD offset42 = 0x400;
+    DWORD targetAddress42 = baseAddress + offset42;
     // 0044BA45 - add[edi + 00005578], eax EDI = 1E4A0B40
     // 00475373 - mov edi, [esi + 00000868] ESI = 0286B490
     // 7794F8
@@ -591,6 +757,8 @@ VOID CPvz::Stop()
     LPVOID allocatedMemory = VirtualAllocEx(hProcess, baseAddress3, allocationSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     DWORD dwOldProtect = 0;
     VirtualProtectEx(hProcess, (LPVOID)baseAddress3, 128, PAGE_EXECUTE_READWRITE, &dwOldProtect);
+    DWORD dwOldProtect2 = 0;
+    VirtualProtectEx(hProcess, (LPVOID)targetAddress42, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect2);
     //WriteProcessMemory(hProcess, (LPVOID)targetAddress2, patch1, sizeof(patch1) - 1, NULL);
     // 修改char数组的前四个位置
     //49E04800
@@ -831,6 +999,16 @@ VOID CPvz::Stop()
     opCode23[3] = (jumpOffset23 >> 8) & 0xFF;
     opCode23[4] = (jumpOffset23 >> 16) & 0xFF;
     opCode23[5] = (jumpOffset23 >> 24) & 0xFF;
+    BYTE opCode24[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset24 = targetAddress28 - (targetAddress26 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode24[1] = jumpOffset24 & 0xFF;
+    opCode24[2] = (jumpOffset24 >> 8) & 0xFF;
+    opCode24[3] = (jumpOffset24 >> 16) & 0xFF;
+    opCode24[4] = (jumpOffset24 >> 24) & 0xFF;
     // 将finalValue写入到操作码
     //memcpy(&opCode4[2], &finalValue, sizeof(DWORD));
     if (!WriteProcessMemory(hProcess, (LPVOID)targetAddress3, opCode, sizeof(opCode), NULL))
@@ -876,6 +1054,7 @@ VOID CPvz::Stop()
     WriteProcessMemory(hProcess, (LPVOID)targetAddress39, opCode21, sizeof(opCode21), NULL);
     WriteProcessMemory(hProcess, (LPVOID)targetAddress40, opCode22, sizeof(opCode22), NULL);
     WriteProcessMemory(hProcess, (LPVOID)targetAddress41, opCode23, sizeof(opCode23), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress26, opCode24, sizeof(opCode24), NULL);
     CloseHandle(hProcess);
 
     /*
@@ -917,7 +1096,7 @@ VOID CPvz::Stop()
 
 
 // 植物不会被魅惑
-VOID CPvz::Dead()
+VOID CPvz::NotSubvert()
 {
     DWORD dwPid = GetGamePid();
     if (dwPid == -1)
@@ -944,13 +1123,197 @@ VOID CPvz::Dead()
     //    0052AB3E E9 BD63EDFF jmp 00400F00
     //    0052AB43 90          nop
     char *patch1 = "\x90\x90\x90";
-    WriteProcessMemory(hProcess, (LPVOID)0x00345911, patch1, 3, NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, 3, NULL);
     CloseHandle(hProcess);
 }
 
+// 樱桃瞬爆
+VOID CPvz::CherryFast()
+{
+    DWORD dwPid = GetGamePid();
+    if (dwPid == -1)
+    {
+        MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        return;
+    }
 
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
+    if (baseAddress != 0)
+    {
+        printf("test");
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset = 0xC943F;
+    DWORD targetAddress = baseAddress + offset;
+    DWORD offset2 = 0x5BF;
+    DWORD targetAddress2 = baseAddress + offset2;
+    DWORD offset3 = 0xC9445;
+    DWORD targetAddress3 = baseAddress + offset3;
+    DWORD offset4 = 0x5C9;
+    DWORD targetAddress4 = baseAddress + offset4;
+
+    // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
+    // 修改后的指令：
+    //    0052AB3E E9 BD63EDFF jmp 00400F00
+    //    0052AB43 90          nop
+    char patch1[] = "\xE9\x00\x00\x00\x00\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, sizeof(patch1) - 1, NULL);
+    DWORD dwOldProtect2 = 0;
+    VirtualProtectEx(hProcess, (LPVOID)targetAddress2, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect2);
+    char patch2[] = "\xC7\x86\x9C\x00\x00\x00\x00\x00\x00\x00\xE9\x36\x94\x44\xFF";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress2, patch2, sizeof(patch2) - 1, NULL);
+    BYTE opCode5[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+    // 设置第二个偏移值
+    DWORD jumpOffset5 = targetAddress2 - (targetAddress + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode5[1] = jumpOffset5 & 0xFF;
+    opCode5[2] = (jumpOffset5 >> 8) & 0xFF;
+    opCode5[3] = (jumpOffset5 >> 16) & 0xFF;
+    opCode5[4] = (jumpOffset5 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, opCode5, sizeof(opCode5), NULL);
+    BYTE opCode1[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+    // 设置第二个偏移值
+    DWORD jumpOffset1 = targetAddress3 - (targetAddress4 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode1[1] = jumpOffset1 & 0xFF;
+    opCode1[2] = (jumpOffset1 >> 8) & 0xFF;
+    opCode1[3] = (jumpOffset1 >> 16) & 0xFF;
+    opCode1[4] = (jumpOffset1 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress4, opCode1, sizeof(opCode1), NULL);
+    CloseHandle(hProcess);
+}
+VOID CPvz::CherryNo()
+{
+    DWORD dwPid = GetGamePid();
+    if (dwPid == -1)
+    {
+        MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        return;
+    }
+
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
+    if (baseAddress != 0)
+    {
+        printf("test");
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset = 0xC943F;
+    DWORD targetAddress = baseAddress + offset;
+
+    // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
+    // 修改后的指令：
+    //    0052AB3E E9 BD63EDFF jmp 00400F00
+    //    0052AB43 90          nop
+    char patch1[] = "\x90\x90\x90\x90\x90\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, sizeof(patch1) - 1, NULL);
+    CloseHandle(hProcess);
+}
+VOID CPvz::MeowFast()
+{
+    DWORD dwPid = GetGamePid();
+    if (dwPid == -1)
+    {
+        MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        return;
+    }
+
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
+    if (baseAddress != 0)
+    {
+        printf("test");
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset = 0xC69AE;
+    DWORD targetAddress = baseAddress + offset;
+
+    // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
+    // 修改后的指令：
+    //    0052AB3E E9 BD63EDFF jmp 00400F00
+    //    0052AB43 90          nop
+    char patch1[] = "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, sizeof(patch1) - 1, NULL);
+    CloseHandle(hProcess);
+}
+VOID CPvz::LoursMC()
+{
+    DWORD dwPid = GetGamePid();
+    if (dwPid == -1)
+    {
+        MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        return;
+    }
+
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
+    if (baseAddress != 0)
+    {
+        printf("test");
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset = 0xC3BD8;
+    DWORD targetAddress = baseAddress + offset;
+
+    // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
+    // 修改后的指令：
+    //    0052AB3E E9 BD63EDFF jmp 00400F00
+    //    0052AB43 90          nop
+    char patch1[] = "\xEB\x04";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, sizeof(patch1) - 1, NULL);
+    offset = 0xC3BCD;
+    targetAddress = baseAddress + offset;
+    char patch2[] = "\xE9\x00\x00\x00\x00\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch2, sizeof(patch2) - 1, NULL);
+    DWORD offset2 = 0x5BF+100;
+    DWORD targetAddress2 = baseAddress + offset2;
+    DWORD offset3 = 0xC3BD3;
+    DWORD targetAddress3 = baseAddress + offset3;
+    DWORD offset4 = 0x633;
+    DWORD targetAddress4 = baseAddress + offset4;
+
+    // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
+    // 修改后的指令：
+    //    0052AB3E E9 BD63EDFF jmp 00400F00
+    //    0052AB43 90          nop
+    DWORD dwOldProtect2 = 0;
+    VirtualProtectEx(hProcess, (LPVOID)targetAddress2, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect2);
+    char patch3[] = "\xC7\x87\xBC\x00\x00\x00\x00\x10\x00\x00\x8B\x8F\xBC\x00\x00\x00\xE9\xBE\x3B\x17\xFF";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress2, patch3, sizeof(patch3) - 1, NULL);
+    BYTE opCode5[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+    DWORD jumpOffset5 = targetAddress2 - (targetAddress + 5);
+    // 将第二个偏移值写入操作码数组
+    opCode5[1] = jumpOffset5 & 0xFF;
+    opCode5[2] = (jumpOffset5 >> 8) & 0xFF;
+    opCode5[3] = (jumpOffset5 >> 16) & 0xFF;
+    opCode5[4] = (jumpOffset5 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, opCode5, sizeof(opCode5), NULL);
+    BYTE opCode1[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+    DWORD jumpOffset1 = targetAddress3 - (targetAddress4 + 5);
+    opCode1[1] = jumpOffset1 & 0xFF;
+    opCode1[2] = (jumpOffset1 >> 8) & 0xFF;
+    opCode1[3] = (jumpOffset1 >> 16) & 0xFF;
+    opCode1[4] = (jumpOffset1 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress4, opCode1, sizeof(opCode1), NULL);
+    CloseHandle(hProcess);
+}
 // 植物无敌
-VOID CPvz::Attract()
+VOID CPvz::GodMode()
 {
     DWORD dwPid = GetGamePid();
     if (dwPid == -1)
