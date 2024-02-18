@@ -3,6 +3,8 @@
 #include <TlHelp32.h>
 #include <string>
 #include <Psapi.h>
+#include <sstream>
+#include <iomanip>
 CPvz::CPvz()
 {
 }
@@ -12,6 +14,21 @@ CPvz::~CPvz()
 {
 }
 
+unsigned char* convertToAssemblyCode(DWORD address) {
+    uint8_t* ptr = reinterpret_cast<uint8_t*>(&address); // 将DWORD地址变量视为指向8位字节的指针
+
+    unsigned char* assemblyCode = new unsigned char[8]; // 分配足够的空间来存储转换后的字节码
+
+    for (int i = 0; i < 4; i++) {
+        uint8_t value = ptr[i]; // 获取每个字节的值
+        uint8_t invertedValue = ~value; // 取反
+
+        assemblyCode[2 * i] = static_cast<unsigned char>((invertedValue >> 4) & 0xF);
+        assemblyCode[2 * i + 1] = static_cast<unsigned char>(invertedValue & 0xF);
+    }
+
+    return assemblyCode;
+};
 DWORD_PTR GetBaseAddress(const char* moduleName) {
     HMODULE hModule = GetModuleHandleA(moduleName);
 
@@ -97,7 +114,7 @@ VOID CPvz::ModifySunValue(DWORD dwSun)
         return;
     }
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -136,7 +153,7 @@ VOID CPvz::SunNop()
         return;
     }
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -169,7 +186,7 @@ VOID CPvz::NoCd()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -209,7 +226,7 @@ VOID CPvz::ModifyCoinValue(DWORD dwCoin)
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -241,7 +258,7 @@ VOID CPvz::Build()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -274,7 +291,7 @@ VOID CPvz::Auto()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -305,7 +322,7 @@ VOID CPvz::Card()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -341,7 +358,7 @@ VOID CPvz::More()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -372,7 +389,7 @@ VOID CPvz::AllScreen()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -409,7 +426,7 @@ VOID CPvz::UnAllScreen()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -439,7 +456,7 @@ VOID CPvz::Cool()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -467,9 +484,8 @@ VOID CPvz::Stop()
         MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
         return;
     }
-
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -478,14 +494,389 @@ VOID CPvz::Stop()
     {
         baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
     }
-    DWORD offset = 0xFEBD0;
+    DWORD offset = 0x100AC4;
     DWORD targetAddress = baseAddress + offset;
-    // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
-    // 修改后的指令：
-    //    0052AB3E E9 BD63EDFF jmp 00400F00
-    //    0052AB43 90          nop
-    char *patch1 = "\x6A\x01";
-    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, 2, NULL);
+    DWORD offset2 = 0xF2E+4;
+    DWORD targetAddress2 = baseAddress + offset2;
+    DWORD offset3 = 0xF59 + 4;
+    DWORD targetAddress3 = baseAddress + offset3;
+    DWORD offset4 = 0x100AC9;
+    DWORD targetAddress4 = baseAddress + offset4;
+    DWORD offset5 = 0xF53 + 4;
+    DWORD targetAddress5 = baseAddress + offset5;
+    DWORD offset6 = 0x953B0;
+    DWORD targetAddress6 = baseAddress + offset6;
+    DWORD offset7 = 0x29CE88;
+    DWORD targetAddress7 = baseAddress + offset7;
+    DWORD offset8 = 0xF3B + 4;
+    DWORD targetAddress8 = baseAddress + offset8;
+    DWORD offset9 = 0xAB677;
+    DWORD targetAddress9 = baseAddress + offset9;
+    DWORD offset10 = 0xF5E + 4;
+    DWORD targetAddress10 = baseAddress + offset10;
+    DWORD offset11 = 0xAB67C;
+    DWORD targetAddress11 = baseAddress + offset11;
+    DWORD offset12 = 0xF6B + 4;
+    DWORD targetAddress12 = baseAddress + offset12;
+    DWORD offset13 = 0xF79 + 4;
+    DWORD targetAddress13 = baseAddress + offset13;
+    DWORD offset14 = 0x29DAC8;
+    DWORD targetAddress14 = baseAddress + offset14;
+    DWORD offset15 = 0xF71 + 4;
+    DWORD targetAddress15 = baseAddress + offset15;
+    DWORD offset16 = 0x95F83;
+    DWORD targetAddress16 = baseAddress + offset16;
+    DWORD offset17 = 0x95F89;
+    DWORD targetAddress17 = baseAddress + offset17;
+    DWORD offset18 = 0xF7E + 4;
+    DWORD targetAddress18 = baseAddress + offset18;
+    DWORD offset19 = 0xF84 + 4;
+    DWORD targetAddress19 = baseAddress + offset19;
+    DWORD offset20 = 0xF8A + 4;
+    DWORD targetAddress20 = baseAddress + offset20;
+    DWORD offset21 = 0xF91 + 4;
+    DWORD targetAddress21 = baseAddress + offset21;
+    DWORD offset22 = 0xF9B + 4;
+    DWORD targetAddress22 = baseAddress + offset22;
+    DWORD offset23 = 0xF97 + 4;
+    DWORD targetAddress23 = baseAddress + offset23;
+    DWORD offset24 = 0xFA6 + 4;
+    DWORD targetAddress24 = baseAddress + offset24;
+    DWORD offset25 = 0xF9C + 4;
+    DWORD targetAddress25 = baseAddress + offset25;
+    DWORD offset26 = 0xA7B6C;
+    DWORD targetAddress26 = baseAddress + offset26;
+    DWORD offset27 = 0xA7B73;
+    DWORD targetAddress27 = baseAddress + offset27;
+    DWORD offset28 = 0xFAB + 4;
+    DWORD targetAddress28 = baseAddress + offset28;
+    DWORD offset29 = 0xFB5 + 4;
+    DWORD targetAddress29 = baseAddress + offset29;
+    DWORD offset30 = 0xFD2 + 4;
+    DWORD targetAddress30 = baseAddress + offset30;
+    DWORD offset31 = 0xFD8 + 4;
+    DWORD targetAddress31 = baseAddress + offset31;
+    DWORD offset32 = 0x100F6F;
+    DWORD targetAddress32 = baseAddress + offset32;
+    DWORD offset33 = 0x100F76;
+    DWORD targetAddress33 = baseAddress + offset33;
+    DWORD offset34 = 0x4D5 + 4;
+    DWORD targetAddress34 = baseAddress + offset34;
+    DWORD offset35 = 0xFB5 + 4;
+    DWORD targetAddress35 = baseAddress + offset35;
+    DWORD offset36 = 0xFD2 + 4;
+    DWORD targetAddress36 = baseAddress + offset36;
+    DWORD offset37 = 0xFD8 + 4;
+    DWORD targetAddress37 = baseAddress + offset37;
+    DWORD offset38 = 0x4F0;
+    DWORD targetAddress38 = baseAddress + offset38;
+    DWORD offset39 = 0x50D;
+    DWORD targetAddress39 = baseAddress + offset39;
+    DWORD offset40 = 0x513;
+    DWORD targetAddress40 = baseAddress + offset40;
+    DWORD offset41 = 0x4E7;
+    DWORD targetAddress41 = baseAddress + offset41;
+    // 0044BA45 - add[edi + 00005578], eax EDI = 1E4A0B40
+    // 00475373 - mov edi, [esi + 00000868] ESI = 0286B490
+    // 7794F8
+
+    DWORD dwNum = 0;
+    ReadProcessMemory(hProcess, (LPCVOID)targetAddress7, &dwNum, sizeof(DWORD), NULL);
+    ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL);
+    dwNum = 0x00E10610;
+    // 获取目标地址对应的字节码
+    //char patch1[] = "\xE9\x43\xEF\xF6\xFF\66\x0F\x1F\x44\x00\x00";  // 初始化为包含了占位字节的数组
+    LPVOID baseAddress3 = (LPVOID)targetAddress2;  // 要申请的起始地址
+    SIZE_T allocationSize = 128;  // 要申请的内存大小（字节）
+    LPVOID allocatedMemory = VirtualAllocEx(hProcess, baseAddress3, allocationSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    DWORD dwOldProtect = 0;
+    VirtualProtectEx(hProcess, (LPVOID)baseAddress3, 128, PAGE_EXECUTE_READWRITE, &dwOldProtect);
+    //WriteProcessMemory(hProcess, (LPVOID)targetAddress2, patch1, sizeof(patch1) - 1, NULL);
+    // 修改char数组的前四个位置
+    //49E04800
+    char patch1[] = "\xE9\x00\x00\x00\x00\x66\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, sizeof(patch1) - 1, NULL);
+
+    char patch2[] = "\xC6\x83\x9C\x00\x00\x00\x01\x60\xBA\x80\x00\x00\x00\x8B\x0D\x10\x06\xE1\x00\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x04\xFF\x73\x18\xFF\x73\x14\xE8\x86\x53\x85\xFF\x61\xE9\x9B\x0A\x8C\xFF";
+    WriteProcessMemory(hProcess, (LPVOID)baseAddress3, patch2, sizeof(patch2) - 1, NULL);
+
+    char patch3[] = "\xE9\x00\x00\x00\x00\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress9, patch3, sizeof(patch3) - 1, NULL);
+
+    char patch4[] = "\xFF\x77\x7C\x83\xEC\x08\x81\x7F\x7C\xFF\xFF\xFF\xFF\x0F\x85\x6A\xB6\xC2\xFF\xA1\x00\x00\x00\x00\x89\x47\x7C\xE9\x5D\xB6\xC2\xFF";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress10, patch4, sizeof(patch4) - 1, NULL);
+
+    char patch5[] = "\xE9\x00\x00\x00\x00\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress16, patch5, sizeof(patch5) - 1, NULL);
+
+    char patch6[] = "\xFF\x87\x70\x03\x00\x00\xFF\x05\xC8\xDA\xB9\x00\x83\x3D\xC8\xDA\xB9\x00\x0E\x74\x09\x0F\x1F\x40\x00\xE9\x6B\x5F\x89\xFC\xC7\x05\xC8\xDA\xB9\x00\x00\x00\x00\x00\xE9\x5C\x5F\x89\xFC";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress18, patch6, sizeof(patch6) - 1, NULL);
+
+    char patch7[] = "\xE9\x8F\x74\xFE\x00\x66\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress26, patch7, sizeof(patch7) - 1, NULL);
+
+    char patch8[] = "\xC7\x47\x64\x00\x00\x00\x00\x60\x8B\xD7\x8B\x0D\x10\x06\x4B\x01\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x04\xFF\x72\x18\xFF\x72\x14\xBA\x80\x00\x00\x00\xE8\x84\x53\x00\xFF\x61\xE9\x41\x8B\x01\xFF";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress28, patch8, sizeof(patch8) - 1, NULL);
+
+    char patch9[] = "\xE9\x8F\x74\xFE\x00\x66\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress32, patch9, sizeof(patch9) - 1, NULL);
+
+    char patch10[] = "\xC7\x47\x40\x01\x00\x00\x00\x80\xBF\x9C\x00\x00\x00\x01\x0F\x84\x62\x0F\xD4\xDF\x60\x8B\xD7\x8B\x0D\x10\x06\x33\x01\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x04\xFF\x72\x18\xFF\x72\x14\xBA\x80\x00\x00\x00\xE8\x77\x53\xCD\xDF\x61\xE9\x37\x0F\xD4\xDF";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress34, patch10, sizeof(patch10) - 1, NULL);
+    // 定义操作码
+    BYTE opCode[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 计算跳转的相对偏移
+    DWORD jumpOffset = targetAddress4 - (targetAddress3 + 5);
+    memcpy(&opCode[1], &jumpOffset, sizeof(jumpOffset));
+    BYTE opCode2[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset2 = targetAddress2 - (targetAddress + 5); //前面是跳转目标，后面是当前地址
+
+    // 将第二个偏移值写入操作码数组
+    opCode2[1] = jumpOffset2 & 0xFF;
+    opCode2[2] = (jumpOffset2 >> 8) & 0xFF;
+    opCode2[3] = (jumpOffset2 >> 16) & 0xFF;
+    opCode2[4] = (jumpOffset2 >> 24) & 0xFF;
+    BYTE opCode3[] = { 0xE8, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset3 = targetAddress6 - (targetAddress5 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode3[1] = jumpOffset3 & 0xFF;
+    opCode3[2] = (jumpOffset3 >> 8) & 0xFF;
+    opCode3[3] = (jumpOffset3 >> 16) & 0xFF;
+    opCode3[4] = (jumpOffset3 >> 24) & 0xFF;
+    // 将目标值转换为DWORD型变量
+    DWORD offsetX = 0x708;
+    DWORD valueX = 0;
+    DWORD targetValueX = 0;
+    ReadProcessMemory(hProcess, (LPCVOID)targetAddress7, &valueX, sizeof(DWORD), NULL);
+    // 在基址上加上偏移量708，得到目标地址的绝对地址
+    DWORD finalAddress = valueX + offsetX;
+    // 定义要写入的操作码
+    BYTE opCode4[] = { 0x8B, 0x0D, 0x01, 0x01, 0x01, 0x01 };
+    // 将finalValue写入到操作码
+    ReadProcessMemory(hProcess, (LPCVOID)finalAddress, &targetValueX, sizeof(DWORD), NULL);
+    DWORD jumpOffsetX = finalAddress;
+    // 将第二个偏移值写入操作码数组
+    opCode4[2] = jumpOffsetX & 0xFF;
+    opCode4[3] = (jumpOffsetX >> 8) & 0xFF;
+    opCode4[4] = (jumpOffsetX >> 16) & 0xFF;
+    opCode4[5] = (jumpOffsetX >> 24) & 0xFF;
+    BYTE opCode5[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset5 = targetAddress10 - (targetAddress9 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode5[1] = jumpOffset5 & 0xFF;
+    opCode5[2] = (jumpOffset5 >> 8) & 0xFF;
+    opCode5[3] = (jumpOffset5 >> 16) & 0xFF;
+    opCode5[4] = (jumpOffset5 >> 24) & 0xFF;
+    BYTE opCode6[] = { 0x0F,0x85, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset6 = targetAddress11 - (targetAddress12 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode6[2] = jumpOffset6 & 0xFF;
+    opCode6[3] = (jumpOffset6 >> 8) & 0xFF;
+    opCode6[4] = (jumpOffset6 >> 16) & 0xFF;
+    opCode6[5] = (jumpOffset6 >> 24) & 0xFF;
+    BYTE opCode7[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset7 = targetAddress11 - (targetAddress13 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode7[1] = jumpOffset7 & 0xFF;
+    opCode7[2] = (jumpOffset7 >> 8) & 0xFF;
+    opCode7[3] = (jumpOffset7 >> 16) & 0xFF;
+    opCode7[4] = (jumpOffset7 >> 24) & 0xFF;
+    // 在基址上加上偏移量708，得到目标地址的绝对地址
+    // 定义要写入的操作码
+    BYTE opCode8[] = { 0xA1, 0x00, 0x00, 0x00, 0x00 };
+    // 将finalValue写入到操作码
+    memcpy(&opCode8[1], &targetAddress14, sizeof(DWORD));    // 将目标值转换为DWORD型变量
+    BYTE opCode9[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset9 = targetAddress18 - (targetAddress16 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode9[1] = jumpOffset9 & 0xFF;
+    opCode9[2] = (jumpOffset9 >> 8) & 0xFF;
+    opCode9[3] = (jumpOffset9 >> 16) & 0xFF;
+    opCode9[4] = (jumpOffset9 >> 24) & 0xFF;
+    BYTE opCode10[] = { 0xFF, 0x05 ,0x00, 0x00, 0x00, 0x00 };
+
+    memcpy(&opCode10[2], &targetAddress14, sizeof(DWORD));    // 将目标值转换为DWORD型变量
+    BYTE opCode11[] = { 0x83, 0x3D ,0x00, 0x00, 0x00, 0x00 ,0x0E};
+
+    memcpy(&opCode11[2], &targetAddress14, sizeof(DWORD));    // 将目标值转换为DWORD型变量
+    BYTE opCode12[] = { 0x74, 0x09};
+    BYTE opCode13[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset13 = targetAddress17 - (targetAddress23 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode13[1] = jumpOffset13 & 0xFF;
+    opCode13[2] = (jumpOffset13 >> 8) & 0xFF;
+    opCode13[3] = (jumpOffset13 >> 16) & 0xFF;
+    opCode13[4] = (jumpOffset13 >> 24) & 0xFF;
+    BYTE opCode14[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset14 = targetAddress17 - (targetAddress24 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode14[1] = jumpOffset14 & 0xFF;
+    opCode14[2] = (jumpOffset14 >> 8) & 0xFF;
+    opCode14[3] = (jumpOffset14 >> 16) & 0xFF;
+    opCode14[4] = (jumpOffset14 >> 24) & 0xFF;
+    BYTE opCode15[] = { 0xC7, 0x05, 0x00, 0x00, 0x00 ,0x00, 0x00, 0x00, 0x00 ,0x00 };
+    memcpy(&opCode15[2], &targetAddress14, sizeof(DWORD));    // 将目标值转换为DWORD型变量
+
+    DWORD valueZ = 0;
+    DWORD targetValueZ = 0;
+    ReadProcessMemory(hProcess, (LPCVOID)targetAddress7, &valueZ, sizeof(DWORD), NULL);
+    // 在基址上加上偏移量708，得到目标地址的绝对地址
+    DWORD finalAddressZ = valueZ + 0x708;
+    // 定义要写入的操作码
+    BYTE opCode16[] = { 0x8B, 0x0D, 0x01, 0x01, 0x01, 0x01 };
+    // 将finalValue写入到操作码
+    DWORD jumpOffsetZ = finalAddressZ;
+    // 将第二个偏移值写入操作码数组
+    opCode16[2] = jumpOffsetZ & 0xFF;
+    opCode16[3] = (jumpOffsetZ >> 8) & 0xFF;
+    opCode16[4] = (jumpOffsetZ >> 16) & 0xFF;
+    opCode16[5] = (jumpOffsetZ >> 24) & 0xFF;
+    BYTE opCode17[] = { 0xE8, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset17 = targetAddress6 - (baseAddress+0xFD6 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode17[1] = jumpOffset17 & 0xFF;
+    opCode17[2] = (jumpOffset17 >> 8) & 0xFF;
+    opCode17[3] = (jumpOffset17 >> 16) & 0xFF;
+    opCode17[4] = (jumpOffset17 >> 24) & 0xFF;
+    BYTE opCode18[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset18 = targetAddress27 - (baseAddress + 0xFDC + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode18[1] = jumpOffset18 & 0xFF;
+    opCode18[2] = (jumpOffset18 >> 8) & 0xFF;
+    opCode18[3] = (jumpOffset18 >> 16) & 0xFF;
+    opCode18[4] = (jumpOffset18 >> 24) & 0xFF;
+    BYTE opCode19[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset19 = targetAddress34 - (targetAddress32 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode19[1] = jumpOffset19 & 0xFF;
+    opCode19[2] = (jumpOffset19 >> 8) & 0xFF;
+    opCode19[3] = (jumpOffset19 >> 16) & 0xFF;
+    opCode19[4] = (jumpOffset19 >> 24) & 0xFF;
+
+
+    DWORD valueY = 0;
+    DWORD targetValueY = 0;
+    ReadProcessMemory(hProcess, (LPCVOID)targetAddress7, &valueY, sizeof(DWORD), NULL);
+    // 在基址上加上偏移量708，得到目标地址的绝对地址
+    DWORD finalAddressY = valueY + 0x708;
+    // 定义要写入的操作码
+    BYTE opCode20[] = { 0x8B, 0x0D, 0x01, 0x01, 0x01, 0x01 };
+    // 将finalValue写入到操作码
+    DWORD jumpOffsetY = finalAddressY;
+    // 将第二个偏移值写入操作码数组
+    opCode20[2] = jumpOffsetY & 0xFF;
+    opCode20[3] = (jumpOffsetY >> 8) & 0xFF;
+    opCode20[4] = (jumpOffsetY >> 16) & 0xFF;
+    opCode20[5] = (jumpOffsetY >> 24) & 0xFF;
+    BYTE opCode21[] = { 0xE8, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset21 = targetAddress6 - (targetAddress39 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode21[1] = jumpOffset21 & 0xFF;
+    opCode21[2] = (jumpOffset21 >> 8) & 0xFF;
+    opCode21[3] = (jumpOffset21 >> 16) & 0xFF;
+    opCode21[4] = (jumpOffset21 >> 24) & 0xFF;
+    BYTE opCode22[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset22 = targetAddress33 - (targetAddress40 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode22[1] = jumpOffset22 & 0xFF;
+    opCode22[2] = (jumpOffset22 >> 8) & 0xFF;
+    opCode22[3] = (jumpOffset22 >> 16) & 0xFF;
+    opCode22[4] = (jumpOffset22 >> 24) & 0xFF;
+    BYTE opCode23[] = { 0x0F,0x84, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset23 = targetAddress33 - (baseAddress + 0x4E8 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode23[2] = jumpOffset23 & 0xFF;
+    opCode23[3] = (jumpOffset23 >> 8) & 0xFF;
+    opCode23[4] = (jumpOffset23 >> 16) & 0xFF;
+    opCode23[5] = (jumpOffset23 >> 24) & 0xFF;
+    // 将finalValue写入到操作码
+    //memcpy(&opCode4[2], &finalValue, sizeof(DWORD));
+    if (!WriteProcessMemory(hProcess, (LPVOID)targetAddress3, opCode, sizeof(opCode), NULL))
+    {
+        MessageBox(NULL, L"写入失败", L"提示", MB_OK);
+        CloseHandle(hProcess);
+        return;
+    }
+    if (!WriteProcessMemory(hProcess, (LPVOID)targetAddress, opCode2, sizeof(opCode2), NULL))
+    {
+        MessageBox(NULL, L"写入失败", L"提示", MB_OK);
+        CloseHandle(hProcess);
+        return;
+    }
+    if (!WriteProcessMemory(hProcess, (LPVOID)targetAddress5, opCode3, sizeof(opCode3), NULL))
+    {
+        MessageBox(NULL, L"写入失败", L"提示", MB_OK);
+        CloseHandle(hProcess);
+        return;
+    }
+    if (!WriteProcessMemory(hProcess, (LPVOID)targetAddress8, opCode4, sizeof(opCode4), NULL))
+    {
+        MessageBox(NULL, L"写入失败", L"提示", MB_OK);
+        CloseHandle(hProcess);
+        return;
+    }
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress9, opCode5, sizeof(opCode5), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress12, opCode6, sizeof(opCode6), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress13, opCode7, sizeof(opCode7), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress15, opCode8, sizeof(opCode8), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress16, opCode9, sizeof(opCode9), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress19, opCode10, sizeof(opCode10), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress20, opCode11, sizeof(opCode11), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress21, opCode12, sizeof(opCode12), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress23, opCode13, sizeof(opCode13), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress24, opCode14, sizeof(opCode14), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress25, opCode15, sizeof(opCode15), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress29, opCode16, sizeof(opCode16), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress30, opCode17, sizeof(opCode17), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress31, opCode18, sizeof(opCode18), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress32, opCode19, sizeof(opCode19), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress38, opCode20, sizeof(opCode20), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress39, opCode21, sizeof(opCode21), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress40, opCode22, sizeof(opCode22), NULL);
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress41, opCode23, sizeof(opCode23), NULL);
+    CloseHandle(hProcess);
 
     /*
     // 在新申请的空间写入的指令
@@ -536,7 +927,7 @@ VOID CPvz::Dead()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -569,7 +960,7 @@ VOID CPvz::Attract()
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -598,7 +989,7 @@ VOID CPvz::Point()
         return;
     }
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -676,7 +1067,7 @@ VOID CPvz::DX()
         return;
     }
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe");
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
         printf("test");
@@ -705,55 +1096,88 @@ VOID CPvz::DX()
     DWORD targetAddress4 = baseAddress + offset;
     char* patch4 = "\x83\x79\x18\x0D";
     WriteProcessMemory(hProcess, (LPVOID)targetAddress4, patch4, 4, NULL);
-    /*
-    MessageBox(NULL, L"此功能无法使用", L"提示", MB_OK);
-    return;
+}
+const char* getAssemblyBytes(DWORD address) {
+    // 创建一个临时的char数组来存储字节码
+    static char assemblyBytes[5] = { 0 };
+
+    // 将DWORD地址拆分为4个字节并存储到字节码数组中
+    for (int i = 0; i < 4; i++) {
+        assemblyBytes[i] = (address >> (i * 8)) & 0xFF;
+    }
+
+    // 返回字节码数组的指针
+    return assemblyBytes;
+}
+
+VOID CPvz::Point2()
+{
+    DWORD dwPid = GetGamePid();
+    if (dwPid == -1)
+    {
+        MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        return;
+    }
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
     if (baseAddress != 0)
     {
-        MessageBox(NULL, L"游戏未找11到", L"提示", MB_OK);
+        printf("test");
     }
     else
     {
         baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
     }
-    DWORD offset = 0x91FB8;
+    DWORD offset = 0x91FB2;
     DWORD targetAddress = baseAddress + offset;
-    offset = 0x4196;
-    DWORD targetAddress2 = baseAddress - offset;
+    DWORD offset2 = 0xF00;
+    DWORD targetAddress2 = baseAddress + offset2;
+    DWORD offset3 = 0xF29;
+    DWORD targetAddress3 = baseAddress + offset3;
+    DWORD offset4 = 0x91FB7;
+    DWORD targetAddress4 = baseAddress + offset4;
+    // 获取目标地址对应的字节码
+    //char patch1[] = "\xE9\x43\xEF\xF6\xFF\66\x0F\x1F\x44\x00\x00";  // 初始化为包含了占位字节的数组
+    LPVOID baseAddress3 = (LPVOID)targetAddress2;  // 要申请的起始地址
+    SIZE_T allocationSize = 64;  // 要申请的内存大小（字节）
+    LPVOID allocatedMemory = VirtualAllocEx(hProcess, baseAddress3, allocationSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     DWORD dwOldProtect = 0;
-    BOOL result = VirtualProtectEx(hProcess, (LPVOID)0x01DE0000, 64, PAGE_EXECUTE_READWRITE, &dwOldProtect);
-    if (result) {
-        // VirtualProtectEx成功申请到新的空间
-        // 可以进行进一步的操作
-        MEMORY_BASIC_INFORMATION memInfo;
-        VirtualQueryEx(hProcess, (LPVOID)0x01DE0000, &memInfo, sizeof(memInfo));
-        // 检查保护属性是否与设置的相匹配
-        if (memInfo.Protect == PAGE_EXECUTE_READWRITE) {
-            MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+    VirtualProtectEx(hProcess, (LPVOID)baseAddress3, 64, PAGE_EXECUTE_READWRITE, &dwOldProtect);
+    //WriteProcessMemory(hProcess, (LPVOID)targetAddress2, patch1, sizeof(patch1) - 1, NULL);
+    // 修改char数组的前四个位置
+    //49E04800
+    char patch1[] = "\xE9\x00\x00\x00\x00\x66\x0F\x1F\x44\x00\x00";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, sizeof(patch1) - 1, NULL);
+
+    char patch2[] = "\x66\xC7\x40\x20\x06\x00\x66\xC7\x40\x24\x06\x00\x66\xC7\x40\x28\x06\x00\x66\xC7\x40\x2C\x03\x00\x66\xC7\x40\x30\x02\x00\x0F\xB7\x40\x20\x66\x89\x87\xA8\x03\x00\x00\xE9\x00\x00\x00\x00";
+    WriteProcessMemory(hProcess, (LPVOID)baseAddress3, patch2, sizeof(patch2) - 1, NULL);
+    // 定义操作码
+    BYTE opCode[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 计算跳转的相对偏移
+    DWORD jumpOffset = targetAddress4 - (targetAddress3 + 5);
+    memcpy(&opCode[1], &jumpOffset, sizeof(jumpOffset));
+    BYTE opCode2[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+    // 设置第二个偏移值
+    DWORD jumpOffset2 = targetAddress2 - (targetAddress + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode2[1] = jumpOffset2 & 0xFF;
+    opCode2[2] = (jumpOffset2 >> 8) & 0xFF;
+    opCode2[3] = (jumpOffset2 >> 16) & 0xFF;
+    opCode2[4] = (jumpOffset2 >> 24) & 0xFF;
+    if (!WriteProcessMemory(hProcess, (LPVOID)targetAddress3, opCode, sizeof(opCode), NULL))
+    {
+        MessageBox(NULL, L"写入失败", L"提示", MB_OK);
+        CloseHandle(hProcess);
+        return;
+    }
+    if (!WriteProcessMemory(hProcess, (LPVOID)targetAddress, opCode2, sizeof(opCode2), NULL))
+        {
+            MessageBox(NULL, L"写入失败", L"提示", MB_OK);
+            CloseHandle(hProcess);
+            return;
         }
-    }
-    else {
-        DWORD error = GetLastError();
-
-        // 转换错误代码为错误消息字符串
-        LPWSTR errorMessage = nullptr;
-        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-            nullptr, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&errorMessage, 0, nullptr);
-
-        // 弹出错误消息框
-        MessageBox(nullptr, errorMessage, L"VirtualProtectEx Error", MB_ICONERROR);
-
-        // 释放错误消息字符串内存
-        LocalFree(errorMessage);
-    }
-    // 原指令：0041BA74 2B F3 sub esi,ebx
-    // 修改后的指令：
-    //     0041BA74 90 nop
-    //     0041BA75 90 nop
-    char* nop = "\xE9\x43\xE0\x33\x05\x66\x0F\x1F\x44\x00\x00";
-    WriteProcessMemory(hProcess, (LPVOID)targetAddress, nop, 11, NULL);
-    char* patch2 = "\xc7\x86\xac\x00\x00\x00\x00\x10\x00\x00\x0F\x85\xD8\x9C\x12\x00\xE9\x2F\x9C\x12\x00";
-    WriteProcessMemory(hProcess, (LPVOID)0x01DE0000, patch2, 21, NULL);
     CloseHandle(hProcess);
-    */
 }

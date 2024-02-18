@@ -42,6 +42,7 @@ public:
     VOID Attract();
     // 荣光拒绝骄傲
     VOID Point();
+    VOID Point2();
     // 导藓批量种植
     VOID DX();
 };
