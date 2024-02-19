@@ -81,6 +81,7 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BTN_ZombieDC, &CGhTrToolDlg::OnBnClickedBtnZombieDC)
     ON_BN_CLICKED(IDC_BTN_NotSubvert, &CGhTrToolDlg::OnBnClickedBtnNotSubvert)
     ON_BN_CLICKED(IDC_BTN_GodMode, &CGhTrToolDlg::OnBnClickedBtnGodMode)
+	ON_BN_CLICKED(IDC_BTN_SummonCup, &CGhTrToolDlg::OnBnClickedBtnSummonCup)
 	ON_BN_CLICKED(IDC_BTN_LoursMC, &CGhTrToolDlg::OnBnClickedBtnLoursMC)
 	ON_BN_CLICKED(IDC_BTN_MeowFast, &CGhTrToolDlg::OnBnClickedBtnMeowFast)
 	ON_BN_CLICKED(IDC_BTN_POINT, &CGhTrToolDlg::OnBnClickedBtnPoint)
@@ -309,6 +310,12 @@ void CGhTrToolDlg::OnBnClickedBtnGodMode()
 {
     CPvz pvz = CPvz();
     pvz.GodMode();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnSummonCup()
+{
+	CPvz pvz = CPvz();
+	pvz.SummonCup();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnLoursMC()

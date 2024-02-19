@@ -529,7 +529,80 @@ VOID CPvz::Mowers()
     WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, 8, NULL);
     CloseHandle(hProcess);
 }
+VOID CPvz::SummonCup()
+{
+    DWORD dwPid = GetGamePid();
+    if (dwPid == -1)
+    {
+        MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        return;
+    }
 
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
+    if (baseAddress != 0)
+    {
+        printf("test");
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset7 = 0x29CE88;
+    DWORD targetAddress7 = baseAddress + offset7;
+    DWORD offset2 = 0x45E;
+    DWORD targetAddress2 = baseAddress + offset2;
+    DWORD offset3 = 0x47B;
+    DWORD targetAddress3 = baseAddress + offset3;
+    DWORD offset4 = 0x953B0;
+    DWORD targetAddress4 = baseAddress + offset4;
+    BYTE shellcode[] = {
+    0x60,                               // pushad
+    0x9C,                               // pushfd
+    0xBA, 0x80, 0x00, 0x00, 0x00,       // mov edx,80
+    0x8B, 0x0D, 0x28, 0xAE, 0x29, 0x00, // mov ecx,[PlantsVsZombies.exe+29AE28]+708]
+    0xBE, 0x32, 0x00, 0x00, 0x00,       // mov esi,32
+    0x68, 0x88, 0x87, 0x00, 0x00,       // push 8788
+    0x6A, 0x02,                         // push 2
+    0x6A, 0x18,                         // push 18
+    0x6A, 0x7B,                         // push 123
+    0xE8, 0xB3, 0x94, 0x00, 0x00,       // call plantsvszombies.exe.text+943B0
+    0x9D,                               // popfd
+    0x61,                               // popad
+    0xC3                                // retn
+    };
+    DWORD offsetX = 0x708;
+    DWORD valueX = 0;
+    DWORD targetValueX = 0;
+    ReadProcessMemory(hProcess, (LPCVOID)targetAddress7, &valueX, sizeof(DWORD), NULL);
+    // 在基址上加上偏移量708，得到目标地址的绝对地址
+    DWORD finalAddress = valueX + offsetX;
+    DWORD jumpOffsetX = finalAddress;
+    // 将第二个偏移值写入操作码数组
+    shellcode[9] = jumpOffsetX & 0xFF;
+    shellcode[10] = (jumpOffsetX >> 8) & 0xFF;
+    shellcode[11] = (jumpOffsetX >> 16) & 0xFF;
+    shellcode[12] = (jumpOffsetX >> 24) & 0xFF;
+    DWORD jumpOffset2 = targetAddress4 - (targetAddress3 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    shellcode[30] = jumpOffset2 & 0xFF;
+    shellcode[31] = (jumpOffset2 >> 8) & 0xFF;
+    shellcode[32] = (jumpOffset2 >> 16) & 0xFF;
+    shellcode[33] = (jumpOffset2 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress2, shellcode, sizeof(shellcode), NULL);
+
+    // 创建远程线程来执行汇编代码
+    HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)targetAddress2, NULL, 0, NULL);
+
+    //等待线程执行完毕
+    WaitForSingleObject(hThread, INFINITE);
+
+    // 清理资源
+    CloseHandle(hThread);
+    //VirtualFreeEx(hProcess, lpBaseAddress, 0, MEM_RELEASE);
+    CloseHandle(hProcess);
+}
 VOID CPvz::PeaSDamage()
 {
     DWORD dwPid = GetGamePid();
@@ -555,7 +628,7 @@ VOID CPvz::PeaSDamage()
     DWORD targetAddress2 = baseAddress + offset2;
     DWORD offset3 = 0x533;
     DWORD targetAddress3 = baseAddress + offset3;
-    DWORD offset4 = 0xA5534;
+    DWORD offset4 = 0xA5533;
     DWORD targetAddress4 = baseAddress + offset4;
     DWORD offset5 = 0x53D;
     DWORD targetAddress5 = baseAddress + offset5;
@@ -1149,12 +1222,12 @@ VOID CPvz::CherryFast()
     }
     DWORD offset = 0xC943F;
     DWORD targetAddress = baseAddress + offset;
-    DWORD offset2 = 0x5BF;
+    DWORD offset2 = 0x5BD;
     DWORD targetAddress2 = baseAddress + offset2;
     DWORD offset3 = 0xC9445;
     DWORD targetAddress3 = baseAddress + offset3;
-    DWORD offset4 = 0x5C9;
-    DWORD targetAddress4 = baseAddress + offset4;
+    DWORD offset5 = 0x5D9;
+    DWORD targetAddress5 = baseAddress + offset5;
 
     // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
     // 修改后的指令：
@@ -1164,7 +1237,7 @@ VOID CPvz::CherryFast()
     WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, sizeof(patch1) - 1, NULL);
     DWORD dwOldProtect2 = 0;
     VirtualProtectEx(hProcess, (LPVOID)targetAddress2, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect2);
-    char patch2[] = "\xC7\x86\x9C\x00\x00\x00\x00\x00\x00\x00\xE9\x36\x94\x44\xFF";
+    char patch2[] = "\x83\xBE\x84\x00\x00\x00\x02\x75\x0D\x0F\x1F\x40\x00\xB8\x00\x00\x00\x00\x90\x90\x90\x90\x89\x86\x9C\x00\x00\x00\xE9\x27\x94\x31\xFF";
     WriteProcessMemory(hProcess, (LPVOID)targetAddress2, patch2, sizeof(patch2) - 1, NULL);
     BYTE opCode5[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
     // 设置第二个偏移值
@@ -1176,18 +1249,19 @@ VOID CPvz::CherryFast()
     opCode5[3] = (jumpOffset5 >> 16) & 0xFF;
     opCode5[4] = (jumpOffset5 >> 24) & 0xFF;
     WriteProcessMemory(hProcess, (LPVOID)targetAddress, opCode5, sizeof(opCode5), NULL);
-    BYTE opCode1[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+    BYTE opCode2[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
     // 设置第二个偏移值
-    DWORD jumpOffset1 = targetAddress3 - (targetAddress4 + 5);
+    DWORD jumpOffset2 = targetAddress3 - (targetAddress5 + 5);
 
     // 将第二个偏移值写入操作码数组
-    opCode1[1] = jumpOffset1 & 0xFF;
-    opCode1[2] = (jumpOffset1 >> 8) & 0xFF;
-    opCode1[3] = (jumpOffset1 >> 16) & 0xFF;
-    opCode1[4] = (jumpOffset1 >> 24) & 0xFF;
-    WriteProcessMemory(hProcess, (LPVOID)targetAddress4, opCode1, sizeof(opCode1), NULL);
+    opCode2[1] = jumpOffset2 & 0xFF;
+    opCode2[2] = (jumpOffset2 >> 8) & 0xFF;
+    opCode2[3] = (jumpOffset2 >> 16) & 0xFF;
+    opCode2[4] = (jumpOffset2 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress5, opCode2, sizeof(opCode2), NULL);
     CloseHandle(hProcess);
 }
+// 樱桃瞬爆
 VOID CPvz::CherryNo()
 {
     DWORD dwPid = GetGamePid();
@@ -1209,13 +1283,55 @@ VOID CPvz::CherryNo()
     }
     DWORD offset = 0xC943F;
     DWORD targetAddress = baseAddress + offset;
+    DWORD offset2 = 0x606;
+    DWORD targetAddress2 = baseAddress + offset2;
+    DWORD offset3 = 0xC9445;
+    DWORD targetAddress3 = baseAddress + offset3;
+    DWORD offset4 = 0x614;
+    DWORD targetAddress4 = baseAddress + offset4;
+    DWORD offset5 = 0x61F;
+    DWORD targetAddress5 = baseAddress + offset5;
 
     // 原指令：0052AB3E 0F85 A4000000 jne 0052ABE8
     // 修改后的指令：
     //    0052AB3E E9 BD63EDFF jmp 00400F00
     //    0052AB43 90          nop
-    char patch1[] = "\x90\x90\x90\x90\x90\x90";
+    char patch1[] = "\xE9\x00\x00\x00\x00\x90";
     WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch1, sizeof(patch1) - 1, NULL);
+    DWORD dwOldProtect2 = 0;
+    VirtualProtectEx(hProcess, (LPVOID)targetAddress2, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect2);
+    char patch2[] = "\x83\xBE\x84\x00\x00\x00\x02\x75\x0A\x0F\x1F\x40\x00\x90\xE9\x32\x94\x31\xFF\x89\x86\x9C\x00\x00\x00\xE9\x27\x94\x31\xFF";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress2, patch2, sizeof(patch2) - 1, NULL);
+    BYTE opCode5[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+    // 设置第二个偏移值
+    DWORD jumpOffset5 = targetAddress2 - (targetAddress + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode5[1] = jumpOffset5 & 0xFF;
+    opCode5[2] = (jumpOffset5 >> 8) & 0xFF;
+    opCode5[3] = (jumpOffset5 >> 16) & 0xFF;
+    opCode5[4] = (jumpOffset5 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, opCode5, sizeof(opCode5), NULL);
+    BYTE opCode1[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+    // 设置第二个偏移值
+    DWORD jumpOffset1 = targetAddress3 - (targetAddress4 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode1[1] = jumpOffset1 & 0xFF;
+    opCode1[2] = (jumpOffset1 >> 8) & 0xFF;
+    opCode1[3] = (jumpOffset1 >> 16) & 0xFF;
+    opCode1[4] = (jumpOffset1 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress4, opCode1, sizeof(opCode1), NULL);
+    BYTE opCode2[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+    // 设置第二个偏移值
+    DWORD jumpOffset2 = targetAddress3 - (targetAddress5 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode2[1] = jumpOffset2 & 0xFF;
+    opCode2[2] = (jumpOffset2 >> 8) & 0xFF;
+    opCode2[3] = (jumpOffset2 >> 16) & 0xFF;
+    opCode2[4] = (jumpOffset2 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress5, opCode2, sizeof(opCode2), NULL);
     CloseHandle(hProcess);
 }
 VOID CPvz::MeowFast()

@@ -60,5 +60,7 @@ public:
     VOID CherryNo();
     //猫丝子无延迟
     VOID MeowFast();
+    //召唤奖杯过关
+    VOID SummonCup();
 };
 

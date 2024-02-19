@@ -56,4 +56,5 @@ public:
     afx_msg void OnBnClickedBtnCherryFast();
     afx_msg void OnBnClickedBtnMeowFast();
     afx_msg void OnBnClickedBtnCherryNo();
+    afx_msg void OnBnClickedBtnSummonCup();
 };
