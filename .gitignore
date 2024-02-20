@@ -31,12 +31,8 @@
 *.out
 *.app
 /GhTrTool/Debug
-/GhTrTool/.vs
-/GhTrTool/x64/*
-/GhTrTool/GhTrTool/x64/Debug
-/GhTrTool/GhTrTool/x64/Release
-/GhTrTool/ipch
-/GhTrTool/x64/Release
-/GhTrTool/x64/Debug
-/GhTrTool/GhTrTool/x64/*
-
+/GhTrTool/.vs/
+/GhTrTool/Realese/
+/GhTrTool/x64/
+/GhTrTool/GhTrTool/x64/
+/GhTrTool/GhTrTool/Release/

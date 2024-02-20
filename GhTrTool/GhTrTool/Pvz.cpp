@@ -454,7 +454,7 @@ VOID CPvz::TheWorld()
 
 
 // 技能无冷却
-VOID CPvz::NoModelCD()
+VOID CPvz::NoModelCD() //has bug 有bug
 {
     DWORD dwPid = GetGamePid();
     if (dwPid == -1)
@@ -475,10 +475,36 @@ VOID CPvz::NoModelCD()
     }
     DWORD offset = 0x93BF5;
     DWORD targetAddress = baseAddress + offset;
+    DWORD offset2 = 0x43B;
+    DWORD targetAddress2 = baseAddress + offset2;
+    DWORD offset4 = 0x442;
+    DWORD targetAddress4 = baseAddress + offset4;
+    DWORD dwOldProtect2 = 0;
+    VirtualProtectEx(hProcess, (LPVOID)targetAddress2, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect2);
+    DWORD offset3 = 0x93BFC;
+    DWORD targetAddress3 = baseAddress + offset3;
     // 指令与 TheWorld 相反
-    char *patch = "\xC7\x86\xC0\x03\x00\x00\x00\x00\x00\x00\x90";
-    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch, 11, NULL);
+    char patch[] = "\xE9\x00\x00\x00\x00\x66\x90";
+    DWORD jumpOffset2 = targetAddress2 - (targetAddress + 5);
 
+    // 将第二个偏移值写入操作码数组
+    patch[1] = jumpOffset2 & 0xFF;
+    patch[2] = (jumpOffset2 >> 8) & 0xFF;
+    patch[3] = (jumpOffset2 >> 16) & 0xFF;
+    patch[4] = (jumpOffset2 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch, 7, NULL);
+    char patch2[] = "\xC6\x86\xC0\x03\x00\x00\x00\xE9\xF0\x3B\xDD\xFE";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress2, patch2, sizeof(patch2), NULL);
+    BYTE opCode1[] = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+    // 设置第二个偏移值
+    DWORD jumpOffset1 = targetAddress3 - (targetAddress4 + 5);
+
+    // 将第二个偏移值写入操作码数组
+    opCode1[1] = jumpOffset1 & 0xFF;
+    opCode1[2] = (jumpOffset1 >> 8) & 0xFF;
+    opCode1[3] = (jumpOffset1 >> 16) & 0xFF;
+    opCode1[4] = (jumpOffset1 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress4, opCode1, sizeof(opCode1), NULL);
     CloseHandle(hProcess);
 }
 
