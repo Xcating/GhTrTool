@@ -9,6 +9,8 @@ public:
     ~CPvz();
     // 修改阳光的值
     VOID ModifySunValue(DWORD dwSun);
+    VOID SeedPacket(DWORD dwSP);
+    VOID Plant(DWORD dwXP, DWORD dwYP,DWORD dwID);
 
 private:
     // 获取游戏的 PID

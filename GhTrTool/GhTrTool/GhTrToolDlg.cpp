@@ -65,6 +65,8 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
     ON_BN_CLICKED(IDC_BTN_SUN, &CGhTrToolDlg::OnBnClickedBtnSun)
+	ON_BN_CLICKED(IDC_BTN_SP, &CGhTrToolDlg::OnBnClickedBtnSeedPacket)
+	ON_BN_CLICKED(IDC_BTN_Plant, &CGhTrToolDlg::OnBnClickedBtnPlant)
     ON_BN_CLICKED(IDC_BTN_SUN_NOP, &CGhTrToolDlg::OnBnClickedBtnSunNop)
     ON_BN_CLICKED(IDC_BTN_NO_CD, &CGhTrToolDlg::OnBnClickedBtnNoCd)
     ON_BN_CLICKED(IDC_BTN_BGId, &CGhTrToolDlg::OnBnClickedBtnBGId)
@@ -187,6 +189,23 @@ void CGhTrToolDlg::OnBnClickedBtnSun()
     pvz.ModifySunValue(dwSun);
 }
 
+void CGhTrToolDlg::OnBnClickedBtnSeedPacket()
+{
+	DWORD dwSP = GetDlgItemInt(IDC_EDIT_SP2);
+
+	CPvz pvz = CPvz();
+	pvz.SeedPacket(dwSP);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPlant()
+{
+	DWORD dwXP = GetDlgItemInt(IDC_EDIT_XP);
+	DWORD dwYP = GetDlgItemInt(IDC_EDIT_YP);
+	DWORD dwID = GetDlgItemInt(IDC_EDIT_ID);
+	CPvz pvz = CPvz();
+	pvz.Plant(dwXP,dwYP,dwID);
+
+}
 
 void CGhTrToolDlg::OnBnClickedBtnSunNop()
 {

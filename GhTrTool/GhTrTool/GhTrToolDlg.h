@@ -33,6 +33,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
     afx_msg void OnBnClickedBtnSun();
+    afx_msg void OnBnClickedBtnSeedPacket();
+    afx_msg void OnBnClickedBtnPlant();
     afx_msg void OnBnClickedBtnSunNop();
     afx_msg void OnBnClickedBtnNoCd();
     afx_msg void OnBnClickedBtnBGId();

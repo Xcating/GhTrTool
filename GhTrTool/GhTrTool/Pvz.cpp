@@ -142,6 +142,44 @@ VOID CPvz::ModifySunValue(DWORD dwSun)
     CloseHandle(hProcess);
 }
 
+// 修改卡槽数量
+VOID CPvz::SeedPacket(DWORD dwSP)
+{
+    DWORD dwPid = GetGamePid();
+    if (dwPid == -1)
+    {
+        MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        return;
+    }
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
+    if (baseAddress != 0)
+    {
+        printf("test");
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset = 0x29CE88;
+    DWORD targetAddress = baseAddress + offset;
+    // 0044BA45 - add[edi + 00005578], eax EDI = 1E4A0B40
+    // 00475373 - mov edi, [esi + 00000868] ESI = 0286B490
+    // 7794F8
+
+    DWORD dwNum = 0;
+    ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL);
+    ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL);
+    ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x14C), &dwNum, sizeof(DWORD), NULL);
+    BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x1C), &dwSP, sizeof(DWORD), NULL);
+    if (result) {
+        MessageBox(NULL, TEXT("写入成功"), TEXT("提示"), MB_OK);
+    }
+    else {
+        MessageBox(NULL, TEXT("写入失败,请检查权限"), TEXT("错误"), MB_OK | MB_ICONERROR);
+    }
+    CloseHandle(hProcess);
+}
 
 // 种植不减阳光
 VOID CPvz::SunNop()
@@ -206,16 +244,16 @@ VOID CPvz::NoCd()
     // 修改后的指令：
     //     00488688 E9 7A010000 jmp 00488807
     //     0048868D 90          nop
-    offset = 0xE4D91;
-    targetAddress = baseAddress + offset;
-    char *patch2 = "\xb8\x00\x00\x00\x00\x90\x90";
-    WriteProcessMemory(hProcess, (LPVOID)targetAddress, patch2, 7, NULL);
+    DWORD offset2 = 0xE55AD;
+    DWORD targetAddress2 = baseAddress + offset2;
+    char *patch2 = "\x90\x90";
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress2, patch2, 2, NULL);
 
     CloseHandle(hProcess);
 }
 
 
-// 修改金币
+// 修改背景ID
 VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
 {
     DWORD dwPid = GetGamePid();
@@ -247,7 +285,7 @@ VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
 }
 
 
-// 重复建造，无需花盆、无需荷叶
+// 重复建造，无需花盆
 VOID CPvz::Build()
 {
     DWORD dwPid = GetGamePid();
@@ -552,6 +590,8 @@ VOID CPvz::SummonCup()
     DWORD targetAddress7 = baseAddress + offset7;
     DWORD offset2 = 0x45E;
     DWORD targetAddress2 = baseAddress + offset2;
+    DWORD dwOldProtect2 = 0;
+    VirtualProtectEx(hProcess, (LPVOID)targetAddress2, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect2);
     DWORD offset3 = 0x47B;
     DWORD targetAddress3 = baseAddress + offset3;
     DWORD offset4 = 0x953B0;
@@ -593,6 +633,84 @@ VOID CPvz::SummonCup()
     WriteProcessMemory(hProcess, (LPVOID)targetAddress2, shellcode, sizeof(shellcode), NULL);
 
     // 创建远程线程来执行汇编代码
+    HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)targetAddress2, NULL, 0, NULL);
+
+    //等待线程执行完毕
+    WaitForSingleObject(hThread, INFINITE);
+
+    // 清理资源
+    CloseHandle(hThread);
+    //VirtualFreeEx(hProcess, lpBaseAddress, 0, MEM_RELEASE);
+    CloseHandle(hProcess);
+}
+VOID CPvz::Plant(DWORD dwXP,DWORD dwYP,DWORD dwID)
+{
+    dwXP--; dwYP--;
+    DWORD dwPid = GetGamePid();
+    if (dwPid == -1)
+    {
+        MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+        return;
+    }
+
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+    DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
+    if (baseAddress != 0)
+    {
+        printf("test");
+    }
+    else
+    {
+        baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
+    }
+    DWORD offset7 = 0x29CE88;
+    DWORD targetAddress7 = baseAddress + offset7;
+    DWORD offset2 = 0x348;
+    DWORD targetAddress2 = baseAddress + offset2;
+    DWORD dwOldProtect2 = 0;
+    VirtualProtectEx(hProcess, (LPVOID)targetAddress2, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect2);
+    DWORD offset3 = 0x357;
+    DWORD targetAddress3 = baseAddress + offset3;
+    DWORD offset4 = 0x956F0;
+    DWORD targetAddress4 = baseAddress + offset4;
+    BYTE shellcode[] = {  //60 6A 01 6A 07 8B 0D 4C F6 42 01 6A 01 6A 01 E8 94 53 09 00 61 C3
+    0x60,
+    0x6A, 0x01,
+    0x6A, 0x07,
+    0x8B, 0x0D, 0x28, 0xAE, 0x29, 0x00,
+    0x6A, 0x01,
+    0x6A, 0x01,
+    0xE8, 0xB3, 0x94, 0x00, 0x00,
+    0x61,
+    0xC3
+    };
+    DWORD offsetX = 0x320;
+    DWORD valueX = 0;
+    DWORD targetValueX = 0;
+    ReadProcessMemory(hProcess, (LPCVOID)targetAddress7, &valueX, sizeof(DWORD), NULL);
+    //在基址上加上偏移量708，得到目标地址的绝对地址
+    DWORD finalAddress = valueX + offsetX;
+    valueX = 0;
+    ReadProcessMemory(hProcess, (LPCVOID)finalAddress, &valueX, sizeof(DWORD), NULL);
+    DWORD finalAddress2 = valueX + 0x7C;
+    DWORD jumpOffsetX = finalAddress2;
+    // 将第二个偏移值写入操作码数组
+    shellcode[7] = jumpOffsetX & 0xFF;
+    shellcode[8] = (jumpOffsetX >> 8) & 0xFF;
+    shellcode[9] = (jumpOffsetX >> 16) & 0xFF;
+    shellcode[10] = (jumpOffsetX >> 24) & 0xFF;
+    DWORD jumpOffset2 = targetAddress4 - (targetAddress3 + 5);
+    shellcode[4] = dwID & 0xFF;
+    shellcode[12] = dwXP & 0xFF;
+    shellcode[14] = dwYP & 0xFF;
+     //将第二个偏移值写入操作码数组
+    shellcode[16] = jumpOffset2 & 0xFF;
+    shellcode[17] = (jumpOffset2 >> 8) & 0xFF;
+    shellcode[18] = (jumpOffset2 >> 16) & 0xFF;
+    shellcode[19] = (jumpOffset2 >> 24) & 0xFF;
+    WriteProcessMemory(hProcess, (LPVOID)targetAddress2, shellcode, sizeof(shellcode), NULL);
+
+    //创建远程线程来执行汇编代码
     HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)targetAddress2, NULL, 0, NULL);
 
     //等待线程执行完毕
