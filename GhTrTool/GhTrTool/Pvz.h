@@ -35,7 +35,7 @@ public:
     // 没有技能冷却
     VOID NoModelCD();
     // 障碍物自动消失
-    VOID NoBuildTIme();
+    VOID NoBuildTime();
     // 豌豆类子弹帧伤
     VOID PeaSDamage();
     //小推车不动
@@ -64,5 +64,7 @@ public:
     VOID MeowFast();
     //召唤奖杯过关
     VOID SummonCup();
+    //忽略阳光种植
+    VOID IgnoreSun();
 };
 

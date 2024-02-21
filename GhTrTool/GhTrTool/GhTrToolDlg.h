@@ -49,11 +49,12 @@ public:
     afx_msg void OnBnClickedBtnNoModelCD();
     afx_msg void OnBnClickedBtnMowers();
     afx_msg void OnBnClickedBtnPeaSDamage();
-    afx_msg void OnBnClickedBtnNoBuildTIme();
+    afx_msg void OnBnClickedBtnNoBuildTime();
     afx_msg void OnBnClickedBtnNoSunMax();
     afx_msg void OnBnClickedBtnZombieDC();
     afx_msg void OnBnClickedBtnNotSubvert();
     afx_msg void OnBnClickedBtnGodMode();
+    afx_msg void OnBnClickedBtnIgnoreSun();
     afx_msg void OnBnClickedBtnLoursMC();
     afx_msg void OnBnClickedBtnCherryFast();
     afx_msg void OnBnClickedBtnMeowFast();

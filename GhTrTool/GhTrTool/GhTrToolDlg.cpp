@@ -78,11 +78,12 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BTN_NoModelCD, &CGhTrToolDlg::OnBnClickedBtnNoModelCD)
     ON_BN_CLICKED(IDC_BTN_Mowers, &CGhTrToolDlg::OnBnClickedBtnMowers)
 	ON_BN_CLICKED(IDC_BTN_PeaSDamage, &CGhTrToolDlg::OnBnClickedBtnPeaSDamage)
-	ON_BN_CLICKED(IDC_BTN_NoBuildTIme, &CGhTrToolDlg::OnBnClickedBtnNoBuildTIme)
+	ON_BN_CLICKED(IDC_BTN_NoBuildTime, &CGhTrToolDlg::OnBnClickedBtnNoBuildTime)
 	ON_BN_CLICKED(IDC_BTN_NOSUNMAX, &CGhTrToolDlg::OnBnClickedBtnNoSunMax)
     ON_BN_CLICKED(IDC_BTN_ZombieDC, &CGhTrToolDlg::OnBnClickedBtnZombieDC)
     ON_BN_CLICKED(IDC_BTN_NotSubvert, &CGhTrToolDlg::OnBnClickedBtnNotSubvert)
     ON_BN_CLICKED(IDC_BTN_GodMode, &CGhTrToolDlg::OnBnClickedBtnGodMode)
+	ON_BN_CLICKED(IDC_BTN_IgnoreSun, &CGhTrToolDlg::OnBnClickedBtnIgnoreSun)
 	ON_BN_CLICKED(IDC_BTN_SummonCup, &CGhTrToolDlg::OnBnClickedBtnSummonCup)
 	ON_BN_CLICKED(IDC_BTN_LoursMC, &CGhTrToolDlg::OnBnClickedBtnLoursMC)
 	ON_BN_CLICKED(IDC_BTN_MeowFast, &CGhTrToolDlg::OnBnClickedBtnMeowFast)
@@ -299,10 +300,10 @@ void CGhTrToolDlg::OnBnClickedBtnPeaSDamage()
 	pvz.PeaSDamage();
 }
 
-void CGhTrToolDlg::OnBnClickedBtnNoBuildTIme()
+void CGhTrToolDlg::OnBnClickedBtnNoBuildTime()
 {
 	CPvz pvz = CPvz();
-	pvz.NoBuildTIme();
+	pvz.NoBuildTime();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnNoSunMax()
@@ -329,6 +330,12 @@ void CGhTrToolDlg::OnBnClickedBtnGodMode()
 {
     CPvz pvz = CPvz();
     pvz.GodMode();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnIgnoreSun()
+{
+	CPvz pvz = CPvz();
+	pvz.IgnoreSun();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSummonCup()
