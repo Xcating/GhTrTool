@@ -83,6 +83,7 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BTN_ZombieDC, &CGhTrToolDlg::OnBnClickedBtnZombieDC)
     ON_BN_CLICKED(IDC_BTN_NotSubvert, &CGhTrToolDlg::OnBnClickedBtnNotSubvert)
     ON_BN_CLICKED(IDC_BTN_GodMode, &CGhTrToolDlg::OnBnClickedBtnGodMode)
+	ON_BN_CLICKED(IDC_BTN_LingSDamage, &CGhTrToolDlg::OnBnClickedBtnLingSDamage)
 	ON_BN_CLICKED(IDC_BTN_IgnoreSun, &CGhTrToolDlg::OnBnClickedBtnIgnoreSun)
 	ON_BN_CLICKED(IDC_BTN_SummonCup, &CGhTrToolDlg::OnBnClickedBtnSummonCup)
 	ON_BN_CLICKED(IDC_BTN_LoursMC, &CGhTrToolDlg::OnBnClickedBtnLoursMC)
@@ -92,6 +93,14 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_DX, &CGhTrToolDlg::OnBnClickedBtnDX)
 	ON_BN_CLICKED(IDC_BTN_CherryFast, &CGhTrToolDlg::OnBnClickedBtnCherryFast)
 	ON_BN_CLICKED(IDC_BTN_CherryNo, &CGhTrToolDlg::OnBnClickedBtnCherryNo)
+	ON_BN_CLICKED(IDC_BTN_ApplayerNoCD, &CGhTrToolDlg::OnBnClickedBtnApplayerNoCD)
+	ON_BN_CLICKED(IDC_BTN_ApplayerNoLag, &CGhTrToolDlg::OnBnClickedBtnApplayerNoLag)
+	ON_BN_CLICKED(IDC_BTN_PlantageNoCD, &CGhTrToolDlg::OnBnClickedBtnPlantageNoCD)
+	ON_BN_CLICKED(IDC_BTN_SunFlowerNoCD, &CGhTrToolDlg::OnBnClickedBtnSunFlowerNoCD)
+	ON_BN_CLICKED(IDC_BTN_PeaNoCD, &CGhTrToolDlg::OnBnClickedBtnPeaNoCD)
+	ON_BN_CLICKED(IDC_BTN_SuperReed, &CGhTrToolDlg::OnBnClickedBtnSuperReed)
+	ON_BN_CLICKED(IDC_BTN_PowerFlowerNoCD, &CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD)
+	ON_BN_CLICKED(IDC_BTN_AwayMax, &CGhTrToolDlg::OnBnClickedBtnAwayMax)
 END_MESSAGE_MAP()
 
 
@@ -330,6 +339,60 @@ void CGhTrToolDlg::OnBnClickedBtnGodMode()
 {
     CPvz pvz = CPvz();
     pvz.GodMode();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnSuperReed()
+{
+	CPvz pvz = CPvz();
+	pvz.SuperReed();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD()
+{
+	CPvz pvz = CPvz();
+	pvz.PowerFlowerNoCD();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnAwayMax()
+{
+	CPvz pvz = CPvz();
+	pvz.AwayMax();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnApplayerNoCD()
+{
+	CPvz pvz = CPvz();
+	pvz.ApplayerNoCD();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnApplayerNoLag()
+{
+	CPvz pvz = CPvz();
+	pvz.ApplayerNoLag();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPlantageNoCD()
+{
+	CPvz pvz = CPvz();
+	pvz.PlantageNoCD();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPeaNoCD()
+{
+	CPvz pvz = CPvz();
+	pvz.PeaNoCD();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnSunFlowerNoCD()
+{
+	CPvz pvz = CPvz();
+	pvz.SunFlowerNoCD();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnLingSDamage()
+{
+	CPvz pvz = CPvz();
+	pvz.LingSDamage();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnIgnoreSun()

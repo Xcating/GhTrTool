@@ -60,4 +60,13 @@ public:
     afx_msg void OnBnClickedBtnMeowFast();
     afx_msg void OnBnClickedBtnCherryNo();
     afx_msg void OnBnClickedBtnSummonCup();
+    afx_msg void OnBnClickedBtnLingSDamage();
+    afx_msg void OnBnClickedBtnApplayerNoCD();
+    afx_msg void OnBnClickedBtnApplayerNoLag();
+    afx_msg void OnBnClickedBtnPlantageNoCD();
+    afx_msg void OnBnClickedBtnSunFlowerNoCD();
+    afx_msg void OnBnClickedBtnPeaNoCD();
+    afx_msg void OnBnClickedBtnSuperReed();
+    afx_msg void OnBnClickedBtnPowerFlowerNoCD();
+    afx_msg void OnBnClickedBtnAwayMax();
 };

@@ -66,5 +66,23 @@ public:
     VOID SummonCup();
     //忽略阳光种植
     VOID IgnoreSun();
+    //光菱角帧伤
+    VOID LingSDamage();
+    //苹果鼓瑟手无冷却
+    VOID ApplayerNoCD();
+    //苹果鼓瑟手无延迟
+    VOID ApplayerNoLag();
+    //车前草无冷却
+    VOID PlantageNoCD();
+    //向日葵产出无冷却
+    VOID SunFlowerNoCD();
+    //豌豆无冷却
+    VOID PeaNoCD();
+    //超级闪电芦苇
+    VOID SuperReed();
+    //牡丹无冷却
+    VOID PowerFlowerNoCD();
+    //牡丹永远最大
+    VOID AwayMax();
 };
 

@@ -13,33 +13,6 @@ CPvz::CPvz()
 CPvz::~CPvz()
 {
 }
-
-unsigned char* convertToAssemblyCode(DWORD address) {
-	uint8_t* ptr = reinterpret_cast<uint8_t*>(&address); // 将DWORD地址变量视为指向8位字节的指针
-
-	unsigned char* assemblyCode = new unsigned char[8]; // 分配足够的空间来存储转换后的字节码
-
-	for (int i = 0; i < 4; i++) {
-		uint8_t value = ptr[i]; // 获取每个字节的值
-		uint8_t invertedValue = ~value; // 取反
-
-		assemblyCode[2 * i] = static_cast<unsigned char>((invertedValue >> 4) & 0xF);
-		assemblyCode[2 * i + 1] = static_cast<unsigned char>(invertedValue & 0xF);
-	}
-
-	return assemblyCode;
-};
-DWORD_PTR GetBaseAddress(const char* moduleName) {
-	HMODULE hModule = GetModuleHandleA(moduleName);
-
-	if (hModule == NULL) {
-		printf("Failed to get module handle for %s\n", moduleName);
-		return 0;
-	}
-
-	DWORD_PTR baseAddress = (DWORD_PTR)hModule;
-	return baseAddress;
-}
 // 获取游戏的 PID
 DWORD CPvz::GetGamePid()
 {
@@ -55,36 +28,7 @@ DWORD CPvz::GetGamePid()
 
 	return dwPid;
 }
-DWORD_PTR GetSectionBaseAddress(HANDLE hProcess, const wchar_t* moduleName, const std::string& sectionName) {
-	HMODULE hModule;
-	if (!GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, reinterpret_cast<LPCWSTR>(GetSectionBaseAddress), &hModule)) {
-		return 0;
-	}
-
-	MODULEINFO moduleInfo;
-	if (!GetModuleInformation(hProcess, hModule, &moduleInfo, sizeof(moduleInfo))) {
-		return 0;
-	}
-
-	IMAGE_DOS_HEADER dosHeader;
-	ReadProcessMemory(hProcess, moduleInfo.lpBaseOfDll, &dosHeader, sizeof(dosHeader), nullptr);
-
-	IMAGE_NT_HEADERS ntHeaders;
-	ReadProcessMemory(hProcess, reinterpret_cast<LPCVOID>(reinterpret_cast<DWORD_PTR>(moduleInfo.lpBaseOfDll) + dosHeader.e_lfanew), &ntHeaders, sizeof(ntHeaders), nullptr);
-
-	IMAGE_SECTION_HEADER sectionHeader;
-	for (int i = 0; i < ntHeaders.FileHeader.NumberOfSections; i++) {
-		ReadProcessMemory(hProcess, reinterpret_cast<LPCVOID>(reinterpret_cast<DWORD_PTR>(moduleInfo.lpBaseOfDll) + dosHeader.e_lfanew + sizeof(IMAGE_NT_HEADERS) + (i * sizeof(IMAGE_SECTION_HEADER))), &sectionHeader, sizeof(sectionHeader), nullptr);
-		std::wstring sectionNameW(reinterpret_cast<const wchar_t*>(sectionHeader.Name));
-		std::string sectionNameA(sectionNameW.begin(), sectionNameW.end());
-
-		if (sectionNameA == sectionName) {
-			return reinterpret_cast<DWORD_PTR>(moduleInfo.lpBaseOfDll) + sectionHeader.VirtualAddress;
-		}
-	}
-
-	return 0;
-}
+//获取模块基址
 DWORD GetModuleBaseAddress(HANDLE hProcess, const wchar_t* moduleName) {
 	MODULEENTRY32W moduleEntry = { sizeof(moduleEntry) };
 	DWORD baseAddress = 0;
@@ -104,6 +48,7 @@ DWORD GetModuleBaseAddress(HANDLE hProcess, const wchar_t* moduleName) {
 
 	return baseAddress;
 }
+//获取模块基址(函数通用)
 DWORD get_baseAddress(HANDLE hProcess)
 {
 	DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
@@ -111,31 +56,8 @@ DWORD get_baseAddress(HANDLE hProcess)
 		baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
 	return baseAddress;
 }
-// 读取进程内存中的DWORD值
-DWORD ReadDwordFromProcess(HANDLE hProcess, DWORD address) {
-	DWORD value = 0;
-	ReadProcessMemory(hProcess, (LPCVOID)address, &value, sizeof(DWORD), NULL);
-	return value;
-}
-
-// 使用地址更新shellcode
-void UpdateShellcodeWithAddress(BYTE* shellcode, SIZE_T shellcodeSize, DWORD address) {
-	// 假设地址在shellcode的特定位置，这里假设是从索引9开始的4个字节。
-	shellcode[9] = address & 0xFF;
-	shellcode[10] = (address >> 8) & 0xFF;
-	shellcode[11] = (address >> 16) & 0xFF;
-	shellcode[12] = (address >> 24) & 0xFF;
-}
-
-// 使用跳转偏移更新shellcode
-void UpdateShellcodeWithJump(BYTE* shellcode, SIZE_T shellcodeSize, DWORD jumpOffset) {
-	// 假设跳转偏移在shellcode的特定位置，这里假设是从索引30开始的4个字节。
-	shellcode[30] = jumpOffset & 0xFF;
-	shellcode[31] = (jumpOffset >> 8) & 0xFF;
-	shellcode[32] = (jumpOffset >> 16) & 0xFF;
-	shellcode[33] = (jumpOffset >> 24) & 0xFF;
-}
-VOID RunTheMmory(DWORD dwPid,DWORD codeCaveOffset) {
+//创建线程，运行指定内存
+VOID RunTheMemory(DWORD dwPid, DWORD codeCaveOffset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	if (baseAddress == 0) {
@@ -145,10 +67,17 @@ VOID RunTheMmory(DWORD dwPid,DWORD codeCaveOffset) {
 
 	DWORD targetAddress = baseAddress + codeCaveOffset;
 	HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)targetAddress, NULL, 0, NULL);
-	WaitForSingleObject(hThread, INFINITE);
-	CloseHandle(hThread);
+	if (hThread != NULL) {
+		WaitForSingleObject(hThread, INFINITE);
+		CloseHandle(hThread);
+	}
+	else {
+		MessageBox(NULL, L"游戏未找到或没有访问权限", L"提示", MB_OK);
+	}
 	CloseHandle(hProcess);
 }
+
+//
 VOID check_dwPid(DWORD dwPid)
 {
 	if (dwPid == -1)
@@ -183,10 +112,7 @@ bool WriteToMemory(DWORD dwPid, DWORD offset, const char* data, size_t size) {
 	CloseHandle(hProcess);
 	return result;
 }
-DWORD getTargetAddress(DWORD base, DWORD offset) {
-	return base + offset;
-}
-
+//修改内存保护措施，用于写入空地址
 void protectAddress(DWORD dwPid, DWORD offset) {
 	HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD dwOldProtect;
@@ -194,23 +120,7 @@ void protectAddress(DWORD dwPid, DWORD offset) {
 	DWORD targetAddress = baseAddress + offset;
 	VirtualProtectEx(hProc, (LPVOID)targetAddress, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect);
 }
-BOOL SetMemoryProtection(HANDLE hProcess, DWORD dwAddress) {
-	DWORD dwOldProtect = 0;
-	return VirtualProtectEx(hProcess, (LPVOID)dwAddress, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect);
-}
-DWORD CalculateRelativeJumpOffset(DWORD target, DWORD source) {
-	return target - (source + 5);
-}
-std::string toHexString(DWORD value) {
-	std::stringstream ss;
-	ss << "0x" << std::hex << std::uppercase << value;
-	while (ss.str().length() < 10) ss << '0'; // 确保字符串长度至少为10
-	return ss.str();
-}
-std::wstring toWideString(const std::string& input) {
-	std::wstring result(input.begin(), input.end());
-	return result;
-}
+//在指定内存写入Jump操作码
 bool WriteJump(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -230,6 +140,7 @@ bool WriteJump(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
 	CloseHandle(hProcess);
 	return result;
 }
+//在指定内存写入Je或者Jne操作码
 bool WriteConditionJump(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset,bool JE) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -243,12 +154,21 @@ bool WriteConditionJump(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset,bool
 	VirtualProtectEx(hProcess, (LPVOID)sourceAddress, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect);
 
 	DWORD jumpOffset = targetAddress - (sourceAddress + 5);
-	BYTE jumpCode[6] = { 0x0F,JE ? 0x84 : 0x85, jumpOffset & 0xFF, (jumpOffset >> 8) & 0xFF, (jumpOffset >> 16) & 0xFF, (jumpOffset >> 24) & 0xFF };
+	BYTE jumpCode[6] = {
+	0x0F,
+	static_cast<BYTE>(JE ? 0x84 : 0x85),
+	static_cast<BYTE>(jumpOffset & 0xFF),
+	static_cast<BYTE>((jumpOffset >> 8) & 0xFF),
+	static_cast<BYTE>((jumpOffset >> 16) & 0xFF),
+	static_cast<BYTE>((jumpOffset >> 24) & 0xFF)
+	};
+
 
 	bool result = WriteProcessMemory(hProcess, (LPVOID)sourceAddress, jumpCode, sizeof(jumpCode), NULL);
 	CloseHandle(hProcess);
 	return result;
 }
+//在指定内存写入Push操作码
 bool WritePush(DWORD dwPid, DWORD Number,DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -264,6 +184,7 @@ bool WritePush(DWORD dwPid, DWORD Number,DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
+//在指定内存写入Mov Ecx,[PlantsVsZombies.exe+0x00000]操作码
 bool WriteMovECX(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -280,6 +201,7 @@ bool WriteMovECX(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
+//在指定内存写入Mov Eax,[PlantsVsZombies.exe+0x00000]操作码
 bool WriteMovEAX(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -296,6 +218,24 @@ bool WriteMovEAX(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
+//在指定内存写入Mov EAX,0x00000 操作码
+bool WriteMovEAXToHEX(DWORD dwPid, DWORD Address, DWORD offset) {
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+	if (hProcess == NULL) {
+		MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+		return false;
+	}
+	DWORD baseAddress = get_baseAddress(hProcess);
+	DWORD targetAddress = baseAddress + offset;
+	DWORD dwOldProtect = 0;
+	VirtualProtectEx(hProcess, (LPVOID)targetAddress, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect);
+	DWORD jumpOffset = Address;
+	BYTE jumpCode[] = { 0xB3 ,jumpOffset & 0xFF, (jumpOffset >> 8) & 0xFF, (jumpOffset >> 16) & 0xFF, (jumpOffset >> 24) & 0xFF };
+	bool result = WriteProcessMemory(hProcess, (LPVOID)targetAddress, jumpCode, sizeof(jumpCode), NULL);
+	CloseHandle(hProcess);
+	return result;
+}
+//在指定内存写入Mov [PlantsVsZombies.exe+0x00000], 00000000 操作码
 bool WriteMOVXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -312,6 +252,7 @@ bool WriteMOVXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
+//在指定内存写入Cmp [PlantsVsZombies.exe+0x00000], 00000000 操作码
 bool WriteCMPXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -328,6 +269,7 @@ bool WriteCMPXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
+//在指定内存写入Inc [PlantsVsZombies.exe+0x00000] 操作码
 bool WriteINC(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -344,6 +286,7 @@ bool WriteINC(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
+//在指定内存写入Call 操作码
 bool WriteCall(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -362,12 +305,25 @@ bool WriteCall(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
 	CloseHandle(hProcess);
 	return result;
 }
+BOOL check_battlefield(DWORD dwPid) {
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+	DWORD baseAddress = get_baseAddress(hProcess);
+	DWORD eBaseAddress = ReadTOMemory(dwPid, baseAddress + 0x29CE88);
+	DWORD checkPoint = ReadTOMemory(dwPid, eBaseAddress + 0x708);
+	if (checkPoint == 0)
+		return false;
+	else
+		return true;
+	return false;
+	CloseHandle(hProcess);
+}
+//检查是否可以写入
 VOID check_result(BOOL result)
 {
 	if (result)
-		MessageBox(NULL, TEXT("写入成功"), TEXT("提示"), MB_OK);
+		MessageBox(NULL, TEXT("写入内存成功"), TEXT("提示"), MB_OK);
 	else
-		MessageBox(NULL, TEXT("写入失败,请检查权限"), TEXT("错误"), MB_OK | MB_ICONERROR);
+		MessageBox(NULL, TEXT("写入失败, 请联系作者"), TEXT("错误"), MB_OK | MB_ICONERROR);
 }
 // 修改阳光的值
 VOID CPvz::ModifySunValue(DWORD dwSun) //Sun指的是阳光
@@ -480,7 +436,7 @@ VOID CPvz::TheWorld() {
 	WriteToMemory(dwPid, 0x96262, patch, sizeof(patch) - 1);
 }
 
-
+//无主动技能冷却
 VOID CPvz::NoModelCD() {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
@@ -490,7 +446,7 @@ VOID CPvz::NoModelCD() {
 	const char patch2[] = "\xC6\x86\xC0\x03\x00\x00\x00\xE9\xF0\x3B\xDD\xFE";
 	WriteToMemory(dwPid, 0x43A, patch2, sizeof(patch2));
 	WriteJump(dwPid, 0x93BF5, 0x43A);
-	WriteJump(dwPid, 0x441, 0x93BFC);
+	WriteJump(dwPid, 0x43A + 0x7 , 0x93BFC);
 }
 
 VOID CPvz::NoSunMax() {
@@ -524,21 +480,30 @@ void CPvz::SummonCup() {
 	DWORD dwPid = GetGamePid();
 	protectAddress(dwPid, 0x45E);
 	check_dwPid(dwPid);
+	if (!check_battlefield(dwPid))
+	{
+		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
+		return;
+	}
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	const char shellcode[] = "\x60\x9C\xBA\x80\x00\x00\x00\x8B\x0D\x28\xAE\x29\x00\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x02\x6A\x18\x6A\x7B\xE8\xB3\x94\x00\x00\x9D\x61\xC3";
 	DWORD eBaseAddress = ReadTOMemory(dwPid,baseAddress+0x29CE88);
 	WriteToMemory(dwPid, 0x45E, shellcode, sizeof(shellcode) - 1);
-	WriteMovECX(dwPid, eBaseAddress +0x708, 0x465);
-	WriteCall(dwPid,0x47B, 0x953B0);
-	RunTheMmory(dwPid, 0x45E);
-	CloseHandle(hProcess);
+	WriteMovECX(dwPid, eBaseAddress +0x708, 0x45E + 0x7);
+	WriteCall(dwPid,0x45E + 0x1D, 0x953B0);
+	RunTheMemory(dwPid, 0x45E);
 }
 VOID CPvz::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
 {
 	dwXP--; dwYP--;
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
+	if (!check_battlefield(dwPid))
+	{
+		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
+		return;
+	}
 	protectAddress(dwPid, 0x348);
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
@@ -546,33 +511,28 @@ VOID CPvz::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
 	DWORD eBaseAddress = ReadTOMemory(dwPid, baseAddress + 0x29CE88);
 	DWORD value = ReadTOMemory(dwPid, eBaseAddress + 0x320);
 	WriteToMemory(dwPid, 0x348, shellcode, sizeof(shellcode) -1);
-	WriteMovECX(dwPid, value + 0x7C, 0x34D);
-	WriteCall(dwPid, 0x357, 0x956F0);
-	WritePush(dwPid, dwXP, 0x353);
-	WritePush(dwPid, dwYP, 0x355);
-	WritePush(dwPid, dwID, 0x34B);
-	RunTheMmory(dwPid, 0x348);
-	CloseHandle(hProcess);
+	WriteMovECX(dwPid, value + 0x7C, 0x348 + 0x5);
+	WriteCall(dwPid, 0x348 + 0xF, 0x956F0);
+	WritePush(dwPid, dwXP, 0x348 + 0xB);
+	WritePush(dwPid, dwYP, 0x348 + 0xD + 0x7);
+	WritePush(dwPid, dwID, 0x348 + 0x3);
+	RunTheMemory(dwPid, 0x348);
 }
 VOID CPvz::PeaSDamage()
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-
-	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-	DWORD baseAddress = get_baseAddress(hProcess);
 	protectAddress(dwPid, 0x52F);
 	const char patch1[] = "\xE9\x00\x00\x00\x00\x90";
 	WriteToMemory(dwPid, 0xA552E, patch1, sizeof(patch1)-1);
 	const char patch2[] = "\x80\x7E\x08\x01\x0F\x84\x2A\x55\x9C\xFE\x80\x7E\x08\x02\x0F\x84\x20\x55\x9C\xFE\x80\x7E\x08\x03\x0F\x84\x16\x55\x9C\xFE\xC6\x46\x24\x01\x0F\x85\x22\x55\x9C\xFE\xE9\x07\x55\x9C\xFE";
 	WriteToMemory(dwPid, 0x52F, patch2, sizeof(patch2)-1);
 	WriteJump(dwPid, 0xA552E, 0x52F);
-	WriteConditionJump(dwPid,0x533,0xA5533,true);
-	WriteConditionJump(dwPid, 0x53D, 0xA5533, true);
-	WriteConditionJump(dwPid, 0x547, 0xA5533, true);
-	WriteConditionJump(dwPid, 0x551, 0xA654A, false);
-	WriteJump(dwPid, 0x557, 0xA5533);
-	CloseHandle(hProcess);
+	WriteConditionJump(dwPid,0x52F + 0x4,0xA5533,true);
+	WriteConditionJump(dwPid, 0x52F + 0xE, 0xA5533, true);
+	WriteConditionJump(dwPid, 0x52F + 0x18, 0xA5533, true);
+	WriteConditionJump(dwPid, 0x52F + 0x22, 0xA654A, false);
+	WriteJump(dwPid, 0x52F + 0x28, 0xA5533);
 }
 // 僵尸掉卡
 VOID CPvz::ZombieDC()
@@ -626,6 +586,7 @@ VOID CPvz::ZombieDC()
 	WriteCall(dwPid, 0x50D, 0x953B0);
 	WriteJump(dwPid, 0x513, 0x100F74);
 	WriteConditionJump(dwPid, 0x4E7, 0x100F73, true);
+	CloseHandle(hProcess);
 }
 
 
@@ -664,6 +625,7 @@ VOID CPvz::CherryNo()
 	WriteJump(dwPid, 0x614, 0xC9445);
 	WriteJump(dwPid, 0x61F, 0xC9445);
 }
+//猫丝子瞬吸
 VOID CPvz::MeowFast()
 {
 	DWORD dwPid = GetGamePid();
@@ -671,6 +633,7 @@ VOID CPvz::MeowFast()
 	const char patch1[] = "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00";
 	WriteToMemory(dwPid, 0xC69AE, patch1, sizeof(patch1) - 1);
 }
+//荷鲁斯刀刀暴击
 VOID CPvz::LoursMC()
 {
 	DWORD dwPid = GetGamePid();
@@ -693,7 +656,7 @@ VOID CPvz::GodMode()
 	const char patch[] = "\x90\x90";
 	WriteToMemory(dwPid, 0xC5997, patch, sizeof(patch) - 1);
 }
-// 取消荣光
+// 取消荣光骄傲状态
 VOID CPvz::Point()
 {
 	DWORD dwPid = GetGamePid();
@@ -701,6 +664,7 @@ VOID CPvz::Point()
 	const char patch[] = "\xC7\x85\xF8\x02\x00\x00\x00\x00\x00\x00\x90\x90"; //硬塞进去的，依靠bug运行（
 	WriteToMemory(dwPid, 0xD1358, patch, sizeof(patch) - 1);
 }
+//导藓批量种植
 VOID CPvz::DX()
 {
 	DWORD dwPid = GetGamePid();
@@ -714,19 +678,7 @@ VOID CPvz::DX()
 	const char patch4[] = "\x83\x79\x18\x0D";
 	WriteToMemory(dwPid, 0x94F27, patch4, sizeof(patch4) - 1);
 }
-const char* getAssemblyBytes(DWORD address) {
-	// 创建一个临时的char数组来存储字节码
-	static char assemblyBytes[5] = { 0 };
-
-	// 将DWORD地址拆分为4个字节并存储到字节码数组中
-	for (int i = 0; i < 4; i++) {
-		assemblyBytes[i] = (address >> (i * 8)) & 0xFF;
-	}
-
-	// 返回字节码数组的指针
-	return assemblyBytes;
-}
-
+//进入游戏修改荣光
 VOID CPvz::Point2()
 {
 	DWORD dwPid = GetGamePid();
@@ -738,4 +690,96 @@ VOID CPvz::Point2()
 	WriteToMemory(dwPid, 0xF00, patch2, sizeof(patch2) - 1);
 	WriteJump(dwPid, 0xF29, 0x91FB7);
 	WriteJump(dwPid, 0x91FB2, 0xF00);
+}
+//光菱角帧伤害
+VOID CPvz::LingSDamage()
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	protectAddress(dwPid, 0x7F1);
+	const char patch1[] = "\xE9\x00\x00\x00\x00\x0F\x1F\x00";
+	WriteToMemory(dwPid, 0xA4B9D, patch1, sizeof(patch1) - 1);
+	const char patch2[] = "\xB8\x02\x00\x00\x00\xB9\x96\x00\x00\x00\xE9\x96\x4B\x84\xFE";
+	WriteToMemory(dwPid, 0x7F1, patch2, sizeof(patch2) - 1);
+	WriteJump(dwPid, 0x7F1+0xA, 0xA4BA5);
+	WriteJump(dwPid, 0xA4B9D, 0x7F1);
+}
+//苹果鼓瑟手无冷却
+VOID CPvz::ApplayerNoCD()
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	const char patch1[] = "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC6AE0, patch1, sizeof(patch1) - 1);
+	const char patch2[] = "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC42D1, patch2, sizeof(patch2) - 1);
+}
+//苹果鼓瑟手无延迟
+VOID CPvz::ApplayerNoLag()
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	const char patch1[] = "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC4323, patch1, sizeof(patch1) - 1);
+}
+//车前草吸收无冷却
+VOID CPvz::PlantageNoCD()
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	const char patch1[] = "\xC7\x86\x9C\x00\x00\x00\x05\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC3728, patch1, sizeof(patch1) - 1);
+	const char patch2[] = "\xC7\x86\x9C\x00\x00\x00\x92\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC5019, patch2, sizeof(patch2) - 1);
+}
+//车前草吸收无冷却
+VOID CPvz::SunFlowerNoCD()
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	const char patch1[] = "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC2CC5, patch1, sizeof(patch1) - 1);
+	const char patch2[] = "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC68F3, patch2, sizeof(patch2) - 1);
+	const char patch3[] = "\xC7\x87\x9C\x00\x00\x00\x24\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC2BA1, patch3, sizeof(patch3) - 1);
+}
+//豌豆无冷却
+VOID CPvz::PeaNoCD()
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	const char patch1[] = "\x90\x90\x90\x90\x90\x90";
+	WriteToMemory(dwPid, 0xC27E7, patch1, sizeof(patch1) - 1);
+}
+//超级闪电芦苇
+VOID CPvz::SuperReed()
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	const char patch1[] = "\xB9\x66\x66\x66\x66";
+	WriteToMemory(dwPid, 0xC765B, patch1, sizeof(patch1) - 1);
+	const char patch2[] = "\x8B\x56\x08";
+	WriteToMemory(dwPid, 0xC762B, patch2, sizeof(patch2) - 1);
+}
+//超级闪电芦苇
+VOID CPvz::PowerFlowerNoCD()
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	const char patch1[] = "\xC7\x86\x9C\x00\x00\x00\x00\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC91A2, patch1, sizeof(patch1) - 1);
+}
+//光菱角帧伤害
+VOID CPvz::AwayMax()
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	protectAddress(dwPid, 0x749);
+	const char patch1[] = "\xE9\x00\x00\x00\x00\x90";
+	WriteToMemory(dwPid, 0xC901B, patch1, sizeof(patch1) - 1);
+	const char patch2[] = "\xC7\x81\xBC\x00\x00\x00\x05\x00\x00\x00\xE9\x12\x90\x39\xFF";
+	WriteToMemory(dwPid, 0x749, patch2, sizeof(patch2) - 1);
+	WriteJump(dwPid, 0x749 + 0xA, 0xC9021);
+	WriteJump(dwPid, 0xC901B, 0x749);
 }
