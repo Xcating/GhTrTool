@@ -82,7 +82,7 @@ VOID check_dwPid(DWORD dwPid)
 {
 	if (dwPid == -1)
 	{
-		MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
+		MessageBox(NULL, L"游戏未找到，请打开游戏后点击功能", L"Info", MB_OK);
 		return;
 	}
 }
@@ -321,9 +321,9 @@ BOOL check_battlefield(DWORD dwPid) {
 VOID check_result(BOOL result)
 {
 	if (result)
-		MessageBox(NULL, TEXT("写入内存成功"), TEXT("提示"), MB_OK);
+		MessageBox(NULL, TEXT("写入内存成功"), TEXT("Info"), MB_OK);
 	else
-		MessageBox(NULL, TEXT("写入失败, 请联系作者"), TEXT("错误"), MB_OK | MB_ICONERROR);
+		MessageBox(NULL, TEXT("写入失败，请联系作者"), TEXT("Error"), MB_OK | MB_ICONERROR);
 }
 // 修改阳光的值
 VOID CPvz::ModifySunValue(DWORD dwSun) //Sun指的是阳光
