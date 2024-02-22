@@ -514,7 +514,7 @@ VOID CPvz::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
 	WriteMovECX(dwPid, value + 0x7C, 0x348 + 0x5);
 	WriteCall(dwPid, 0x348 + 0xF, 0x956F0);
 	WritePush(dwPid, dwXP, 0x348 + 0xB);
-	WritePush(dwPid, dwYP, 0x348 + 0xD + 0x7);
+	WritePush(dwPid, dwYP, 0x348 + 0xD);
 	WritePush(dwPid, dwID, 0x348 + 0x3);
 	RunTheMemory(dwPid, 0x348);
 }
