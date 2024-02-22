@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include <afxwin.h>
 
 // CGhTrToolDlg 对话框
 class CGhTrToolDlg : public CDialogEx
@@ -11,7 +11,6 @@ class CGhTrToolDlg : public CDialogEx
 // 构造
 public:
 	CGhTrToolDlg(CWnd* pParent = NULL);	// 标准构造函数
-
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_GhTrTool_DIALOG };
@@ -19,7 +18,6 @@ public:
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
-
 
 // 实现
 protected:
