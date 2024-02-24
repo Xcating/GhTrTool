@@ -6,6 +6,7 @@
 #include "GhTrTool.h"
 #include "GhTrToolDlg.h"
 #include "afxdialogex.h"
+#include<string>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -51,14 +52,17 @@ CGhTrToolDlg::CGhTrToolDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_GhTrTool_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_bIsRed = true;
 }
-
 void CGhTrToolDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_STATIC_TEXT, m_StaticText);
 }
 
 BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
+	ON_WM_CTLCOLOR()
+	ON_WM_TIMER()
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -101,22 +105,37 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_PowerFlowerNoCD, &CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD)
 	ON_BN_CLICKED(IDC_BTN_AwayMax, &CGhTrToolDlg::OnBnClickedBtnAwayMax)
 	ON_BN_CLICKED(IDC_BTN_SunNoDelay, &CGhTrToolDlg::OnBnClickedBtnSunNoDelay)
-	ON_BN_CLICKED(IDC_CHECK1, &CGhTrToolDlg::OnBnClickedCheck1)
 END_MESSAGE_MAP()
-
-
 // CGhTrToolDlg 消息处理程序
+HBRUSH CGhTrToolDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	// 如果当前控件是你要改变颜色的静态文本
+	if (pWnd->GetDlgCtrlID() == IDC_STATIC_TEXT)
+	{
+		if(m_bIsRed)
+			pDC->SetTextColor(RGB(255, 100, 103));
+		else
+			pDC->SetTextColor(RGB(55, 55, 255));
+		pDC->SelectObject(&m_font);  // 设置字体
+		// 返回画刷句柄
+		hbr = (HBRUSH)GetStockObject(NULL_BRUSH);
+	}
+	return hbr;
+}
+
 
 BOOL CGhTrToolDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-
 	// 将“关于...”菜单项添加到系统菜单中。
-
-	// IDM_ABOUTBOX 必须在系统命令范围内。
+	UpdateText();
+	m_brush.CreateSolidBrush(RGB(255, 0, 0));
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
-
+	m_font.CreatePointFont(200, _T("微软雅黑"));
+	SetTimer(1, 1000, NULL); 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu != NULL)
 	{
@@ -157,7 +176,20 @@ void CGhTrToolDlg::OnSysCommand(UINT nID, LPARAM lParam)
 // 如果向对话框添加最小化按钮，则需要下面的代码
 //  来绘制该图标。  对于使用文档/视图模型的 MFC 应用程序，
 //  这将由框架自动完成。
+DWORD CGhTrToolDlg::GetGamePid()
+{
+	HWND hWnd = ::FindWindow(NULL, GAME_NAME);
 
+	if (hWnd == NULL)
+	{
+		return -1;
+	}
+
+	DWORD dwPid = 0;
+	::GetWindowThreadProcessId(hWnd, &dwPid);
+
+	return dwPid;
+}
 void CGhTrToolDlg::OnPaint()
 {
 	if (IsIconic())
@@ -190,8 +222,29 @@ HCURSOR CGhTrToolDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void CGhTrToolDlg::UpdateText()
+{
+	int pid = GetGamePid();
+	if (pid == -1)
+	{
+		m_bIsRed = 1;
+		m_StaticText.SetWindowText(_T("游戏未找到"));
+	}
+	else
+	{
+		m_bIsRed = 0;
+		m_StaticText.SetWindowText(_T("游戏已找到"));
+	}
+}
+void CGhTrToolDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	if (nIDEvent == 1)
+	{
+		UpdateText();
+	}
 
-
+	CDialogEx::OnTimer(nIDEvent);
+}
 void CGhTrToolDlg::OnBnClickedBtnSun()
 {
     DWORD dwSun = GetDlgItemInt(IDC_EDIT_SUN);
@@ -782,23 +835,5 @@ void CGhTrToolDlg::OnBnClickedBtnCherryFast()
 	{
 		CPvz pvz = CPvz();
 		pvz.CherryFast(0);
-	}
-}
-
-void CGhTrToolDlg::OnBnClickedCheck1()
-{
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_CHECK1);
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		// 复选框已勾选
-		CPvz pvz = CPvz();
-		pvz.CherryNo(1);
-	}
-	else
-	{
-		// 复选框已勾选
-		CPvz pvz = CPvz();
-		pvz.CherryFast(1);
 	}
 }

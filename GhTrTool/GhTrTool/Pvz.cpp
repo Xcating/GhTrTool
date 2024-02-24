@@ -457,8 +457,7 @@ VOID CPvz::NoSunMax(bool dwSwitch) {
 }
 
 VOID CPvz::NoBuildTime(bool dwSwitch){
-	DWORD dwPid = GetGamePid();
-	check_dwPid(dwPid);
+	DWORD dwPid = GetGamePid(); 
 	const char* patch = (dwSwitch == 1) ? "\xC7\x86\x94\x00\x00\x00\x00\x00\x00\x00\x90\x90\x90\x90" : "\x89\x86\x94\x00\x00\x00\x85\xC0\x0F\x85\xDC\x01\x00\x00";
 	WriteToMemory(dwPid, 0xA2913, patch, 14);
 }

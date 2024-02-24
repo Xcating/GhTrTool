@@ -4,14 +4,15 @@
 
 #pragma once
 #include <afxwin.h>
-
+#include <Psapi.h>
 // CGhTrToolDlg 对话框
 class CGhTrToolDlg : public CDialogEx
 {
 // 构造
 public:
 	CGhTrToolDlg(CWnd* pParent = NULL);	// 标准构造函数
-// 对话框数据
+    CStatic m_StaticText;
+    DWORD GetGamePid();
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_GhTrTool_DIALOG };
 #endif
@@ -22,8 +23,11 @@ public:
 // 实现
 protected:
 	HICON m_hIcon;
-
-	// 生成的消息映射函数
+    CBrush m_brush;
+    BOOL m_bIsRed=1;
+    CFont m_font;
+    HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+    // 生成的消息映射函数
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
@@ -69,5 +73,6 @@ public:
     afx_msg void OnBnClickedBtnAwayMax();
     afx_msg void OnBnClickedBtnItemNoDie();
     afx_msg void OnBnClickedBtnSunNoDelay();
-    afx_msg void OnBnClickedCheck1();
+    afx_msg void UpdateText();
+    void OnTimer(UINT_PTR nIDEvent);
 };
