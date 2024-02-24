@@ -1,29 +1,29 @@
-
-// GhTrToolDlg.h : Í·ÎÄ¼ş
+ï»¿
+// GhTrToolDlg.h : å¤´æ–‡ä»¶
 //
 
 #pragma once
 #include <afxwin.h>
 
-// CGhTrToolDlg ¶Ô»°¿ò
+// CGhTrToolDlg å¯¹è¯æ¡†
 class CGhTrToolDlg : public CDialogEx
 {
-// ¹¹Ôì
+// æ„é€ 
 public:
-	CGhTrToolDlg(CWnd* pParent = NULL);	// ±ê×¼¹¹Ôìº¯Êı
-// ¶Ô»°¿òÊı¾İ
+	CGhTrToolDlg(CWnd* pParent = NULL);	// æ ‡å‡†æ„é€ å‡½æ•°
+// å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_GhTrTool_DIALOG };
 #endif
 
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV Ö§³Ö
+	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV æ”¯æŒ
 
-// ÊµÏÖ
+// å®ç°
 protected:
 	HICON m_hIcon;
 
-	// Éú³ÉµÄÏûÏ¢Ó³Éäº¯Êı
+	// ç”Ÿæˆçš„æ¶ˆæ¯æ˜ å°„å‡½æ•°
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
@@ -67,4 +67,7 @@ public:
     afx_msg void OnBnClickedBtnSuperReed();
     afx_msg void OnBnClickedBtnPowerFlowerNoCD();
     afx_msg void OnBnClickedBtnAwayMax();
+    afx_msg void OnBnClickedBtnItemNoDie();
+    afx_msg void OnBnClickedBtnSunNoDelay();
+    afx_msg void OnBnClickedCheck1();
 };

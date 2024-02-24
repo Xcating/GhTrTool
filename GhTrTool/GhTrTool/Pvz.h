@@ -7,82 +7,86 @@ class CPvz
 public:
     CPvz();
     ~CPvz();
-    // �޸������ֵ
+    // 修改阳光的值
     VOID ModifySunValue(DWORD dwSun);
     VOID SeedPacket(DWORD dwSP);
     VOID Plant(DWORD dwXP, DWORD dwYP,DWORD dwID);
 
 private:
-    // ��ȡ��Ϸ�� PID
+    // 获取游戏的 PID
     DWORD GetGamePid();
 public:
-    // ��ֲ��������
-    VOID SunNop();
-    // ��ֲ����ȴ
-    VOID NoCd();
-    // �޸ı���id
+    // 种植不减阳光
+    VOID SunNop(bool dwSwitch);
+    // 种植免冷却
+    VOID NoCd(bool dwSwitch);
+    // 修改背景id
     VOID ModifyBGIdValue(DWORD dwBGId);
-    // �ظ����졢�����Ҷ
-    VOID Build();
-    // �Զ��ռ�����
-    VOID Auto();
-    // ֡��
-    VOID Card();
-    // ����������
-    VOID Fast();
-    // ���õĸ߼���ͣ
-    VOID TheWorld();
-    // û�м�����ȴ
-    VOID NoModelCD();
-    // �ϰ����Զ���ʧ
-    VOID NoBuildTime();
-    // �㶹���ӵ�֡��
-    VOID PeaSDamage();
-    //С�Ƴ�����
-    VOID Mowers();
-    //û����������
-    VOID NoSunMax();
-    // ��ʬ�������俨Ƭ
-    VOID ZombieDC();
-    // ֲ�ﲻ���Ȼ�
-    VOID NotSubvert();
-    // ֲ���޵�ģʽ
-    VOID GodMode();
-    //��³˹��������
-    VOID LoursMC();
-    // �ٹ�ܾ�����
-    VOID Point();
-    // ����ؿ��޸��ٹ�
-    VOID Point2();
-    // ��޺������ֲ
-    VOID DX();
-    // ӣ��˲ը
-    VOID CherryFast();
-    // ӣ�Ҳ�ը
-    VOID CherryNo();
-    //è˿�����ӳ�
-    VOID MeowFast();
-    //�ٻ���������
+    // 重复建造、无需荷叶
+    VOID Build(bool dwSwitch);
+    // 自动收集阳光
+    VOID Auto(bool dwSwitch);
+    // 帧伤
+    VOID Card(bool dwSwitch);
+    // 加速阳光金币
+    VOID Fast(bool dwSwitch);
+    // 更好的高级暂停
+    VOID TheWorld(bool dwSwitch);
+    // 没有技能冷却
+    VOID NoModelCD(bool dwSwitch);
+    // 障碍物自动消失
+    VOID NoBuildTime(bool dwSwitch);
+    // 豌豆类子弹帧伤
+    VOID PeaSDamage(bool dwSwitch);
+    //小推车不动
+    VOID Mowers(bool dwSwitch);
+    //没有阳光限制
+    VOID NoSunMax(bool dwSwitch);
+    // 僵尸死亡掉落卡片
+    VOID ZombieDC(bool dwSwitch);
+    // 植物不被魅惑
+    VOID NotSubvert(bool dwSwitch);
+    // 植物无敌模式
+    VOID GodMode(bool dwSwitch);
+    //荷鲁斯刀刀暴击
+    VOID LoursMC(bool dwSwitch);
+    // 荣光拒绝骄傲
+    VOID Point(bool dwSwitch);
+    // 进入关卡修改荣光
+    VOID Point2(bool dwSwitch);
+    // 导藓批量种植
+    VOID DX(bool dwSwitch);
+    // 樱桃瞬炸
+    VOID CherryFast(bool dwSwitch);
+    // 樱桃不炸
+    VOID CherryNo(bool dwSwitch);
+    //猫丝子无延迟
+    VOID MeowFast(bool dwSwitch);
+    //召唤奖杯过关
     VOID SummonCup();
-    //����������ֲ
-    VOID IgnoreSun();
-    //�����֡��
-    VOID LingSDamage();
-    //ƻ����ɪ������ȴ
-    VOID ApplayerNoCD();
-    //ƻ����ɪ�����ӳ�
-    VOID ApplayerNoLag();
-    //��ǰ������ȴ
-    VOID PlantageNoCD();
-    //���տ���������ȴ
-    VOID SunFlowerNoCD();
-    //�㶹����ȴ
-    VOID PeaNoCD();
-    //��������«έ
-    VOID SuperReed();
-    //ĵ������ȴ
-    VOID PowerFlowerNoCD();
-    //ĵ����Զ���
-    VOID AwayMax();
+    //忽略阳光种植
+    VOID IgnoreSun(bool dwSwitch);
+    //光菱角帧伤
+    VOID LingSDamage(bool dwSwitch);
+    //苹果鼓瑟手无冷却
+    VOID ApplayerNoCD(bool dwSwitch);
+    //苹果鼓瑟手无延迟
+    VOID ApplayerNoLag(bool dwSwitch);
+    //车前草无冷却
+    VOID PlantageNoCD(bool dwSwitch);
+    //向日葵产出无冷却
+    VOID SunFlowerNoCD(bool dwSwitch);
+    //豌豆无冷却
+    VOID PeaNoCD(bool dwSwitch);
+    //超级闪电芦苇
+    VOID SuperReed(bool dwSwitch);
+    //牡丹无冷却
+    VOID PowerFlowerNoCD(bool dwSwitch);
+    //牡丹永远最大
+    VOID AwayMax(bool dwSwitch);
+    //牡丹永远最大
+    VOID ItemNoDie(bool dwSwitch);
+    //阳光无延迟生成
+    VOID SunNoDelay(bool dwSwitch);
 };
 

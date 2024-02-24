@@ -1,5 +1,5 @@
-
-// GhTrToolDlg.cpp : ÊµÏÖÎÄ¼ş
+ï»¿
+// GhTrToolDlg.cpp : å®ç°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -10,22 +10,22 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-// ÓÃÓÚÓ¦ÓÃ³ÌĞò¡°¹ØÓÚ¡±²Ëµ¥ÏîµÄ CAboutDlg ¶Ô»°¿ò
+// ç”¨äºåº”ç”¨ç¨‹åºâ€œå…³äºâ€èœå•é¡¹çš„ CAboutDlg å¯¹è¯æ¡†
 
 class CAboutDlg : public CDialogEx
 {
 public:
 	CAboutDlg();
 
-// ¶Ô»°¿òÊı¾İ
+// å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
-// ÊµÏÖ
+// å®ç°
 protected:
 	DECLARE_MESSAGE_MAP()
 };
@@ -43,7 +43,7 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// CGhTrToolDlg ¶Ô»°¿ò
+// CGhTrToolDlg å¯¹è¯æ¡†
 
 
 
@@ -81,6 +81,7 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BTN_ZombieDC, &CGhTrToolDlg::OnBnClickedBtnZombieDC)
     ON_BN_CLICKED(IDC_BTN_NotSubvert, &CGhTrToolDlg::OnBnClickedBtnNotSubvert)
     ON_BN_CLICKED(IDC_BTN_GodMode, &CGhTrToolDlg::OnBnClickedBtnGodMode)
+	ON_BN_CLICKED(IDC_BTN_ItemNoDie, &CGhTrToolDlg::OnBnClickedBtnItemNoDie)
 	ON_BN_CLICKED(IDC_BTN_LingSDamage, &CGhTrToolDlg::OnBnClickedBtnLingSDamage)
 	ON_BN_CLICKED(IDC_BTN_IgnoreSun, &CGhTrToolDlg::OnBnClickedBtnIgnoreSun)
 	ON_BN_CLICKED(IDC_BTN_SummonCup, &CGhTrToolDlg::OnBnClickedBtnSummonCup)
@@ -99,18 +100,20 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_SuperReed, &CGhTrToolDlg::OnBnClickedBtnSuperReed)
 	ON_BN_CLICKED(IDC_BTN_PowerFlowerNoCD, &CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD)
 	ON_BN_CLICKED(IDC_BTN_AwayMax, &CGhTrToolDlg::OnBnClickedBtnAwayMax)
+	ON_BN_CLICKED(IDC_BTN_SunNoDelay, &CGhTrToolDlg::OnBnClickedBtnSunNoDelay)
+	ON_BN_CLICKED(IDC_CHECK1, &CGhTrToolDlg::OnBnClickedCheck1)
 END_MESSAGE_MAP()
 
 
-// CGhTrToolDlg ÏûÏ¢´¦Àí³ÌĞò
+// CGhTrToolDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 BOOL CGhTrToolDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// ½«¡°¹ØÓÚ...¡±²Ëµ¥ÏîÌí¼Óµ½ÏµÍ³²Ëµ¥ÖĞ¡£
+	// å°†â€œå…³äº...â€èœå•é¡¹æ·»åŠ åˆ°ç³»ç»Ÿèœå•ä¸­ã€‚
 
-	// IDM_ABOUTBOX ±ØĞëÔÚÏµÍ³ÃüÁî·¶Î§ÄÚ¡£
+	// IDM_ABOUTBOX å¿…é¡»åœ¨ç³»ç»Ÿå‘½ä»¤èŒƒå›´å†…ã€‚
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
@@ -128,14 +131,14 @@ BOOL CGhTrToolDlg::OnInitDialog()
 		}
 	}
 
-	// ÉèÖÃ´Ë¶Ô»°¿òµÄÍ¼±ê¡£  µ±Ó¦ÓÃ³ÌĞòÖ÷´°¿Ú²»ÊÇ¶Ô»°¿òÊ±£¬¿ò¼Ü½«×Ô¶¯
-	//  Ö´ĞĞ´Ë²Ù×÷
-	SetIcon(m_hIcon, TRUE);			// ÉèÖÃ´óÍ¼±ê
-	SetIcon(m_hIcon, FALSE);		// ÉèÖÃĞ¡Í¼±ê
+	// è®¾ç½®æ­¤å¯¹è¯æ¡†çš„å›¾æ ‡ã€‚  å½“åº”ç”¨ç¨‹åºä¸»çª—å£ä¸æ˜¯å¯¹è¯æ¡†æ—¶ï¼Œæ¡†æ¶å°†è‡ªåŠ¨
+	//  æ‰§è¡Œæ­¤æ“ä½œ
+	SetIcon(m_hIcon, TRUE);			// è®¾ç½®å¤§å›¾æ ‡
+	SetIcon(m_hIcon, FALSE);		// è®¾ç½®å°å›¾æ ‡
 
-	// TODO: ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–ä»£ç 
 
-	return TRUE;  // ³ı·Ç½«½¹µãÉèÖÃµ½¿Ø¼ş£¬·ñÔò·µ»Ø TRUE
+	return TRUE;  // é™¤éå°†ç„¦ç‚¹è®¾ç½®åˆ°æ§ä»¶ï¼Œå¦åˆ™è¿”å› TRUE
 }
 
 void CGhTrToolDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -151,19 +154,19 @@ void CGhTrToolDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-// Èç¹ûÏò¶Ô»°¿òÌí¼Ó×îĞ¡»¯°´Å¥£¬ÔòĞèÒªÏÂÃæµÄ´úÂë
-//  À´»æÖÆ¸ÃÍ¼±ê¡£  ¶ÔÓÚÊ¹ÓÃÎÄµµ/ÊÓÍ¼Ä£ĞÍµÄ MFC Ó¦ÓÃ³ÌĞò£¬
-//  Õâ½«ÓÉ¿ò¼Ü×Ô¶¯Íê³É¡£
+// å¦‚æœå‘å¯¹è¯æ¡†æ·»åŠ æœ€å°åŒ–æŒ‰é’®ï¼Œåˆ™éœ€è¦ä¸‹é¢çš„ä»£ç 
+//  æ¥ç»˜åˆ¶è¯¥å›¾æ ‡ã€‚  å¯¹äºä½¿ç”¨æ–‡æ¡£/è§†å›¾æ¨¡å‹çš„ MFC åº”ç”¨ç¨‹åºï¼Œ
+//  è¿™å°†ç”±æ¡†æ¶è‡ªåŠ¨å®Œæˆã€‚
 
 void CGhTrToolDlg::OnPaint()
 {
 	if (IsIconic())
 	{
-		CPaintDC dc(this); // ÓÃÓÚ»æÖÆµÄÉè±¸ÉÏÏÂÎÄ
+		CPaintDC dc(this); // ç”¨äºç»˜åˆ¶çš„è®¾å¤‡ä¸Šä¸‹æ–‡
 
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
-		// Ê¹Í¼±êÔÚ¹¤×÷Çø¾ØĞÎÖĞ¾ÓÖĞ
+		// ä½¿å›¾æ ‡åœ¨å·¥ä½œåŒºçŸ©å½¢ä¸­å±…ä¸­
 		int cxIcon = GetSystemMetrics(SM_CXICON);
 		int cyIcon = GetSystemMetrics(SM_CYICON);
 		CRect rect;
@@ -171,7 +174,7 @@ void CGhTrToolDlg::OnPaint()
 		int x = (rect.Width() - cxIcon + 1) / 2;
 		int y = (rect.Height() - cyIcon + 1) / 2;
 
-		// »æÖÆÍ¼±ê
+		// ç»˜åˆ¶å›¾æ ‡
 		dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
@@ -180,8 +183,8 @@ void CGhTrToolDlg::OnPaint()
 	}
 }
 
-//µ±ÓÃ»§ÍÏ¶¯×îĞ¡»¯´°¿ÚÊ±ÏµÍ³µ÷ÓÃ´Ëº¯ÊıÈ¡µÃ¹â±ê
-//ÏÔÊ¾¡£
+//å½“ç”¨æˆ·æ‹–åŠ¨æœ€å°åŒ–çª—å£æ—¶ç³»ç»Ÿè°ƒç”¨æ­¤å‡½æ•°å–å¾—å…‰æ ‡
+//æ˜¾ç¤ºã€‚
 HCURSOR CGhTrToolDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
@@ -217,22 +220,41 @@ void CGhTrToolDlg::OnBnClickedBtnPlant()
 
 void CGhTrToolDlg::OnBnClickedBtnSunNop()
 {
-    CPvz pvz = CPvz();
-    pvz.SunNop();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SUN_NOP);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.SunNop(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.SunNop(0);
+	}
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnNoCd()
 {
-    CPvz pvz = CPvz();
-    pvz.NoCd();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NO_CD);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.NoCd(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.NoCd(0);
+	}
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnBGId()
 {
     DWORD dwBGId = GetDlgItemInt(IDC_EDIT_BGId);
-
     CPvz pvz = CPvz();
     pvz.ModifyBGIdValue(dwBGId);
 }
@@ -240,192 +262,543 @@ void CGhTrToolDlg::OnBnClickedBtnBGId()
 
 void CGhTrToolDlg::OnBnClickedBtnBuild()
 {
-    CPvz pvz = CPvz();
-    pvz.Build();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_BUILD);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.Build(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.Build(0);
+	}
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnAuto()
 {
-    CPvz pvz = CPvz();
-    pvz.Auto();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_AUTO);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.Auto(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.Auto(0);
+	}
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnCard()
 {
-    CPvz pvz = CPvz();
-    pvz.Card();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_CARD);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.Card(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.Card(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPoint()
 {
-	CPvz pvz = CPvz();
-	pvz.Point();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_POINT);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.Point(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.Point(0);
+	}
 }
 void CGhTrToolDlg::OnBnClickedBtnPoint2()
 {
-	CPvz pvz = CPvz();
-	pvz.Point2();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_POINT2);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.Point2(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.Point2(0);
+	}
 }
 void CGhTrToolDlg::OnBnClickedBtnDX()
 {
-	CPvz pvz = CPvz();
-	pvz.DX();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_DX);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.DX(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.DX(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnFast()
 {
-    CPvz pvz = CPvz();
-    pvz.Fast();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_Fast);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.Fast(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.Fast(0);
+	}
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnTheWorld()
 {
-    CPvz pvz = CPvz();
-    pvz.TheWorld();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_TheWorld);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.TheWorld(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.TheWorld(0);
+	}
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnNoModelCD()
 {
-    CPvz pvz = CPvz();
-    pvz.NoModelCD();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NoModelCD);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.NoModelCD(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.NoModelCD(0);
+	}
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnMowers()
 {
-    CPvz pvz = CPvz();
-    pvz.Mowers();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_Mowers);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.Mowers(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.Mowers(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPeaSDamage()
 {
-	CPvz pvz = CPvz();
-	pvz.PeaSDamage();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PeaSDamage);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.PeaSDamage(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.PeaSDamage(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnNoBuildTime()
 {
-	CPvz pvz = CPvz();
-	pvz.NoBuildTime();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NoBuildTime);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.NoBuildTime(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.NoBuildTime(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnNoSunMax()
 {
-	CPvz pvz = CPvz();
-	pvz.NoSunMax();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NOSUNMAX);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.NoSunMax(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.NoSunMax(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnZombieDC()
 {
-    CPvz pvz = CPvz();
-    pvz.ZombieDC();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ZombieDC);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.ZombieDC(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.ZombieDC(0);
+	}
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnNotSubvert()
 {
-    CPvz pvz = CPvz();
-    pvz.NotSubvert();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NotSubvert);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.NotSubvert(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.NotSubvert(0);
+	}
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnGodMode()
 {
-    CPvz pvz = CPvz();
-    pvz.GodMode();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_GodMode);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.GodMode(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.GodMode(0);
+	}
 }
+
+void CGhTrToolDlg::OnBnClickedBtnItemNoDie()
+{
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ItemNoDie);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.ItemNoDie(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.ItemNoDie(0);
+	}
+}
+
+void CGhTrToolDlg::OnBnClickedBtnSunNoDelay()
+{
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SunNoDelay);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.SunNoDelay(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.SunNoDelay(0);
+	}
+}
+
 
 void CGhTrToolDlg::OnBnClickedBtnSuperReed()
 {
-	CPvz pvz = CPvz();
-	pvz.SuperReed();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SuperReed);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.SuperReed(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.SuperReed(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD()
 {
-	CPvz pvz = CPvz();
-	pvz.PowerFlowerNoCD();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PowerFlowerNoCD);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.PowerFlowerNoCD(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.PowerFlowerNoCD(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnAwayMax()
 {
-	CPvz pvz = CPvz();
-	pvz.AwayMax();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_AwayMax);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.AwayMax(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.AwayMax(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnApplayerNoCD()
 {
-	CPvz pvz = CPvz();
-	pvz.ApplayerNoCD();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ApplayerNoCD);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.ApplayerNoCD(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.ApplayerNoCD(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnApplayerNoLag()
 {
-	CPvz pvz = CPvz();
-	pvz.ApplayerNoLag();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ApplayerNoLag);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.ApplayerNoLag(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.ApplayerNoLag(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPlantageNoCD()
 {
-	CPvz pvz = CPvz();
-	pvz.PlantageNoCD();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PlantageNoCD);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.PlantageNoCD(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.PlantageNoCD(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPeaNoCD()
 {
-	CPvz pvz = CPvz();
-	pvz.PeaNoCD();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PeaNoCD);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.PeaNoCD(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.PeaNoCD(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSunFlowerNoCD()
 {
-	CPvz pvz = CPvz();
-	pvz.SunFlowerNoCD();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SunFlowerNoCD);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.SunFlowerNoCD(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.SunFlowerNoCD(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnLingSDamage()
 {
-	CPvz pvz = CPvz();
-	pvz.LingSDamage();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_LingSDamage);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.LingSDamage(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.LingSDamage(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnIgnoreSun()
 {
-	CPvz pvz = CPvz();
-	pvz.IgnoreSun();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_IgnoreSun);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.IgnoreSun(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.IgnoreSun(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSummonCup()
 {
-	CPvz pvz = CPvz();
-	pvz.SummonCup();
+		CPvz pvz = CPvz();
+		pvz.SummonCup();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnLoursMC()
 {
-	CPvz pvz = CPvz();
-	pvz.LoursMC();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_LoursMC);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.LoursMC(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.LoursMC(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnMeowFast()
 {
-	CPvz pvz = CPvz();
-	pvz.MeowFast();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_MeowFast);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.MeowFast(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.MeowFast(0);
+	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnCherryNo()
 {
-	CPvz pvz = CPvz();
-	pvz.CherryNo();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_CherryNo);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.CherryNo(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.CherryNo(0);
+	}
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnCherryFast()
 {
-	CPvz pvz = CPvz();
-	pvz.CherryFast();
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_CherryFast);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		CPvz pvz = CPvz();
+		pvz.CherryFast(1);
+	}
+	else
+	{
+		CPvz pvz = CPvz();
+		pvz.CherryFast(0);
+	}
+}
+
+void CGhTrToolDlg::OnBnClickedCheck1()
+{
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_CHECK1);
+	int checkState = pCheck->GetCheck();
+	if (checkState == BST_CHECKED)
+	{
+		// å¤é€‰æ¡†å·²å‹¾é€‰
+		CPvz pvz = CPvz();
+		pvz.CherryNo(1);
+	}
+	else
+	{
+		// å¤é€‰æ¡†å·²å‹¾é€‰
+		CPvz pvz = CPvz();
+		pvz.CherryFast(1);
+	}
 }

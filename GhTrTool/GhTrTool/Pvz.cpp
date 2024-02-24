@@ -1,4 +1,4 @@
-#include "stdafx.h"
+Ôªø#include "stdafx.h"
 #include "Pvz.h"
 #include <TlHelp32.h>
 #include <string>
@@ -13,7 +13,7 @@ CPvz::CPvz()
 CPvz::~CPvz()
 {
 }
-// ªÒ»°”Œœ∑µƒ PID
+// Ëé∑ÂèñÊ∏∏ÊàèÁöÑ PID
 DWORD CPvz::GetGamePid()
 {
 	HWND hWnd = ::FindWindow(NULL, GAME_NAME);
@@ -28,7 +28,7 @@ DWORD CPvz::GetGamePid()
 
 	return dwPid;
 }
-//ªÒ»°ƒ£øÈª˘÷∑
+//Ëé∑ÂèñÊ®°ÂùóÂü∫ÂùÄ
 DWORD GetModuleBaseAddress(HANDLE hProcess, const wchar_t* moduleName) {
 	MODULEENTRY32W moduleEntry = { sizeof(moduleEntry) };
 	DWORD baseAddress = 0;
@@ -48,15 +48,15 @@ DWORD GetModuleBaseAddress(HANDLE hProcess, const wchar_t* moduleName) {
 
 	return baseAddress;
 }
-//ªÒ»°ƒ£øÈª˘÷∑(∫Ø ˝Õ®”√)
+//Ëé∑ÂèñÊ®°ÂùóÂü∫ÂùÄ(ÂáΩÊï∞ÈÄöÁî®)
 DWORD get_baseAddress(HANDLE hProcess)
 {
-	DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); // ◊œ»∂¡»°¥Û–¥µƒ
+	DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //È¶ñÂÖàËØªÂèñÂ§ßÂÜôÁöÑ
 	if (baseAddress == 0)
 		baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
 	return baseAddress;
 }
-//¥¥Ω®œﬂ≥Ã£¨‘À––÷∏∂®ƒ⁄¥Ê
+//ÂàõÂª∫Á∫øÁ®ãÔºåËøêË°åÊåáÂÆöÂÜÖÂ≠ò
 VOID RunTheMemory(DWORD dwPid, DWORD codeCaveOffset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
@@ -72,7 +72,7 @@ VOID RunTheMemory(DWORD dwPid, DWORD codeCaveOffset) {
 		CloseHandle(hThread);
 	}
 	else {
-		MessageBox(NULL, L"”Œœ∑Œ¥’“µΩªÚ√ª”–∑√Œ »®œﬁ", L"Ã· æ", MB_OK);
+		MessageBox(NULL, L"Ê∏∏ÊàèÊú™ÊâæÂà∞ÊàñÊ≤°ÊúâËÆøÈóÆÊùÉÈôê", L"ÊèêÁ§∫", MB_OK);
 	}
 	CloseHandle(hProcess);
 }
@@ -82,21 +82,21 @@ VOID check_dwPid(DWORD dwPid)
 {
 	if (dwPid == -1)
 	{
-		MessageBox(NULL, L"”Œœ∑Œ¥’“µΩ£¨«Î¥Úø™”Œœ∑∫Ûµ„ª˜π¶ƒ‹", L"Info", MB_OK);
+		MessageBox(NULL, L"Ê∏∏ÊàèÊú™ÊâæÂà∞ÔºåËØ∑ÊâìÂºÄÊ∏∏ÊàèÂêéÁÇπÂáªÂäüËÉΩ", L"Info", MB_OK);
 		return;
 	}
 }
 DWORD ReadTOMemory(DWORD dwPid, DWORD targetAddress) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
-		MessageBox(NULL, L"”Œœ∑Œ¥’“µΩ", L"Ã· æ", MB_OK);
+		MessageBox(NULL, L"Ê∏∏ÊàèÊú™ÊâæÂà∞", L"ÊèêÁ§∫", MB_OK);
 		return 0;
 	}
 	DWORD value = 0;
 	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &value, sizeof(DWORD), NULL);
 	return value;
 }
-// Õ®”√µƒƒ⁄¥Ê–¥»Î∫Ø ˝
+// ÈÄöÁî®ÁöÑÂÜÖÂ≠òÂÜôÂÖ•ÂáΩÊï∞
 bool WriteToMemory(DWORD dwPid, DWORD offset, const char* data, size_t size) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -112,7 +112,7 @@ bool WriteToMemory(DWORD dwPid, DWORD offset, const char* data, size_t size) {
 	CloseHandle(hProcess);
 	return result;
 }
-//–ﬁ∏ƒƒ⁄¥Ê±£ª§¥Î ©£¨”√”⁄–¥»Îø’µÿ÷∑
+//‰øÆÊîπÂÜÖÂ≠ò‰øùÊä§Êé™ÊñΩÔºåÁî®‰∫éÂÜôÂÖ•Á©∫Âú∞ÂùÄ
 void protectAddress(DWORD dwPid, DWORD offset) {
 	HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD dwOldProtect;
@@ -120,7 +120,7 @@ void protectAddress(DWORD dwPid, DWORD offset) {
 	DWORD targetAddress = baseAddress + offset;
 	VirtualProtectEx(hProc, (LPVOID)targetAddress, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect);
 }
-//‘⁄÷∏∂®ƒ⁄¥Ê–¥»ÎJump≤Ÿ◊˜¬Î
+//Âú®ÊåáÂÆöÂÜÖÂ≠òÂÜôÂÖ•JumpÊìç‰ΩúÁ†Å
 bool WriteJump(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -140,7 +140,7 @@ bool WriteJump(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//‘⁄÷∏∂®ƒ⁄¥Ê–¥»ÎJeªÚ’ﬂJne≤Ÿ◊˜¬Î
+//Âú®ÊåáÂÆöÂÜÖÂ≠òÂÜôÂÖ•JeÊàñËÄÖJneÊìç‰ΩúÁ†Å
 bool WriteConditionJump(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset,bool JE) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -168,7 +168,7 @@ bool WriteConditionJump(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset,bool
 	CloseHandle(hProcess);
 	return result;
 }
-//‘⁄÷∏∂®ƒ⁄¥Ê–¥»ÎPush≤Ÿ◊˜¬Î
+//Âú®ÊåáÂÆöÂÜÖÂ≠òÂÜôÂÖ•PushÊìç‰ΩúÁ†Å
 bool WritePush(DWORD dwPid, DWORD Number,DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -184,11 +184,11 @@ bool WritePush(DWORD dwPid, DWORD Number,DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//‘⁄÷∏∂®ƒ⁄¥Ê–¥»ÎMov Ecx,[PlantsVsZombies.exe+0x00000]≤Ÿ◊˜¬Î
+//Âú®ÊåáÂÆöÂÜÖÂ≠òÂÜôÂÖ•Mov Ecx,[PlantsVsZombies.exe+0x00000]Êìç‰ΩúÁ†Å
 bool WriteMovECX(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
-		MessageBox(NULL, L"”Œœ∑Œ¥’“µΩ", L"Ã· æ", MB_OK);
+		MessageBox(NULL, L"Ê∏∏ÊàèÊú™ÊâæÂà∞", L"ÊèêÁ§∫", MB_OK);
 		return false;
 	}
 	DWORD baseAddress = get_baseAddress(hProcess);
@@ -201,11 +201,11 @@ bool WriteMovECX(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//‘⁄÷∏∂®ƒ⁄¥Ê–¥»ÎMov Eax,[PlantsVsZombies.exe+0x00000]≤Ÿ◊˜¬Î
+//Âú®ÊåáÂÆöÂÜÖÂ≠òÂÜôÂÖ•Mov Eax,[PlantsVsZombies.exe+0x00000]Êìç‰ΩúÁ†Å
 bool WriteMovEAX(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
-		MessageBox(NULL, L"”Œœ∑Œ¥’“µΩ", L"Ã· æ", MB_OK);
+		MessageBox(NULL, L"Ê∏∏ÊàèÊú™ÊâæÂà∞", L"ÊèêÁ§∫", MB_OK);
 		return false;
 	}
 	DWORD baseAddress = get_baseAddress(hProcess);
@@ -218,11 +218,11 @@ bool WriteMovEAX(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//‘⁄÷∏∂®ƒ⁄¥Ê–¥»ÎMov EAX,0x00000 ≤Ÿ◊˜¬Î
+//Âú®ÊåáÂÆöÂÜÖÂ≠òÂÜôÂÖ•Mov EAX,0x00000 Êìç‰ΩúÁ†Å
 bool WriteMovEAXToHEX(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
-		MessageBox(NULL, L"”Œœ∑Œ¥’“µΩ", L"Ã· æ", MB_OK);
+		MessageBox(NULL, L"Ê∏∏ÊàèÊú™ÊâæÂà∞", L"ÊèêÁ§∫", MB_OK);
 		return false;
 	}
 	DWORD baseAddress = get_baseAddress(hProcess);
@@ -235,11 +235,11 @@ bool WriteMovEAXToHEX(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//‘⁄÷∏∂®ƒ⁄¥Ê–¥»ÎMov [PlantsVsZombies.exe+0x00000], 00000000 ≤Ÿ◊˜¬Î
+//Âú®ÊåáÂÆöÂÜÖÂ≠òÂÜôÂÖ•Mov [PlantsVsZombies.exe+0x00000], 00000000 Êìç‰ΩúÁ†Å
 bool WriteMOVXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
-		MessageBox(NULL, L"”Œœ∑Œ¥’“µΩ", L"Ã· æ", MB_OK);
+		MessageBox(NULL, L"Ê∏∏ÊàèÊú™ÊâæÂà∞", L"ÊèêÁ§∫", MB_OK);
 		return false;
 	}
 	DWORD baseAddress = get_baseAddress(hProcess);
@@ -252,11 +252,11 @@ bool WriteMOVXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//‘⁄÷∏∂®ƒ⁄¥Ê–¥»ÎCmp [PlantsVsZombies.exe+0x00000], 00000000 ≤Ÿ◊˜¬Î
+//Âú®ÊåáÂÆöÂÜÖÂ≠òÂÜôÂÖ•Cmp [PlantsVsZombies.exe+0x00000], 00000000 Êìç‰ΩúÁ†Å
 bool WriteCMPXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
-		MessageBox(NULL, L"”Œœ∑Œ¥’“µΩ", L"Ã· æ", MB_OK);
+		MessageBox(NULL, L"Ê∏∏ÊàèÊú™ÊâæÂà∞", L"ÊèêÁ§∫", MB_OK);
 		return false;
 	}
 	DWORD baseAddress = get_baseAddress(hProcess);
@@ -269,11 +269,11 @@ bool WriteCMPXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//‘⁄÷∏∂®ƒ⁄¥Ê–¥»ÎInc [PlantsVsZombies.exe+0x00000] ≤Ÿ◊˜¬Î
+//Âú®ÊåáÂÆöÂÜÖÂ≠òÂÜôÂÖ•Inc [PlantsVsZombies.exe+0x00000] Êìç‰ΩúÁ†Å
 bool WriteINC(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
-		MessageBox(NULL, L"”Œœ∑Œ¥’“µΩ", L"Ã· æ", MB_OK);
+		MessageBox(NULL, L"Ê∏∏ÊàèÊú™ÊâæÂà∞", L"ÊèêÁ§∫", MB_OK);
 		return false;
 	}
 	DWORD baseAddress = get_baseAddress(hProcess);
@@ -286,7 +286,7 @@ bool WriteINC(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//‘⁄÷∏∂®ƒ⁄¥Ê–¥»ÎCall ≤Ÿ◊˜¬Î
+//Âú®ÊåáÂÆöÂÜÖÂ≠òÂÜôÂÖ•Call Êìç‰ΩúÁ†Å
 bool WriteCall(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -317,16 +317,16 @@ BOOL check_battlefield(DWORD dwPid) {
 	return false;
 	CloseHandle(hProcess);
 }
-//ºÏ≤È «∑Òø…“‘–¥»Î
+//Ê£ÄÊü•ÊòØÂê¶ÂèØ‰ª•ÂÜôÂÖ•
 VOID check_result(BOOL result)
 {
 	if (result)
-		MessageBox(NULL, TEXT("–¥»Îƒ⁄¥Ê≥…π¶"), TEXT("Info"), MB_OK);
+		MessageBox(NULL, TEXT("ÂÜôÂÖ•ÂÜÖÂ≠òÊàêÂäü"), TEXT("Info"), MB_OK);
 	else
-		MessageBox(NULL, TEXT("–¥»Î ß∞‹£¨«Î¡™œµ◊˜’ﬂ"), TEXT("Error"), MB_OK | MB_ICONERROR);
+		MessageBox(NULL, TEXT("ÂÜôÂÖ•Â§±Ë¥•ÔºåËØ∑ËÅîÁ≥ª‰ΩúËÄÖ"), TEXT("Error"), MB_OK | MB_ICONERROR);
 }
-// –ﬁ∏ƒ—Ùπ‚µƒ÷µ
-VOID CPvz::ModifySunValue(DWORD dwSun) //Sun÷∏µƒ «—Ùπ‚
+// ‰øÆÊîπÈò≥ÂÖâÁöÑÂÄº
+VOID CPvz::ModifySunValue(DWORD dwSun) //SunÊåáÁöÑÊòØÈò≥ÂÖâ
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
@@ -334,15 +334,15 @@ VOID CPvz::ModifySunValue(DWORD dwSun) //Sun÷∏µƒ «—Ùπ‚
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x29CE88;
 	DWORD dwNum = 0;
-	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); //∂¡»°targetAddress∂‘”¶µƒ÷µ(ª˘÷∑->ƒ⁄¥Êª˘÷∑)
-	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); //∂¡»°’Ω≥°ª˘÷∑∂‘”¶µƒ÷µ(ƒ⁄¥Êª˘÷∑ +708->’Ω≥°ª˘÷∑)
-	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x380), &dwSun, sizeof(DWORD), NULL); //Ω´dwNum–¥»Îøÿ÷∆—Ùπ‚µƒµÿ÷∑
+	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); //ËØªÂèñtargetAddressÂØπÂ∫îÁöÑÂÄº(Âü∫ÂùÄ->ÂÜÖÂ≠òÂü∫ÂùÄ)
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); //ËØªÂèñÊàòÂú∫Âü∫ÂùÄÂØπÂ∫îÁöÑÂÄº(ÂÜÖÂ≠òÂü∫ÂùÄ +708->ÊàòÂú∫Âü∫ÂùÄ)
+	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x380), &dwSun, sizeof(DWORD), NULL); //Â∞ÜdwNumÂÜôÂÖ•ÊéßÂà∂Èò≥ÂÖâÁöÑÂú∞ÂùÄ
 	check_result(result);
 	CloseHandle(hProcess);
 }
 
-// –ﬁ∏ƒø®≤€ ˝¡ø
-VOID CPvz::SeedPacket(DWORD dwSP) //SP÷∏µƒ «SeedPacket£¨÷÷◊”∞¸
+// ‰øÆÊîπÂç°ÊßΩÊï∞Èáè
+VOID CPvz::SeedPacket(DWORD dwSP) //SPÊåáÁöÑÊòØSeedPacketÔºåÁßçÂ≠êÂåÖ
 {
 
 	DWORD dwPid = GetGamePid();
@@ -352,32 +352,32 @@ VOID CPvz::SeedPacket(DWORD dwSP) //SP÷∏µƒ «SeedPacket£¨÷÷◊”∞¸
 	DWORD targetAddress = baseAddress + 0x29CE88;
 	DWORD dwNum = 0;
 	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL);
-	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); //“ª≤„∆´“∆
-	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x14C), &dwNum, sizeof(DWORD), NULL); //∂˛≤„∆´“∆
-	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x1C), &dwSP, sizeof(DWORD), NULL); //»˝≤„∆´“∆
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); //‰∏ÄÂ±ÇÂÅèÁßª
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x14C), &dwNum, sizeof(DWORD), NULL); //‰∫åÂ±ÇÂÅèÁßª
+	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x1C), &dwSP, sizeof(DWORD), NULL); //‰∏âÂ±ÇÂÅèÁßª
 	check_result(result);
 	CloseHandle(hProcess);
 }
-//  π”√Õ®”√∫Ø ˝µƒ÷÷÷≤≤ªºı—Ùπ‚
-VOID CPvz::SunNop() {
+// ‰ΩøÁî®ÈÄöÁî®ÂáΩÊï∞ÁöÑÁßçÊ§ç‰∏çÂáèÈò≥ÂÖâ
+VOID CPvz::SunNop(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char nop[] = "\x90\x90\x90\x90\x90\x90";
-	WriteToMemory(dwPid, 0x95E39, nop, sizeof(nop) - 1);
+	const char* nop = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x29\xBE\x80\x03\x00\x00";
+	WriteToMemory(dwPid, 0x95E39, nop, 6);
 }
 
-// ÷÷÷≤√‚¿‰»¥
-VOID CPvz::NoCd() {
+// ÁßçÊ§çÂÖçÂÜ∑Âç¥
+VOID CPvz::NoCd(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch1[] = "\xc7\x41\x20\x00\x00\x00\x00\x90\x90\x90";
-	WriteToMemory(dwPid, 0xE54A1, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\x90\x90";
-	WriteToMemory(dwPid, 0xE55AD, patch2, sizeof(patch2) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\xc7\x41\x20\x00\x00\x00\x00\x90\x90\x90" : "\x89\x41\x20\xC7\x41\x1C\x00\x00\x00\x00";
+	WriteToMemory(dwPid, 0xE54A1, patch1, 10);
+	const char* patch2 = (dwSwitch == 1) ? "\x90\x90" : "\x39\x10";
+	WriteToMemory(dwPid, 0xE55AD, patch2, 2);
 }
 
 
-// –ﬁ∏ƒ±≥æ∞ID
+// ‰øÆÊîπËÉåÊôØID
 VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
 {
 	DWORD dwPid = GetGamePid();
@@ -394,106 +394,108 @@ VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
 }
 
 
-// ÷ÿ∏¥Ω®‘Ï£¨Œﬁ–Ëª®≈Ë
-VOID CPvz::Build() {
+// ÈáçÂ§çÂª∫ÈÄ†ÔºåÊó†ÈúÄËç∑Âè∂
+VOID CPvz::Build(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch[] = "\x90\x90\x90\x90\x90\x90\x90";
-	WriteToMemory(dwPid, 0x94C74, patch, sizeof(patch) - 1);
+	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90\x90" : "\xFF\x24\x85\x78\x4E\xFC\x00";
+	WriteToMemory(dwPid, 0x94C74, patch, 7);
 }
 
 
-// ◊‘∂Ø ’ºØ—Ùπ‚
-VOID CPvz::Auto()
+// Ëá™Âä®Êî∂ÈõÜÈò≥ÂÖâ
+VOID CPvz::Auto(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch[] = "\x90\x90\x90\x90";
-	WriteToMemory(dwPid, 0xABD9A, patch, sizeof(patch) - 1);
+	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90":"\x80\x7E\x1F\x00";
+	WriteToMemory(dwPid, 0xABD9A, patch, 4);
 }
 
-// »´≤ø÷°…À
-VOID CPvz::Card() {
+// ÂÖ®ÈÉ®Â∏ß‰º§
+VOID CPvz::Card(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch[] = "\x90\x90\x90\x90";
-	WriteToMemory(dwPid, 0xA552E, patch, sizeof(patch) - 1);
+	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90" : "\xC6\x46\x24\x01"; 
+	WriteToMemory(dwPid, 0xA552E, patch, 4);
 }
 
-// º”ÀŸΩ© ¨≥ˆ∂Ø
-VOID CPvz::Fast() {
+// Âä†ÈÄüÂÉµÂ∞∏Âá∫Âä®
+VOID CPvz::Fast(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch[] = "\xC7\x87\xFC\x03\x00\x00\x00\x00\x00\x00\x90";
-	WriteToMemory(dwPid, 0x996DB, patch, sizeof(patch) - 1);
+	const char* patch = (dwSwitch == 1) ? "\xC7\x87\xFC\x03\x00\x00\x00\x00\x00\x00\x90":"\x89\x8F\xFC\x03\x00\x00\x03\xC2\xC1\xF8\x02";
+	WriteToMemory(dwPid, 0x996DB, patch, 11);
 }
 
-// ∏¸∫√µƒ∏ﬂº∂‘›Õ£
-VOID CPvz::TheWorld() {
+// Êõ¥Â•ΩÁöÑÈ´òÁ∫ßÊöÇÂÅú
+VOID CPvz::TheWorld(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch[] = "\x90\x90\x90";
-	WriteToMemory(dwPid, 0x96262, patch, sizeof(patch) - 1);
+	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90" : "\x83\xF8\x32";
+	WriteToMemory(dwPid, 0x96262, patch, 3);
 }
 
-//Œﬁ÷˜∂Øººƒ‹¿‰»¥
-VOID CPvz::NoModelCD() {
+//Êó†‰∏ªÂä®ÊäÄËÉΩÂÜ∑Âç¥
+VOID CPvz::NoModelCD(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
 	protectAddress(dwPid, 0x43A);
-	const char patch[] = "\xE9\x00\x00\x00\x00\x66\x90";
+	const char* patch = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x66\x90" : "\x66\x89\x86\xC0\x03\x00\x00";
 	WriteToMemory(dwPid, 0x93BF5, patch, 7);
-	const char patch2[] = "\xC6\x86\xC0\x03\x00\x00\x00\xE9\xF0\x3B\xDD\xFE";
-	WriteToMemory(dwPid, 0x43A, patch2, sizeof(patch2));
-	WriteJump(dwPid, 0x93BF5, 0x43A);
+	const char* patch2 = "\xC6\x86\xC0\x03\x00\x00\x00\xE9\xF0\x3B\xDD\xFE";
+	WriteToMemory(dwPid, 0x43A, patch2, 12);
+	if (dwSwitch == 1)WriteJump(dwPid, 0x93BF5, 0x43A);
 	WriteJump(dwPid, 0x43A + 0x7 , 0x93BFC);
 }
 
-VOID CPvz::NoSunMax() {
+VOID CPvz::NoSunMax(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch[] = "\x90\x90\x90\x90\x90\x90";
-	WriteToMemory(dwPid, 0x8E8ED, patch, sizeof(patch) - 1);
+	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x89\x81\x80\x03\x00\x00";
+	WriteToMemory(dwPid, 0x8E8ED, patch, 6);
 }
 
-VOID CPvz::NoBuildTime() {
+VOID CPvz::NoBuildTime(bool dwSwitch){
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch[] = "\xC7\x86\x94\x00\x00\x00\x00\x00\x00\x00\x90\x90\x90\x90";
-	WriteToMemory(dwPid, 0xA2913, patch, sizeof(patch) - 1);
+	const char* patch = (dwSwitch == 1) ? "\xC7\x86\x94\x00\x00\x00\x00\x00\x00\x00\x90\x90\x90\x90" : "\x89\x86\x94\x00\x00\x00\x85\xC0\x0F\x85\xDC\x01\x00\x00";
+	WriteToMemory(dwPid, 0xA2913, patch, 14);
 }
 
-VOID CPvz::IgnoreSun() {
+VOID CPvz::IgnoreSun(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch[] = "\xB8\x3F\x3F\x3F\x3F\x90";
-	WriteToMemory(dwPid, 0x8ED0A, patch, sizeof(patch) - 1);
+	const char* patch = (dwSwitch == 1) ? "\xB8\x3F\x3F\x3F\x3F\x90" : "\x8B\x83\x80\x03\x00\x00";
+	WriteToMemory(dwPid, 0x8ED0A, patch, 6);
 }
 
-VOID CPvz::Mowers() {
+VOID CPvz::Mowers(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch[] = "\x90\x90\x90\x90\x90\x90\x90\x90";
-	WriteToMemory(dwPid, 0xBE362, patch, sizeof(patch) - 1);
+	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90\x90\x90":"\xF3\x0F\x11\x87\x84\x00\x00\x00";
+	WriteToMemory(dwPid, 0xBE362, patch, 8);
 }
+//Âè¨Âî§Â•ñÊùØ
 void CPvz::SummonCup() {
 	DWORD dwPid = GetGamePid();
 	protectAddress(dwPid, 0x45E);
 	check_dwPid(dwPid);
 	if (!check_battlefield(dwPid))
 	{
-		MessageBox(NULL, L"Œ¥Ω¯»Î’Ω≥°", L"Ã· æ", MB_OK);
+		MessageBox(NULL, L"Êú™ËøõÂÖ•ÊàòÂú∫", L"ÊèêÁ§∫", MB_OK);
 		return;
 	}
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
-	const char shellcode[] = "\x60\x9C\xBA\x80\x00\x00\x00\x8B\x0D\x28\xAE\x29\x00\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x02\x6A\x18\x6A\x7B\xE8\xB3\x94\x00\x00\x9D\x61\xC3";
+	const char* shellcode = "\x60\x9C\xBA\x80\x00\x00\x00\x8B\x0D\x28\xAE\x29\x00\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x02\x6A\x18\x6A\x7B\xE8\xB3\x94\x00\x00\x9D\x61\xC3";
 	DWORD eBaseAddress = ReadTOMemory(dwPid,baseAddress+0x29CE88);
-	WriteToMemory(dwPid, 0x45E, shellcode, sizeof(shellcode) - 1);
+	WriteToMemory(dwPid, 0x45E, shellcode, 37);
 	WriteMovECX(dwPid, eBaseAddress +0x708, 0x45E + 0x7);
 	WriteCall(dwPid,0x45E + 0x1D, 0x953B0);
 	RunTheMemory(dwPid, 0x45E);
 }
+//ÁßçÊ§ç
 VOID CPvz::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
 {
 	dwXP--; dwYP--;
@@ -501,16 +503,16 @@ VOID CPvz::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
 	check_dwPid(dwPid);
 	if (!check_battlefield(dwPid))
 	{
-		MessageBox(NULL, L"Œ¥Ω¯»Î’Ω≥°", L"Ã· æ", MB_OK);
+		MessageBox(NULL, L"Êú™ËøõÂÖ•ÊàòÂú∫", L"ÊèêÁ§∫", MB_OK);
 		return;
 	}
 	protectAddress(dwPid, 0x348);
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
-	const char shellcode[] = "\x60\x6A\x01\x6A\x07\x8B\x0D\x28\xAE\x29\x00\x6A\x01\x6A\x01\xE8\xB3\x94\x00\x00\x61\xC3";
+	const char* shellcode = "\x60\x6A\x01\x6A\x07\x8B\x0D\x28\xAE\x29\x00\x6A\x01\x6A\x01\xE8\xB3\x94\x00\x00\x61\xC3";
 	DWORD eBaseAddress = ReadTOMemory(dwPid, baseAddress + 0x29CE88);
 	DWORD value = ReadTOMemory(dwPid, eBaseAddress + 0x320);
-	WriteToMemory(dwPid, 0x348, shellcode, sizeof(shellcode) -1);
+	WriteToMemory(dwPid, 0x348, shellcode, 22);
 	WriteMovECX(dwPid, value + 0x7C, 0x348 + 0x5);
 	WriteCall(dwPid, 0x348 + 0xF, 0x956F0);
 	WritePush(dwPid, dwXP, 0x348 + 0xB);
@@ -518,24 +520,25 @@ VOID CPvz::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
 	WritePush(dwPid, dwID, 0x348 + 0x3);
 	RunTheMemory(dwPid, 0x348);
 }
-VOID CPvz::PeaSDamage()
+//Ë±åË±ÜÂ≠êÂºπÂ∏ß‰º§
+VOID CPvz::PeaSDamage(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
 	protectAddress(dwPid, 0x52F);
-	const char patch1[] = "\xE9\x00\x00\x00\x00\x90";
-	WriteToMemory(dwPid, 0xA552E, patch1, sizeof(patch1)-1);
-	const char patch2[] = "\x80\x7E\x08\x01\x0F\x84\x2A\x55\x9C\xFE\x80\x7E\x08\x02\x0F\x84\x20\x55\x9C\xFE\x80\x7E\x08\x03\x0F\x84\x16\x55\x9C\xFE\xC6\x46\x24\x01\x0F\x85\x22\x55\x9C\xFE\xE9\x07\x55\x9C\xFE";
-	WriteToMemory(dwPid, 0x52F, patch2, sizeof(patch2)-1);
-	WriteJump(dwPid, 0xA552E, 0x52F);
+	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\xC6\x46\x24\x01\x75\x16";
+	WriteToMemory(dwPid, 0xA552E, patch1, 6);
+	const char* patch2 = "\x80\x7E\x08\x01\x0F\x84\x2A\x55\x9C\xFE\x80\x7E\x08\x02\x0F\x84\x20\x55\x9C\xFE\x80\x7E\x08\x03\x0F\x84\x16\x55\x9C\xFE\xC6\x46\x24\x01\x0F\x85\x22\x55\x9C\xFE\xE9\x07\x55\x9C\xFE";
+	WriteToMemory(dwPid, 0x52F, patch2, 45);
+	if(dwSwitch == 1) WriteJump(dwPid, 0xA552E, 0x52F);
 	WriteConditionJump(dwPid,0x52F + 0x4,0xA5533,true);
 	WriteConditionJump(dwPid, 0x52F + 0xE, 0xA5533, true);
 	WriteConditionJump(dwPid, 0x52F + 0x18, 0xA5533, true);
 	WriteConditionJump(dwPid, 0x52F + 0x22, 0xA654A, false);
 	WriteJump(dwPid, 0x52F + 0x28, 0xA5533);
 }
-// Ω© ¨µÙø®
-VOID CPvz::ZombieDC()
+// ÂÉµÂ∞∏ÊéâÂç°
+VOID CPvz::ZombieDC(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
@@ -543,45 +546,46 @@ VOID CPvz::ZombieDC()
 	DWORD baseAddress = get_baseAddress(hProcess);
 	protectAddress(dwPid, 0xF32);
 	protectAddress(dwPid, 0x400);
-	const char patch1[] = "\xE9\x00\x00\x00\x00\x66\x90";
-	WriteToMemory(dwPid, 0x100AC4, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\xC6\x83\x9C\x00\x00\x00\x01\x60\xBA\x80\x00\x00\x00\x8B\x0D\x10\x06\xE1\x00\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x04\xFF\x73\x18\xFF\x73\x14\xE8\x86\x53\x85\xFF\x61\xE9\x9B\x0A\x8C\xFF";
-	WriteToMemory(dwPid, 0xF32, patch2, sizeof(patch2) - 1);
-	const char patch3[] = "\xE9\x00\x00\x00\x00\x90";
-	WriteToMemory(dwPid, 0xAB677, patch3, sizeof(patch3) - 1);
-	const char patch4[] = "\xFF\x77\x7C\x83\xEC\x08\x81\x7F\x7C\xFF\xFF\xFF\xFF\x0F\x85\x6A\xB6\xC2\xFF\xA1\x00\x00\x00\x00\x89\x47\x7C\xE9\x5D\xB6\xC2\xFF";
-	WriteToMemory(dwPid, 0xF62, patch4, sizeof(patch4) - 1);
-	const char patch5[] = "\xE9\x00\x00\x00\x00\x90";
-	WriteToMemory(dwPid, 0x95F83, patch5, sizeof(patch5) - 1);
-	const char patch6[] = "\xFF\x87\x70\x03\x00\x00\xFF\x05\xC8\xDA\xB9\x00\x83\x3D\xC8\xDA\xB9\x00\x0E\x74\x09\x0F\x1F\x40\x00\xE9\x6B\x5F\x89\xFC\xC7\x05\xC8\xDA\xB9\x00\x00\x00\x00\x00\xE9\x5C\x5F\x89\xFC";
-	WriteToMemory(dwPid, 0xF82, patch6, sizeof(patch6) - 1);
-	const char patch7[] = "\xE9\x8F\x74\xFE\x00\x66\x90";
-	WriteToMemory(dwPid, 0xA8B6C, patch7, sizeof(patch7) - 1);
-	const char patch8[] = "\xC7\x47\x64\x00\x00\x00\x00\x60\x8B\xD7\x8B\x0D\x10\x06\x4B\x01\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x04\xFF\x72\x18\xFF\x72\x14\xBA\x80\x00\x00\x00\xE8\x84\x53\x00\xFF\x61\xE9\x41\x8B\x01\xFF";
-	WriteToMemory(dwPid, 0xFAF, patch8, sizeof(patch8) - 1);
-	const char patch9[] = "\xE9\x8F\x74\xFE\x00\x66\x90";
-	WriteToMemory(dwPid, 0x100F6F, patch9, sizeof(patch9) - 1);
-	const char patch10[] = "\xC7\x47\x40\x01\x00\x00\x00\x80\xBF\x9C\x00\x00\x00\x01\x0F\x84\x62\x0F\xD4\xDF\x60\x8B\xD7\x8B\x0D\x10\x06\x33\x01\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x04\xFF\x72\x18\xFF\x72\x14\xBA\x80\x00\x00\x00\xE8\x77\x53\xCD\xDF\x61\xE9\x37\x0F\xD4\xDF";
-	WriteToMemory(dwPid, 0x4D9, patch10, sizeof(patch10) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x66\x90" : "\xC6\x83\x9C\x00\x00\x00\x01";
+	WriteToMemory(dwPid, 0x100AC4, patch1, 7);
+	const char* patch2 = "\xC6\x83\x9C\x00\x00\x00\x01\x60\xBA\x80\x00\x00\x00\x8B\x0D\x10\x06\xE1\x00\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x04\xFF\x73\x18\xFF\x73\x14\xE8\x86\x53\x85\xFF\x61\xE9\x9B\x0A\x8C\xFF";
+	WriteToMemory(dwPid, 0xF32, patch2, 48);
+	const char* patch3 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\xFF\x77\x7C\x83\xEC\x08";
+	WriteToMemory(dwPid, 0xAB677, patch3, 6);
+	const char* patch4 = "\xFF\x77\x7C\x83\xEC\x08\x81\x7F\x7C\xFF\xFF\xFF\xFF\x0F\x85\x6A\xB6\xC2\xFF\xA1\x00\x00\x00\x00\x89\x47\x7C\xE9\x5D\xB6\xC2\xFF";
+	WriteToMemory(dwPid, 0xF62, patch4, 32);
+	const char* patch5 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\xFF\x87\x70\x03\x00\x00";
+	WriteToMemory(dwPid, 0x95F83, patch5, 6);
+	const char* patch6 = "\xFF\x87\x70\x03\x00\x00\xFF\x05\xC8\xDA\xB9\x00\x83\x3D\xC8\xDA\xB9\x00\x0E\x74\x09\x0F\x1F\x40\x00\xE9\x6B\x5F\x89\xFC\xC7\x05\xC8\xDA\xB9\x00\x00\x00\x00\x00\xE9\x5C\x5F\x89\xFC";
+	WriteToMemory(dwPid, 0xF82, patch6, 45);
+	const char* patch7 = (dwSwitch == 1) ? "\xE9\x8F\x74\xFE\x00\x66\x90" : "\xC7\x47\x64\x00\x00\x00\x00";
+	WriteToMemory(dwPid, 0xA8B6C, patch7, 7);
+	const char* patch8 = "\xC7\x47\x64\x00\x00\x00\x00\x60\x8B\xD7\x8B\x0D\x10\x06\x4B\x01\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x04\xFF\x72\x18\xFF\x72\x14\xBA\x80\x00\x00\x00\xE8\x84\x53\x00\xFF\x61\xE9\x41\x8B\x01\xFF";
+	WriteToMemory(dwPid, 0xFAF, patch8, 50);
+	const char* patch9 = (dwSwitch == 1) ? "\xE9\x8F\x74\xFE\x00\x66\x90" : "\xC7\x47\x40\x01\x00\x00\x00";
+	WriteToMemory(dwPid, 0x100F6F, patch9, 7);
+	const char* patch10 = "\xC7\x47\x40\x01\x00\x00\x00\x80\xBF\x9C\x00\x00\x00\x01\x0F\x84\x62\x0F\xD4\xDF\x60\x8B\xD7\x8B\x0D\x10\x06\x33\x01\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x04\xFF\x72\x18\xFF\x72\x14\xBA\x80\x00\x00\x00\xE8\x77\x53\xCD\xDF\x61\xE9\x37\x0F\xD4\xDF";
+	WriteToMemory(dwPid, 0x4D9, patch10, 63);
 	WriteJump(dwPid, 0xF5D, 0x100AC9);
-	WriteJump(dwPid, 0x100AC4, 0xF32);
+	if (dwSwitch == 1)WriteJump(dwPid, 0x100AC4, 0xF32);
 	WriteCall(dwPid, 0xF57, 0x953B0);
 	DWORD eBaseAddress = ReadTOMemory(dwPid, baseAddress + 0x29CE88);
 	WriteMovECX(dwPid, eBaseAddress + 0x708, 0xF3F);
-	WriteJump(dwPid, 0xAB677,0xF62);
+	if (dwSwitch == 1)WriteJump(dwPid, 0xAB677,0xF62);
 	WriteConditionJump(dwPid, 0xF6F, 0xAB67C, false);
 	WriteJump(dwPid, 0xF7D, 0xAB67C);
 	WriteMovEAX(dwPid, baseAddress + 0x29DAC8 , 0xF75);
-	WriteJump(dwPid, 0x95F83, 0xF82);
+	if (dwSwitch == 1)WriteJump(dwPid, 0x95F83, 0xF82);
 	WriteINC(dwPid, baseAddress + 0x29DAC8, 0xF88);
 	WriteCMPXZero(dwPid, baseAddress + 0x29DAC8, 0xF8E);
 	WriteJump(dwPid, 0xF9B, 0x95F89);
 	WriteJump(dwPid, 0xFAA, 0x95F89);
+	if (dwSwitch == 1)WriteJump(dwPid, 0xA8B6C, 0xFAF);
 	WriteMOVXZero(dwPid, baseAddress + 0x29DAC8, 0xFA0);
 	WriteMovECX(dwPid, eBaseAddress + 0x708, 0xFB9);
 	WriteCall(dwPid, 0xFD6, 0x953B0);
 	WriteJump(dwPid, 0xFDC, 0xA8B73);
-	WriteJump(dwPid, 0x100F6F, 0x4D9);
+	if (dwSwitch == 1)WriteJump(dwPid, 0x100F6F, 0x4D9);
 	WriteMovECX(dwPid, eBaseAddress + 0x708, 0x4F0);
 	WriteCall(dwPid, 0x50D, 0x953B0);
 	WriteJump(dwPid, 0x513, 0x100F74);
@@ -590,196 +594,212 @@ VOID CPvz::ZombieDC()
 }
 
 
-// ÷≤ŒÔ≤ªª·±ª˜»ªÛ
-VOID CPvz::NotSubvert()
+// Ê§çÁâ©‰∏ç‰ºöË¢´È≠ÖÊÉë
+VOID CPvz::NotSubvert(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch[] = "\x90\x90\x90";
-	WriteToMemory(dwPid, 0xC5911, patch, sizeof(patch) - 1);
+	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90" : "\x89\x46\x10";
+	WriteToMemory(dwPid, 0xC5911, patch, 3);
 }
 
-// ”£Ã“À≤±¨
-VOID CPvz::CherryFast()
+// Ê®±Ê°ÉÁû¨ÁàÜ
+VOID CPvz::CherryFast(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	protectAddress(dwPid, 0x5BD);
 	check_dwPid(dwPid);
-	const char patch1[] = "\xE9\x00\x00\x00\x00\x90";
-	WriteToMemory(dwPid, 0xC943F, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\x83\xBE\x84\x00\x00\x00\x02\x75\x0D\x0F\x1F\x40\x00\xB8\x00\x00\x00\x00\x90\x90\x90\x90\x89\x86\x9C\x00\x00\x00\xE9\x27\x94\x31\xFF";
-	WriteToMemory(dwPid, 0x5BD, patch2, sizeof(patch2) - 1);
-	WriteJump(dwPid,0xC943F, 0x5BD);
+	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\x89\x86\x9C\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC943F, patch1,6);
+	const char* patch2 = "\x83\xBE\x84\x00\x00\x00\x02\x75\x0D\x0F\x1F\x40\x00\xB8\x00\x00\x00\x00\x90\x90\x90\x90\x89\x86\x9C\x00\x00\x00\xE9\x27\x94\x31\xFF";
+	WriteToMemory(dwPid, 0x5BD, patch2, 33);
+	if (dwSwitch == 1)WriteJump(dwPid,0xC943F, 0x5BD);
 	WriteJump(dwPid, 0x5D9 ,0xC9445);
 }
-// ”£Ã“≤ª±¨
-VOID CPvz::CherryNo()
+// Ê®±Ê°É‰∏çÁàÜ
+VOID CPvz::CherryNo(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch1[] = "\xE9\x00\x00\x00\x00\x90";
-	WriteToMemory(dwPid, 0xC943F, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\x83\xBE\x84\x00\x00\x00\x02\x75\x0A\x0F\x1F\x40\x00\x90\xE9\x32\x94\x31\xFF\x89\x86\x9C\x00\x00\x00\xE9\x27\x94\x31\xFF";
-	WriteToMemory(dwPid, 0x606, patch2, sizeof(patch2) - 1);
-	WriteJump(dwPid, 0xC943F, 0x606);
+	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\x89\x86\x9C\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC943F, patch1, 6);
+	const char* patch2 = "\x83\xBE\x84\x00\x00\x00\x02\x75\x0A\x0F\x1F\x40\x00\x90\xE9\x32\x94\x31\xFF\x89\x86\x9C\x00\x00\x00\xE9\x27\x94\x31\xFF";
+	WriteToMemory(dwPid, 0x606, patch2, 30);
+	if (dwSwitch == 1)WriteJump(dwPid, 0xC943F, 0x606);
 	WriteJump(dwPid, 0x614, 0xC9445);
 	WriteJump(dwPid, 0x61F, 0xC9445);
 }
-//√®Àø◊”À≤Œ¸
-VOID CPvz::MeowFast()
+//Áå´‰∏ùÂ≠êÁû¨Âê∏
+VOID CPvz::MeowFast(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch1[] = "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC69AE, patch1, sizeof(patch1) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x83\x9C\x00\x00\x00\x2C\x01\x00\x00";
+	WriteToMemory(dwPid, 0xC69AE, patch1, 10);
 }
-//∫…¬≥Àπµ∂µ∂±©ª˜
-VOID CPvz::LoursMC()
+//Ëç∑È≤ÅÊñØÂàÄÂàÄÊö¥Âáª
+VOID CPvz::LoursMC(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
 	protectAddress(dwPid, 0x6BF);
-	const char patch1[] = "\xEB\x04";
-	WriteToMemory(dwPid, 0xC3BD8, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\xE9\x00\x00\x00\x00\x90";
-	WriteToMemory(dwPid, 0xC3BCD, patch2, sizeof(patch2) - 1);
-	const char patch3[] = "\xC7\x87\xBC\x00\x00\x00\x00\x10\x00\x00\x8B\x8F\xBC\x00\x00\x00\xE9\xBE\x3B\x17\xFF";
-	WriteToMemory(dwPid, 0x6BF, patch3, sizeof(patch3) - 1);
-	WriteJump(dwPid, 0xC3BCD , 0x6BF);
+	const char* patch1 = (dwSwitch == 1) ? "\xEB\x04" :"\x7D\x04";
+	WriteToMemory(dwPid, 0xC3BD8, patch1, 2);
+	const char* patch2 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90":"\x8B\x8F\xBC\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC3BCD, patch2, 6);
+	const char* patch3 = "\xC7\x87\xBC\x00\x00\x00\x00\x10\x00\x00\x8B\x8F\xBC\x00\x00\x00\xE9\xBE\x3B\x17\xFF";
+	WriteToMemory(dwPid, 0x6BF, patch3, 21);
+	if(dwSwitch == 1)WriteJump(dwPid, 0xC3BCD , 0x6BF);
 	WriteJump(dwPid, 0x6CF, 0xC3BD3);
 }
-// ÷≤ŒÔŒﬁµ–
-VOID CPvz::GodMode()
+// Ê§çÁâ©Êó†Êïå
+VOID CPvz::GodMode(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch[] = "\x90\x90";
-	WriteToMemory(dwPid, 0xC5997, patch, sizeof(patch) - 1);
+	const char* patch = (dwSwitch == 1) ? "\x90\x90" :"\x2B\xC7";
+	WriteToMemory(dwPid, 0xC5997, patch, 2);
 }
-// »°œ˚»Ÿπ‚Ωæ∞¡◊¥Ã¨
-VOID CPvz::Point()
+// ÂèñÊ∂àËç£ÂÖâÈ™ÑÂÇ≤Áä∂ÊÄÅ
+VOID CPvz::Point(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch[] = "\xC7\x85\xF8\x02\x00\x00\x00\x00\x00\x00\x90\x90"; //”≤»˚Ω¯»•µƒ£¨“¿øøbug‘À––£®
-	WriteToMemory(dwPid, 0xD1358, patch, sizeof(patch) - 1);
+	const char* patch = (dwSwitch == 1) ? "\xC7\x85\xF8\x02\x00\x00\x00\x00\x00\x00\x90\x90":"\x88\x95\xF8\x02\x00\x00\x8B\x80\x14\x08\x00\x00"; //Á°¨Â°ûËøõÂéªÁöÑÔºå‰æùÈù†bugËøêË°åÔºà
+	WriteToMemory(dwPid, 0xD1358, patch, 12);
 }
-//µºﬁ∫≈˙¡ø÷÷÷≤
-VOID CPvz::DX()
+//ÂØºËóìÊâπÈáèÁßçÊ§ç
+VOID CPvz::DX(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch1[] = "\x6A\x09\x90\x90\x90\x90";
-	WriteToMemory(dwPid, 0x9424E, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\x6A\x0D";
-	WriteToMemory(dwPid, 0x95077, patch2, sizeof(patch2) - 1);
-	const char patch3[] = "\x83\x78\xE8\x0D";
-	WriteToMemory(dwPid, 0xC50F5, patch3, sizeof(patch3) - 1);
-	const char patch4[] = "\x83\x79\x18\x0D";
-	WriteToMemory(dwPid, 0x94F27, patch4, sizeof(patch4) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\x6A\x09\x90\x90\x90\x90" : "\xFF\xB6\x84\x00\x00\x00";
+	WriteToMemory(dwPid, 0x9424E, patch1, 6);
+	const char* patch2 = (dwSwitch == 1) ? "\x6A\x0D" : "\x6A\x09";
+	WriteToMemory(dwPid, 0x95077, patch2, 2);
+	const char* patch3 = (dwSwitch == 1) ? "\x83\x78\xE8\x0D" : "\x83\x78\xE8\x09";
+	WriteToMemory(dwPid, 0xC50F5, patch3, 4);
+	const char* patch4 = (dwSwitch == 1) ? "\x83\x79\x18\x0D" :"\x83\x79\x18\x0D";
+	WriteToMemory(dwPid, 0x94F27, patch4, 4);
 }
-//Ω¯»Î”Œœ∑–ﬁ∏ƒ»Ÿπ‚
-VOID CPvz::Point2()
+//ËøõÂÖ•Ê∏∏Êàè‰øÆÊîπËç£ÂÖâ
+VOID CPvz::Point2(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
 	protectAddress(dwPid, 0xF00);
-	const char patch1[] = "\xE9\x00\x00\x00\x00\x66\x0F\x1F\x44\x00\x00";
-	WriteToMemory(dwPid, 0x91FB2, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\x66\xC7\x40\x20\x06\x00\x66\xC7\x40\x24\x06\x00\x66\xC7\x40\x28\x06\x00\x66\xC7\x40\x2C\x03\x00\x66\xC7\x40\x30\x02\x00\x0F\xB7\x40\x20\x66\x89\x87\xA8\x03\x00\x00\xE9\x00\x00\x00\x00";
-	WriteToMemory(dwPid, 0xF00, patch2, sizeof(patch2) - 1);
-	WriteJump(dwPid, 0xF29, 0x91FB7);
-	WriteJump(dwPid, 0x91FB2, 0xF00);
+	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x66\x0F\x1F\x44\x00\x00" :"\x8B\x81\x14\x08\x00\x00\x0F\xB7\x40\x20\x66"; //Âê´bugËøêË°å
+	WriteToMemory(dwPid, 0x91FB2, patch1, 11);
+	const char* patch2 = "\x66\xC7\x40\x20\x06\x00\x66\xC7\x40\x24\x06\x00\x66\xC7\x40\x28\x06\x00\x66\xC7\x40\x2C\x03\x00\x66\xC7\x40\x30\x02\x00\x0F\xB7\x40\x20\x66\x89\x87\xA8\x03\x00\x00\xE9\x00\x00\x00\x00";
+	WriteToMemory(dwPid, 0xF00, patch2, 46);
+	WriteJump(dwPid, 0xF00+0x29, 0x91FB7);
+	if(dwSwitch == 1)WriteJump(dwPid, 0x91FB2, 0xF00);
 }
-//π‚¡‚Ω«÷°…À∫¶
-VOID CPvz::LingSDamage()
+//ÂÖâËè±ËßíÂ∏ß‰º§ÂÆ≥
+VOID CPvz::LingSDamage(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
 	protectAddress(dwPid, 0x7F1);
-	const char patch1[] = "\xE9\x00\x00\x00\x00\x0F\x1F\x00";
-	WriteToMemory(dwPid, 0xA4B9D, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\xB8\x02\x00\x00\x00\xB9\x96\x00\x00\x00\xE9\x96\x4B\x84\xFE";
-	WriteToMemory(dwPid, 0x7F1, patch2, sizeof(patch2) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x0F\x1F\x00" : "\x8B\x47\x38\xB9\x96\x00\x00\x00";
+	WriteToMemory(dwPid, 0xA4B9D, patch1, 8);
+	const char* patch2 = "\xB8\x02\x00\x00\x00\xB9\x96\x00\x00\x00\xE9\x96\x4B\x84\xFE";
+	WriteToMemory(dwPid, 0x7F1, patch2, 15);
 	WriteJump(dwPid, 0x7F1+0xA, 0xA4BA5);
-	WriteJump(dwPid, 0xA4B9D, 0x7F1);
+	if (dwSwitch == 1)WriteJump(dwPid, 0xA4B9D, 0x7F1);
 }
-//∆ªπ˚πƒ…™ ÷Œﬁ¿‰»¥
-VOID CPvz::ApplayerNoCD()
+//ËãπÊûúÈºìÁëüÊâãÊó†ÂÜ∑Âç¥
+VOID CPvz::ApplayerNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch1[] = "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC6AE0, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC42D1, patch2, sizeof(patch2) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x83\x9C\x00\x00\x00\xB0\x04\x00\x00";
+	WriteToMemory(dwPid, 0xC6AE0, patch1, 10);
+	const char* patch2 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x60\x09\x00\x00";
+	WriteToMemory(dwPid, 0xC42D1, patch2, 10);
 }
-//∆ªπ˚πƒ…™ ÷Œﬁ—”≥Ÿ
-VOID CPvz::ApplayerNoLag()
+//ËãπÊûúÈºìÁëüÊâãÊó†Âª∂Ëøü
+VOID CPvz::ApplayerNoLag(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch1[] = "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC4323, patch1, sizeof(patch1) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x2C\x01\x00\x00";
+	WriteToMemory(dwPid, 0xC4323, patch1, 10);
 }
-//≥µ«∞≤›Œ¸ ’Œﬁ¿‰»¥
-VOID CPvz::PlantageNoCD()
+//ËΩ¶ÂâçËçâÂê∏Êî∂Êó†ÂÜ∑Âç¥
+VOID CPvz::PlantageNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch1[] = "\xC7\x86\x9C\x00\x00\x00\x05\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC3728, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\xC7\x86\x9C\x00\x00\x00\x92\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC5019, patch2, sizeof(patch2) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\xC7\x86\x9C\x00\x00\x00\x05\x00\x00\x00" : "\xC7\x86\x9C\x00\x00\x00\xD0\x07\x00\x00";
+	WriteToMemory(dwPid, 0xC3728, patch1, 10);
+	const char* patch2 = (dwSwitch == 1) ? "\xC7\x86\x9C\x00\x00\x00\x92\x00\x00\x00" : "\xC7\x86\x9C\x00\x00\x00\xFA\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC5019, patch2, 10);
 }
-//≥µ«∞≤›Œ¸ ’Œﬁ¿‰»¥
-VOID CPvz::SunFlowerNoCD()
+//ÂêëÊó•ËëµÊó†cdÁîü‰∫ß
+VOID CPvz::SunFlowerNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch1[] = "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC2CC5, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC68F3, patch2, sizeof(patch2) - 1);
-	const char patch3[] = "\xC7\x87\x9C\x00\x00\x00\x24\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC2BA1, patch3, sizeof(patch3) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\xB8\x0B\x00\x00";
+	WriteToMemory(dwPid, 0xC2CC5, patch1, 10);
+	const char* patch2 = (dwSwitch == 1) ? "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x83\x9C\x00\x00\x00\xEE\x02\x00\x00";
+	WriteToMemory(dwPid, 0xC68F3, patch2, 10);
+	const char* patch3 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x24\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x55\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC2BA1, patch3, 10);
 }
-//Õ„∂πŒﬁ¿‰»¥
-VOID CPvz::PeaNoCD()
+//Ë±åË±ÜÊó†ÂÜ∑Âç¥
+VOID CPvz::PeaNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch1[] = "\x90\x90\x90\x90\x90\x90";
-	WriteToMemory(dwPid, 0xC27E7, patch1, sizeof(patch1) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x0F\x85\x6C\x03\x00\x00";
+	WriteToMemory(dwPid, 0xC27E7, patch1, 6);
 }
-//≥¨º∂…¡µÁ¬´Œ≠
-VOID CPvz::SuperReed()
+//Ë∂ÖÁ∫ßÈó™ÁîµËä¶Ëãá
+VOID CPvz::SuperReed(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch1[] = "\xB9\x66\x66\x66\x66";
-	WriteToMemory(dwPid, 0xC765B, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\x8B\x56\x08";
-	WriteToMemory(dwPid, 0xC762B, patch2, sizeof(patch2) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\xB9\x66\x66\x66\x66" : "\xB9\x2C\x01\x00\x00";
+	WriteToMemory(dwPid, 0xC765B, patch1, 5);
+	const char* patch2 = (dwSwitch == 1) ? "\x8B\x56\x08" : "\x8B\x52\x08";
+	WriteToMemory(dwPid, 0xC762B, patch2, 3);
 }
-//≥¨º∂…¡µÁ¬´Œ≠
-VOID CPvz::PowerFlowerNoCD()
+//Ë∂ÖÁ∫ßÈó™ÁîµËä¶Ëãá
+VOID CPvz::PowerFlowerNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
-	const char patch1[] = "\xC7\x86\x9C\x00\x00\x00\x00\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC91A2, patch1, sizeof(patch1) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\xC7\x86\x9C\x00\x00\x00\x00\x00\x00\x00" :"\xC7\x86\x9C\x00\x00\x00\x96\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC91A2, patch1, 10);
 }
-//π‚¡‚Ω«÷°…À∫¶
-VOID CPvz::AwayMax()
+//ÂÖâËè±ËßíÂ∏ß‰º§ÂÆ≥
+VOID CPvz::AwayMax(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	check_dwPid(dwPid);
 	protectAddress(dwPid, 0x749);
-	const char patch1[] = "\xE9\x00\x00\x00\x00\x90";
-	WriteToMemory(dwPid, 0xC901B, patch1, sizeof(patch1) - 1);
-	const char patch2[] = "\xC7\x81\xBC\x00\x00\x00\x05\x00\x00\x00\xE9\x12\x90\x39\xFF";
-	WriteToMemory(dwPid, 0x749, patch2, sizeof(patch2) - 1);
+	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\x89\xB9\xBC\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC901B, patch1, 6);
+	const char* patch2 = "\xC7\x81\xBC\x00\x00\x00\x05\x00\x00\x00\xE9\x12\x90\x39\xFF";
+	WriteToMemory(dwPid, 0x749, patch2, 15);
 	WriteJump(dwPid, 0x749 + 0xA, 0xC9021);
-	WriteJump(dwPid, 0xC901B, 0x749);
+	if (dwSwitch == 1)WriteJump(dwPid, 0xC901B, 0x749);
+}
+//Áâ©ÂìÅ‰∏çÊ∂àÂ§±
+VOID CPvz::ItemNoDie(bool dwSwitch)
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	const char* patch1 = (dwSwitch == 1) ? "\x90\x90\x90" : "\x83\xC0\xFF";
+	WriteToMemory(dwPid, 0xABC71, patch1, 3);
+}
+//Â§©‰∏äÁãÇÊéâÈò≥ÂÖâ
+VOID CPvz::SunNoDelay(bool dwSwitch)
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	const char* patch1 = (dwSwitch == 1) ? "\xB8\x01\x00\x00\x00\x90" : "\x8B\x87\xD0\x03\x00\x00";
+	WriteToMemory(dwPid, 0x9950D, patch1, 6);
 }
