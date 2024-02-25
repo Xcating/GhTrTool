@@ -68,6 +68,7 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
     ON_BN_CLICKED(IDC_BTN_SUN, &CGhTrToolDlg::OnBnClickedBtnSun)
 	ON_BN_CLICKED(IDC_BTN_SP, &CGhTrToolDlg::OnBnClickedBtnSeedPacket)
+	ON_BN_CLICKED(IDC_BTN_ModifySeedPacket, &CGhTrToolDlg::OnBnClickedBtnModifySeedPacket)
 	ON_BN_CLICKED(IDC_BTN_Plant, &CGhTrToolDlg::OnBnClickedBtnPlant)
     ON_BN_CLICKED(IDC_BTN_SUN_NOP, &CGhTrToolDlg::OnBnClickedBtnSunNop)
     ON_BN_CLICKED(IDC_BTN_NO_CD, &CGhTrToolDlg::OnBnClickedBtnNoCd)
@@ -105,6 +106,9 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_PowerFlowerNoCD, &CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD)
 	ON_BN_CLICKED(IDC_BTN_AwayMax, &CGhTrToolDlg::OnBnClickedBtnAwayMax)
 	ON_BN_CLICKED(IDC_BTN_SunNoDelay, &CGhTrToolDlg::OnBnClickedBtnSunNoDelay)
+	ON_BN_CLICKED(IDC_BTN_BuildTheArray, &CGhTrToolDlg::OnBnClickedBtnBuildTheArray)
+	ON_BN_CLICKED(IDC_BTN_ZombieClear, &CGhTrToolDlg::OnBnClickedBtnZombieClear)
+	ON_BN_CLICKED(IDC_BTN_PlantClear, &CGhTrToolDlg::OnBnClickedBtnPlantClear)
 END_MESSAGE_MAP()
 // CGhTrToolDlg 消息处理程序
 HBRUSH CGhTrToolDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
@@ -251,6 +255,14 @@ void CGhTrToolDlg::OnBnClickedBtnSun()
 
     CPvz pvz = CPvz();
     pvz.ModifySunValue(dwSun);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnModifySeedPacket()
+{
+	DWORD dwID = GetDlgItemInt(IDC_EDIT_SPID);
+	DWORD dwNum = GetDlgItemInt(IDC_EDIT_SPNUM);
+	CPvz pvz = CPvz();
+	pvz.ModifySeedPacket(dwID , dwNum);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSeedPacket()
@@ -606,6 +618,23 @@ void CGhTrToolDlg::OnBnClickedBtnSunNoDelay()
 	}
 }
 
+void CGhTrToolDlg::OnBnClickedBtnBuildTheArray()
+{
+		CPvz pvz = CPvz();
+		pvz.BuildTheArray();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnZombieClear()
+{
+	CPvz pvz = CPvz();
+	pvz.ZombieClear();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPlantClear()
+{
+	CPvz pvz = CPvz();
+	pvz.PlantClear();
+}
 
 void CGhTrToolDlg::OnBnClickedBtnSuperReed()
 {

@@ -3,8 +3,8 @@
 #include <TlHelp32.h>
 #include <string>
 #include <Psapi.h>
+#include <chrono>
 #include <sstream>
-#include <iomanip>
 CPvz::CPvz()
 {
 }
@@ -264,7 +264,7 @@ bool WriteCMPXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	DWORD dwOldProtect = 0;
 	VirtualProtectEx(hProcess, (LPVOID)targetAddress, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect);
 	DWORD jumpOffset = Address;
-	BYTE jumpCode[] = { 0x83, 0x3D ,jumpOffset & 0xFF, (jumpOffset >> 8) & 0xFF, (jumpOffset >> 16) & 0xFF, (jumpOffset >> 24) & 0xFF ,0x0E };
+	BYTE jumpCode[] = { 0x83, 0x3D ,jumpOffset & 0xFF, (jumpOffset >> 8) & 0xFF, (jumpOffset >> 16) & 0xFF, (jumpOffset >> 24) & 0xFF ,0x10 };
 	bool result = WriteProcessMemory(hProcess, (LPVOID)targetAddress, jumpCode, sizeof(jumpCode), NULL);
 	CloseHandle(hProcess);
 	return result;
@@ -358,6 +358,24 @@ VOID CPvz::SeedPacket(DWORD dwSP) //SP指的是SeedPacket，种子包
 	check_result(result);
 	CloseHandle(hProcess);
 }
+
+// 修改卡槽数量
+VOID CPvz::ModifySeedPacket(DWORD dwID,DWORD dwNum) //SP指的是SeedPacket，种子包 dwId指要替换的id，dwNum，要替换的卡槽号
+{
+	dwNum--;
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+	DWORD baseAddress = get_baseAddress(hProcess);
+	DWORD targetAddress = baseAddress + 0x29CE88;
+	DWORD dwNum1 = 0;
+	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum1, sizeof(DWORD), NULL);
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum1 + 0x708), &dwNum1, sizeof(DWORD), NULL); //一层偏移
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum1 + 0x14C), &dwNum1, sizeof(DWORD), NULL); //二层偏移
+	WriteProcessMemory(hProcess, (LPVOID)(dwNum1 + 0x44 + 0x34*dwNum), &dwID, sizeof(DWORD), NULL); //三层偏移
+	CloseHandle(hProcess);
+}
+
 // 使用通用函数的种植不减阳光
 VOID CPvz::SunNop(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
@@ -555,7 +573,7 @@ VOID CPvz::ZombieDC(bool dwSwitch)
 	WriteToMemory(dwPid, 0xF62, patch4, 32);
 	const char* patch5 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\xFF\x87\x70\x03\x00\x00";
 	WriteToMemory(dwPid, 0x95F83, patch5, 6);
-	const char* patch6 = "\xFF\x87\x70\x03\x00\x00\xFF\x05\xC8\xDA\xB9\x00\x83\x3D\xC8\xDA\xB9\x00\x0E\x74\x09\x0F\x1F\x40\x00\xE9\x6B\x5F\x89\xFC\xC7\x05\xC8\xDA\xB9\x00\x00\x00\x00\x00\xE9\x5C\x5F\x89\xFC";
+	const char* patch6 = "\xFF\x87\x70\x03\x00\x00\xFF\x05\xC8\xDA\xB9\x00\x83\x3D\xC8\xDA\xB9\x00\x10\x74\x09\x0F\x1F\x40\x00\xE9\x6B\x5F\x89\xFC\xC7\x05\xC8\xDA\xB9\x00\x00\x00\x00\x00\xE9\x5C\x5F\x89\xFC";
 	WriteToMemory(dwPid, 0xF82, patch6, 45);
 	const char* patch7 = (dwSwitch == 1) ? "\xE9\x8F\x74\xFE\x00\x66\x90" : "\xC7\x47\x64\x00\x00\x00\x00";
 	WriteToMemory(dwPid, 0xA8B6C, patch7, 7);
@@ -801,4 +819,72 @@ VOID CPvz::SunNoDelay(bool dwSwitch)
 	check_dwPid(dwPid);
 	const char* patch1 = (dwSwitch == 1) ? "\xB8\x01\x00\x00\x00\x90" : "\x8B\x87\xD0\x03\x00\x00";
 	WriteToMemory(dwPid, 0x9950D, patch1, 6);
+}
+//一键布阵
+VOID CPvz::BuildTheArray()
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	const char* patch1 = "\xC6\x47\x2F\x00";
+	WriteToMemory(dwPid, 0x95774, patch1, 4);
+	Sleep(10);
+	patch1 = "\x80\x7F\x2F\x00";
+	WriteToMemory(dwPid, 0x95774, patch1, 4);
+	for (int X = 1; X <= 9; ++X) {
+		for (int Y = 1; Y <= 5; ++Y) {
+			int ID;
+			do {
+				ID = rand() % 15; // 生成1~15范围内的随机ID
+			} while (ID == 2 || ID == 6);
+			if (ID == 4  || ID == 9 || ID == 13)
+			{
+				if (ID == 9 || ID == 13)
+				{
+					Plant(Y + 1, X, ID);
+					Plant(Y, X + 1, ID);
+					Sleep(10);
+					Plant(Y + 1, X + 1, ID);
+				}
+				Plant(Y, X, ID);
+				do {
+					ID = rand() % 15; // 生成0~15范围内的随机数
+				} while (ID==4 || ID == 9 || ID == 13 || ID == 2 || ID == 6);
+				Plant(Y, X, ID);
+			}
+			else
+			{
+				Plant(Y, X, ID);
+			}
+		}
+	}
+}
+//清空植物
+VOID CPvz::PlantClear()
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	const char* patch1 = "\xC6\x47\x2F\x00";
+	WriteToMemory(dwPid, 0x95774, patch1, 4);
+	Sleep(10);
+	patch1 = "\x80\x7F\x2F\x00";
+	WriteToMemory(dwPid, 0x95774, patch1, 4);
+}
+//清空僵尸
+VOID CPvz::ZombieClear()
+{
+	DWORD dwPid = GetGamePid();
+	check_dwPid(dwPid);
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+	const char* patch1 = "\xC6\x42\x2F\x01";
+	WriteToMemory(dwPid, 0x8F865, patch1, 4);
+	Sleep(10);
+	patch1 = "\x80\x7A\x2F\x00 ";
+	WriteToMemory(dwPid, 0x8F865, patch1, 4);
+	DWORD baseAddress = get_baseAddress(hProcess);
+	DWORD targetAddress = baseAddress + 0x29CE88;
+	DWORD dwNum = 0;
+	DWORD dwWave = 0;
+	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); //读取targetAddress对应的值(基址->内存基址)
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); //读取战场基址对应的值(内存基址 +708->战场基址)
+	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x3FC), &dwWave, sizeof(DWORD), NULL); //将dwNum写入控制阳光的地址
 }

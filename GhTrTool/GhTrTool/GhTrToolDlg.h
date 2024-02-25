@@ -73,6 +73,10 @@ public:
     afx_msg void OnBnClickedBtnAwayMax();
     afx_msg void OnBnClickedBtnItemNoDie();
     afx_msg void OnBnClickedBtnSunNoDelay();
+    afx_msg void OnBnClickedBtnBuildTheArray();
+    afx_msg void OnBnClickedBtnModifySeedPacket();
+    afx_msg void OnBnClickedBtnPlantClear();
+    afx_msg void OnBnClickedBtnZombieClear();
     afx_msg void UpdateText();
     void OnTimer(UINT_PTR nIDEvent);
 };

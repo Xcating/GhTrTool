@@ -10,6 +10,7 @@ public:
     // 修改阳光的值
     VOID ModifySunValue(DWORD dwSun);
     VOID SeedPacket(DWORD dwSP);
+    VOID ModifySeedPacket(DWORD dwID,DWORD dwNum);
     VOID Plant(DWORD dwXP, DWORD dwYP,DWORD dwID);
 
 private:
@@ -88,5 +89,11 @@ public:
     VOID ItemNoDie(bool dwSwitch);
     //阳光无延迟生成
     VOID SunNoDelay(bool dwSwitch);
+    //一键布阵
+    VOID BuildTheArray();
+    //清空僵尸
+    VOID PlantClear();
+    //清空植物
+    VOID ZombieClear();
 };
 
