@@ -189,6 +189,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PlantID.h" />
     <ClInclude Include="Pvz.h" />
     <ClInclude Include="GhTrTool.h" />
     <ClInclude Include="GhTrToolDlg.h" />
@@ -198,6 +199,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="PlantID.cpp" />
     <ClCompile Include="Pvz.cpp" />
     <ClCompile Include="GhTrTool.cpp" />
     <ClCompile Include="GhTrToolDlg.cpp" />

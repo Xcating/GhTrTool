@@ -11,6 +11,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+#include "PlantID.h"
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
 class CAboutDlg : public CDialogEx
@@ -109,6 +110,7 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_BuildTheArray, &CGhTrToolDlg::OnBnClickedBtnBuildTheArray)
 	ON_BN_CLICKED(IDC_BTN_ZombieClear, &CGhTrToolDlg::OnBnClickedBtnZombieClear)
 	ON_BN_CLICKED(IDC_BTN_PlantClear, &CGhTrToolDlg::OnBnClickedBtnPlantClear)
+	ON_BN_CLICKED(IDC_BTN_Plant2, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
 END_MESSAGE_MAP()
 // CGhTrToolDlg 消息处理程序
 HBRUSH CGhTrToolDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
@@ -135,6 +137,9 @@ BOOL CGhTrToolDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 	// 将“关于...”菜单项添加到系统菜单中。
 	UpdateText();
+	SetDlgItemText(IDC_EDIT_YP, _T("0"));
+	SetDlgItemText(IDC_EDIT_XP, _T("0"));
+	SetDlgItemText(IDC_EDIT_ID, _T("1"));
 	m_brush.CreateSolidBrush(RGB(255, 0, 0));
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
@@ -249,6 +254,13 @@ void CGhTrToolDlg::OnTimer(UINT_PTR nIDEvent)
 
 	CDialogEx::OnTimer(nIDEvent);
 }
+
+void CGhTrToolDlg::OnBnClickedBtnPlantIDList()
+{
+	PlantID dlg;
+	dlg.DoModal(); // 显示对话框
+}
+
 void CGhTrToolDlg::OnBnClickedBtnSun()
 {
     DWORD dwSun = GetDlgItemInt(IDC_EDIT_SUN);
@@ -279,8 +291,34 @@ void CGhTrToolDlg::OnBnClickedBtnPlant()
 	DWORD dwYP = GetDlgItemInt(IDC_EDIT_YP);
 	DWORD dwID = GetDlgItemInt(IDC_EDIT_ID);
 	CPvz pvz = CPvz();
-	pvz.Plant(dwXP,dwYP,dwID);
-
+	if (dwXP == 0 && dwYP == 0)
+	{
+		for (int X = 1; X <= 9; ++X) 
+		{
+			for (int Y = 1; Y <= 5; ++Y)
+			{
+				pvz.Plant(X, Y, dwID);
+			}
+		}
+	}
+	else if (dwXP == 0)
+	{
+		for (int X = 1; X <= 9; ++X)
+		{
+			pvz.Plant(X, dwYP, dwID);
+			Sleep(80);
+		}
+	}
+	else if (dwYP == 0)
+	{
+		for (int Y = 1; Y <= 5; ++Y)
+		{
+			pvz.Plant(dwXP, Y, dwID);
+			Sleep(80);
+		}
+	}
+	else
+		pvz.Plant(dwXP,dwYP,dwID);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSunNop()

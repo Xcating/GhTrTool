@@ -78,5 +78,6 @@ public:
     afx_msg void OnBnClickedBtnPlantClear();
     afx_msg void OnBnClickedBtnZombieClear();
     afx_msg void UpdateText();
+    afx_msg void OnBnClickedBtnPlantIDList();
     void OnTimer(UINT_PTR nIDEvent);
 };
