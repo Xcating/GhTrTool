@@ -840,20 +840,20 @@ VOID CPvz::BuildTheArray()
 			{
 				if (ID == 9 || ID == 13)
 				{
-					Plant(Y + 1, X, ID);
-					Plant(Y, X + 1, ID);
+					Plant(X, Y+1, ID);
+					Plant(X, Y + 1, ID);
 					Sleep(10);
-					Plant(Y + 1, X + 1, ID);
+					Plant(X + 1, Y + 1, ID);
 				}
-				Plant(Y, X, ID);
+				Plant(X, Y, ID);
 				do {
 					ID = rand() % 15; // 生成0~15范围内的随机数
 				} while (ID==4 || ID == 9 || ID == 13 || ID == 2 || ID == 6);
-				Plant(Y, X, ID);
+				Plant(X, Y, ID);
 			}
 			else
 			{
-				Plant(Y, X, ID);
+				Plant(X, Y, ID);
 			}
 		}
 	}
