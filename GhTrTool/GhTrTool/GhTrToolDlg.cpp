@@ -111,6 +111,7 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_ZombieClear, &CGhTrToolDlg::OnBnClickedBtnZombieClear)
 	ON_BN_CLICKED(IDC_BTN_PlantClear, &CGhTrToolDlg::OnBnClickedBtnPlantClear)
 	ON_BN_CLICKED(IDC_BTN_Plant2, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
+	ON_BN_CLICKED(IDC_BTN_Plant3, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
 END_MESSAGE_MAP()
 // CGhTrToolDlg 消息处理程序
 HBRUSH CGhTrToolDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
