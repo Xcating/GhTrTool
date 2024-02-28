@@ -92,8 +92,10 @@ public:
     //一键布阵
     VOID BuildTheArray();
     //清空僵尸
-    VOID PlantClear();
+    VOID ClearPlant();
     //清空植物
-    VOID ZombieClear();
+    VOID ClearZombie();
+    //清空子弹
+    VOID ClearBullet();
 };
 

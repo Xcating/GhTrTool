@@ -108,8 +108,9 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_AwayMax, &CGhTrToolDlg::OnBnClickedBtnAwayMax)
 	ON_BN_CLICKED(IDC_BTN_SunNoDelay, &CGhTrToolDlg::OnBnClickedBtnSunNoDelay)
 	ON_BN_CLICKED(IDC_BTN_BuildTheArray, &CGhTrToolDlg::OnBnClickedBtnBuildTheArray)
-	ON_BN_CLICKED(IDC_BTN_ZombieClear, &CGhTrToolDlg::OnBnClickedBtnZombieClear)
-	ON_BN_CLICKED(IDC_BTN_PlantClear, &CGhTrToolDlg::OnBnClickedBtnPlantClear)
+	ON_BN_CLICKED(IDC_BTN_ClearZombie, &CGhTrToolDlg::OnBnClickedBtnClearZombie)
+	ON_BN_CLICKED(IDC_BTN_ClearPlant, &CGhTrToolDlg::OnBnClickedBtnClearPlant)
+	ON_BN_CLICKED(IDC_BTN_ClearBullet, &CGhTrToolDlg::OnBnClickedBtnClearBullet)
 	ON_BN_CLICKED(IDC_BTN_Plant2, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
 	ON_BN_CLICKED(IDC_BTN_Plant3, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
 END_MESSAGE_MAP()
@@ -224,7 +225,15 @@ void CGhTrToolDlg::OnPaint()
 		CDialogEx::OnPaint();
 	}
 }
-
+BOOL check_dwPid2(DWORD dwPid)
+{
+	if (dwPid == -1)
+	{
+		MessageBox(NULL, L"游戏未找到，请打开游戏后点击功能", L"Info", MB_OK);
+		return false;
+	}
+	return true;
+}
 //当用户拖动最小化窗口时系统调用此函数取得光标
 //显示。
 HCURSOR CGhTrToolDlg::OnQueryDragIcon()
@@ -325,6 +334,7 @@ void CGhTrToolDlg::OnBnClickedBtnPlant()
 void CGhTrToolDlg::OnBnClickedBtnSunNop()
 {
 	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SUN_NOP);
+	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -342,6 +352,7 @@ void CGhTrToolDlg::OnBnClickedBtnSunNop()
 void CGhTrToolDlg::OnBnClickedBtnNoCd()
 {
 	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NO_CD);
+	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -367,6 +378,7 @@ void CGhTrToolDlg::OnBnClickedBtnBGId()
 void CGhTrToolDlg::OnBnClickedBtnBuild()
 {
 	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_BUILD);
+	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -384,6 +396,7 @@ void CGhTrToolDlg::OnBnClickedBtnBuild()
 void CGhTrToolDlg::OnBnClickedBtnAuto()
 {
 	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_AUTO);
+	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -401,6 +414,7 @@ void CGhTrToolDlg::OnBnClickedBtnAuto()
 void CGhTrToolDlg::OnBnClickedBtnCard()
 {
 	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_CARD);
+	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -417,6 +431,7 @@ void CGhTrToolDlg::OnBnClickedBtnCard()
 void CGhTrToolDlg::OnBnClickedBtnPoint()
 {
 	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_POINT);
+	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -432,6 +447,7 @@ void CGhTrToolDlg::OnBnClickedBtnPoint()
 void CGhTrToolDlg::OnBnClickedBtnPoint2()
 {
 	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_POINT2);
+	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -447,6 +463,7 @@ void CGhTrToolDlg::OnBnClickedBtnPoint2()
 void CGhTrToolDlg::OnBnClickedBtnDX()
 {
 	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_DX);
+	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -463,6 +480,7 @@ void CGhTrToolDlg::OnBnClickedBtnDX()
 void CGhTrToolDlg::OnBnClickedBtnFast()
 {
 	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_Fast);
+	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -480,6 +498,7 @@ void CGhTrToolDlg::OnBnClickedBtnFast()
 void CGhTrToolDlg::OnBnClickedBtnTheWorld()
 {
 	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_TheWorld);
+	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -496,7 +515,7 @@ void CGhTrToolDlg::OnBnClickedBtnTheWorld()
 
 void CGhTrToolDlg::OnBnClickedBtnNoModelCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NoModelCD);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NoModelCD);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -513,7 +532,7 @@ void CGhTrToolDlg::OnBnClickedBtnNoModelCD()
 
 void CGhTrToolDlg::OnBnClickedBtnMowers()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_Mowers);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_Mowers);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -529,7 +548,7 @@ void CGhTrToolDlg::OnBnClickedBtnMowers()
 
 void CGhTrToolDlg::OnBnClickedBtnPeaSDamage()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PeaSDamage);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PeaSDamage);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -545,7 +564,7 @@ void CGhTrToolDlg::OnBnClickedBtnPeaSDamage()
 
 void CGhTrToolDlg::OnBnClickedBtnNoBuildTime()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NoBuildTime);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NoBuildTime);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -561,7 +580,7 @@ void CGhTrToolDlg::OnBnClickedBtnNoBuildTime()
 
 void CGhTrToolDlg::OnBnClickedBtnNoSunMax()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NOSUNMAX);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NOSUNMAX);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -577,7 +596,7 @@ void CGhTrToolDlg::OnBnClickedBtnNoSunMax()
 
 void CGhTrToolDlg::OnBnClickedBtnZombieDC()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ZombieDC);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ZombieDC);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -594,7 +613,7 @@ void CGhTrToolDlg::OnBnClickedBtnZombieDC()
 
 void CGhTrToolDlg::OnBnClickedBtnNotSubvert()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NotSubvert);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NotSubvert);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -611,7 +630,7 @@ void CGhTrToolDlg::OnBnClickedBtnNotSubvert()
 
 void CGhTrToolDlg::OnBnClickedBtnGodMode()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_GodMode);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_GodMode);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -627,7 +646,7 @@ void CGhTrToolDlg::OnBnClickedBtnGodMode()
 
 void CGhTrToolDlg::OnBnClickedBtnItemNoDie()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ItemNoDie);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ItemNoDie);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -643,7 +662,7 @@ void CGhTrToolDlg::OnBnClickedBtnItemNoDie()
 
 void CGhTrToolDlg::OnBnClickedBtnSunNoDelay()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SunNoDelay);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SunNoDelay);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -663,21 +682,27 @@ void CGhTrToolDlg::OnBnClickedBtnBuildTheArray()
 		pvz.BuildTheArray();
 }
 
-void CGhTrToolDlg::OnBnClickedBtnZombieClear()
+void CGhTrToolDlg::OnBnClickedBtnClearZombie()
 {
 	CPvz pvz = CPvz();
-	pvz.ZombieClear();
+	pvz.ClearZombie();
 }
 
-void CGhTrToolDlg::OnBnClickedBtnPlantClear()
+void CGhTrToolDlg::OnBnClickedBtnClearPlant()
 {
 	CPvz pvz = CPvz();
-	pvz.PlantClear();
+	pvz.ClearPlant();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnClearBullet()
+{
+	CPvz pvz = CPvz();
+	pvz.ClearBullet();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSuperReed()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SuperReed);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SuperReed);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -693,7 +718,7 @@ void CGhTrToolDlg::OnBnClickedBtnSuperReed()
 
 void CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PowerFlowerNoCD);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PowerFlowerNoCD);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -709,7 +734,7 @@ void CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD()
 
 void CGhTrToolDlg::OnBnClickedBtnAwayMax()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_AwayMax);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_AwayMax);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -725,7 +750,7 @@ void CGhTrToolDlg::OnBnClickedBtnAwayMax()
 
 void CGhTrToolDlg::OnBnClickedBtnApplayerNoCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ApplayerNoCD);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ApplayerNoCD);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -741,7 +766,7 @@ void CGhTrToolDlg::OnBnClickedBtnApplayerNoCD()
 
 void CGhTrToolDlg::OnBnClickedBtnApplayerNoLag()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ApplayerNoLag);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ApplayerNoLag);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -757,7 +782,7 @@ void CGhTrToolDlg::OnBnClickedBtnApplayerNoLag()
 
 void CGhTrToolDlg::OnBnClickedBtnPlantageNoCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PlantageNoCD);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PlantageNoCD);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -773,7 +798,7 @@ void CGhTrToolDlg::OnBnClickedBtnPlantageNoCD()
 
 void CGhTrToolDlg::OnBnClickedBtnPeaNoCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PeaNoCD);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PeaNoCD); 	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -789,7 +814,7 @@ void CGhTrToolDlg::OnBnClickedBtnPeaNoCD()
 
 void CGhTrToolDlg::OnBnClickedBtnSunFlowerNoCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SunFlowerNoCD);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SunFlowerNoCD);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -805,7 +830,7 @@ void CGhTrToolDlg::OnBnClickedBtnSunFlowerNoCD()
 
 void CGhTrToolDlg::OnBnClickedBtnLingSDamage()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_LingSDamage);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_LingSDamage);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -821,7 +846,7 @@ void CGhTrToolDlg::OnBnClickedBtnLingSDamage()
 
 void CGhTrToolDlg::OnBnClickedBtnIgnoreSun()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_IgnoreSun);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_IgnoreSun);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -843,7 +868,7 @@ void CGhTrToolDlg::OnBnClickedBtnSummonCup()
 
 void CGhTrToolDlg::OnBnClickedBtnLoursMC()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_LoursMC);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_LoursMC);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -859,7 +884,7 @@ void CGhTrToolDlg::OnBnClickedBtnLoursMC()
 
 void CGhTrToolDlg::OnBnClickedBtnMeowFast()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_MeowFast);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_MeowFast);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -875,7 +900,7 @@ void CGhTrToolDlg::OnBnClickedBtnMeowFast()
 
 void CGhTrToolDlg::OnBnClickedBtnCherryNo()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_CherryNo);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_CherryNo);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -892,7 +917,7 @@ void CGhTrToolDlg::OnBnClickedBtnCherryNo()
 
 void CGhTrToolDlg::OnBnClickedBtnCherryFast()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_CherryFast);
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_CherryFast);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
