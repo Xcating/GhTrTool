@@ -383,8 +383,8 @@ VOID CPvz::ModifySeedPacket(DWORD dwID,DWORD dwNum) //SP指的是SeedPacket，�
 VOID CPvz::SunNop(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
-	const char* nop = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x29\xBE\x80\x03\x00\x00";
-	WriteToMemory(dwPid, 0x95439, nop, 6);
+	const char* nop = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x29\xBE\x84\x03\x00\x00";
+	WriteToMemory(dwPid, 0x9C439, nop, 6);
 }
 
 // 种植免冷却
