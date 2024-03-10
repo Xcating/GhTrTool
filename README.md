@@ -10,9 +10,9 @@ PlantsVsZombies ~ GhTr *PersonGames Tools*
 
 [+]what *functions* r needed, pls click [here](https://github.com/Xcating/GhTrTool-issues/issues) propose and **TRY** todo it as well as ***possible***
 ### [#]修改 modified
-[+]修改了偏移，适配与GhTr.0.16k版本
+[+]修改了偏移，适配与GhTr.0.16l版本
 
-[+]Modified offset to adapt to GhTr.0.16k version
+[+]Modified offset to adapt to GhTr.0.16l version
 
 
 ---

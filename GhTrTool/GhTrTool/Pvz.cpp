@@ -265,7 +265,7 @@ bool WriteCMPXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	DWORD dwOldProtect = 0;
 	VirtualProtectEx(hProcess, (LPVOID)targetAddress, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect);
 	DWORD jumpOffset = Address;
-	BYTE jumpCode[] = { 0x83, 0x3D ,jumpOffset & 0xFF, (jumpOffset >> 8) & 0xFF, (jumpOffset >> 16) & 0xFF, (jumpOffset >> 24) & 0xFF ,0x10 };
+	BYTE jumpCode[] = { 0x83, 0x3D ,jumpOffset & 0xFF, (jumpOffset >> 8) & 0xFF, (jumpOffset >> 16) & 0xFF, (jumpOffset >> 24) & 0xFF ,0xF };
 	bool result = WriteProcessMemory(hProcess, (LPVOID)targetAddress, jumpCode, sizeof(jumpCode), NULL);
 	CloseHandle(hProcess);
 	return result;
@@ -309,7 +309,7 @@ bool WriteCall(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
 BOOL check_battlefield(DWORD dwPid) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
-	DWORD eBaseAddress = ReadTOMemory(dwPid, baseAddress + 0x29CE88);
+	DWORD eBaseAddress = ReadTOMemory(dwPid, baseAddress + 0x297C54);
 	DWORD checkPoint = ReadTOMemory(dwPid, eBaseAddress + 0x708);
 	if (checkPoint == 0)
 		return false;
@@ -334,11 +334,11 @@ VOID CPvz::ModifySunValue(DWORD dwSun) //Sun指的是阳光
 
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
-	DWORD targetAddress = baseAddress + 0x29CE88;
+	DWORD targetAddress = baseAddress + 0x297C54;
 	DWORD dwNum = 0;
 	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); //读取targetAddress对应的值(基址->内存基址)
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); //读取战场基址对应的值(内存基址 +708->战场基址)
-	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x380), &dwSun, sizeof(DWORD), NULL); //将dwNum写入控制阳光的地址
+	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x384), &dwSun, sizeof(DWORD), NULL); //将dwNum写入控制阳光的地址
 	check_result(result);
 	CloseHandle(hProcess);
 }
@@ -351,12 +351,12 @@ VOID CPvz::SeedPacket(DWORD dwSP) //SP指的是SeedPacket，种子包
 	if (!check_dwPid(dwPid)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
-	DWORD targetAddress = baseAddress + 0x29CE88;
+	DWORD targetAddress = baseAddress + 0x297C54;
 	DWORD dwNum = 0;
 	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL);
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); //一层偏移
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x14C), &dwNum, sizeof(DWORD), NULL); //二层偏移
-	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x1C), &dwSP, sizeof(DWORD), NULL); //三层偏移
+	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x24), &dwSP, sizeof(DWORD), NULL); //三层偏移
 	check_result(result);
 	CloseHandle(hProcess);
 }
@@ -369,12 +369,13 @@ VOID CPvz::ModifySeedPacket(DWORD dwID,DWORD dwNum) //SP指的是SeedPacket，�
 	if (!check_dwPid(dwPid)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
-	DWORD targetAddress = baseAddress + 0x29CE88;
+	DWORD targetAddress = baseAddress + 0x297C54;
 	DWORD dwNum1 = 0;
 	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum1, sizeof(DWORD), NULL);
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum1 + 0x708), &dwNum1, sizeof(DWORD), NULL); //一层偏移
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum1 + 0x14C), &dwNum1, sizeof(DWORD), NULL); //二层偏移
-	WriteProcessMemory(hProcess, (LPVOID)(dwNum1 + 0x44 + 0x34*dwNum), &dwID, sizeof(DWORD), NULL); //三层偏移
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum1 + 0x2C), &dwNum1, sizeof(DWORD), NULL); //三层偏移
+	WriteProcessMemory(hProcess, (LPVOID)(dwNum1 + 0x1C + 0x38*dwNum), &dwID, sizeof(DWORD), NULL); //四层偏移
 	CloseHandle(hProcess);
 }
 
@@ -383,17 +384,17 @@ VOID CPvz::SunNop(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* nop = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x29\xBE\x80\x03\x00\x00";
-	WriteToMemory(dwPid, 0x95E39, nop, 6);
+	WriteToMemory(dwPid, 0x95439, nop, 6);
 }
 
 // 种植免冷却
 VOID CPvz::NoCd(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
-	const char* patch1 = (dwSwitch == 1) ? "\xc7\x41\x20\x00\x00\x00\x00\x90\x90\x90" : "\x89\x41\x20\xC7\x41\x1C\x00\x00\x00\x00";
-	WriteToMemory(dwPid, 0xE54A1, patch1, 10);
-	const char* patch2 = (dwSwitch == 1) ? "\x90\x90" : "\x39\x10";
-	WriteToMemory(dwPid, 0xE55AD, patch2, 2);
+	const char* patch1 = (dwSwitch == 1) ? "\xC7\x42\x24\x00\x00\x00\x00\x90\x90\x90" : "\x89\x42\x24\xC7\x42\x20\x00\x00\x00\x00";
+	WriteToMemory(dwPid, 0xEA679, patch1, 10);
+	const char* patch2 = (dwSwitch == 1) ? "\x90\x90" : "\x39\x08";
+	WriteToMemory(dwPid, 0xEA91D, patch2, 2); //bug
 }
 
 
@@ -404,7 +405,7 @@ VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
 	if (!check_dwPid(dwPid)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
-	DWORD targetAddress = baseAddress + 0x29CE88;
+	DWORD targetAddress = baseAddress + 0x297C54;
 	DWORD dwNum = 0;
 	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL);
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL);
@@ -418,8 +419,8 @@ VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
 VOID CPvz::Build(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
-	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90\x90" : "\xFF\x24\x85\x78\x4E\xFC\x00";
-	WriteToMemory(dwPid, 0x94C74, patch, 7);
+	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90\x90" : "\xFF\x24\x85\xDC\x9C\x3A\x00";
+	WriteToMemory(dwPid, 0x99AD1, patch, 7);
 }
 
 
@@ -428,8 +429,8 @@ VOID CPvz::Auto(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
-	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90":"\x80\x7E\x1F\x00";
-	WriteToMemory(dwPid, 0xABD9A, patch, 4);
+	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90":"\x0F\x84\xC4\x01\x00\x00";
+	WriteToMemory(dwPid, 0xB31EE, patch, 6);
 }
 
 // 全部帧伤
@@ -437,15 +438,15 @@ VOID CPvz::Card(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90" : "\xC6\x46\x24\x01"; 
-	WriteToMemory(dwPid, 0xA552E, patch, 4);
+	WriteToMemory(dwPid, 0xAC55E, patch, 4);
 }
 
 // 加速僵尸出动
 VOID CPvz::Fast(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
-	const char* patch = (dwSwitch == 1) ? "\xC7\x87\xFC\x03\x00\x00\x00\x00\x00\x00\x90":"\x89\x8F\xFC\x03\x00\x00\x03\xC2\xC1\xF8\x02";
-	WriteToMemory(dwPid, 0x996DB, patch, 11);
+	const char* patch = (dwSwitch == 1) ? "\x89\x97\x00\x04\x00\x00":"\x89\x8F\x00\x04\x00\x00";
+	WriteToMemory(dwPid, 0x9FD01, patch, 6);
 }
 
 // 更好的高级暂停
@@ -453,7 +454,7 @@ VOID CPvz::TheWorld(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90" : "\x83\xF8\x32";
-	WriteToMemory(dwPid, 0x96262, patch, 3);
+	WriteToMemory(dwPid, 0x9C862, patch, 3);
 }
 
 //无主动技能冷却
@@ -461,39 +462,39 @@ VOID CPvz::NoModelCD(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	protectAddress(dwPid, 0x43A);
-	const char* patch = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x66\x90" : "\x66\x89\x86\xC0\x03\x00\x00";
-	WriteToMemory(dwPid, 0x93BF5, patch, 7);
-	const char* patch2 = "\xC6\x86\xC0\x03\x00\x00\x00\xE9\xF0\x3B\xDD\xFE";
-	WriteToMemory(dwPid, 0x43A, patch2, 12);
-	if (dwSwitch == 1)WriteJump(dwPid, 0x93BF5, 0x43A);
-	WriteJump(dwPid, 0x43A + 0x7 , 0x93BFC);
+	const char* patch = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x66\x90" : "\x0F\xBF\x87\xC4\x03\x00\x00";
+	WriteToMemory(dwPid, 0x916E2, patch, 7);
+	const char* patch2 = "\x66\xC7\x87\xC4\x03\x00\x00\x00\x00\x0F\xBF\x87\xC4\x03\x00\x00\xE9\xD4\x16\x29\xFF";
+	WriteToMemory(dwPid, 0x43A, patch2, 21);
+	if (dwSwitch == 1)WriteJump(dwPid, 0x916E2, 0x43A);
+	WriteJump(dwPid, 0x44A , 0x916E7);
 }
 
 VOID CPvz::NoSunMax(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
-	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x89\x81\x80\x03\x00\x00";
-	WriteToMemory(dwPid, 0x8E8ED, patch, 6);
+	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x89\x81\x84\x03\x00\x00";
+	WriteToMemory(dwPid, 0x8F64D, patch, 6);
 }
 
 VOID CPvz::NoBuildTime(bool dwSwitch){
 	DWORD dwPid = GetGamePid(); 
 	const char* patch = (dwSwitch == 1) ? "\xC7\x86\x94\x00\x00\x00\x00\x00\x00\x00\x90\x90\x90\x90" : "\x89\x86\x94\x00\x00\x00\x85\xC0\x0F\x85\xDC\x01\x00\x00";
-	WriteToMemory(dwPid, 0xA2913, patch, 14);
+	WriteToMemory(dwPid, 0xA98E3, patch, 14);
 }
 
 VOID CPvz::IgnoreSun(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
-	const char* patch = (dwSwitch == 1) ? "\xB8\x3F\x3F\x3F\x3F\x90" : "\x8B\x83\x80\x03\x00\x00";
-	WriteToMemory(dwPid, 0x8ED0A, patch, 6);
+	const char* patch = (dwSwitch == 1) ? "\xB8\x3F\x3F\x3F\x3F\x90" : "\x8B\x83\x84\x03\x00\x00";
+	WriteToMemory(dwPid, 0x8FADA, patch, 6);
 }
 
 VOID CPvz::Mowers(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90\x90\x90":"\xF3\x0F\x11\x87\x84\x00\x00\x00";
-	WriteToMemory(dwPid, 0xBE362, patch, 8);
+	WriteToMemory(dwPid, 0xC28B2, patch, 8);
 }
 //召唤奖杯
 void CPvz::SummonCup() {
@@ -508,10 +509,10 @@ void CPvz::SummonCup() {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	const char* shellcode = "\x60\x9C\xBA\x80\x00\x00\x00\x8B\x0D\x28\xAE\x29\x00\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x02\x6A\x18\x6A\x7B\xE8\xB3\x94\x00\x00\x9D\x61\xC3";
-	DWORD eBaseAddress = ReadTOMemory(dwPid,baseAddress+0x29CE88);
+	DWORD eBaseAddress = ReadTOMemory(dwPid,baseAddress+0x297C54);
 	WriteToMemory(dwPid, 0x45E, shellcode, 37);
 	WriteMovECX(dwPid, eBaseAddress +0x708, 0x45E + 0x7);
-	WriteCall(dwPid,0x45E + 0x1D, 0x953B0);
+	WriteCall(dwPid,0x45E + 0x1D, 0x9A210);
 	RunTheMemory(dwPid, 0x45E);
 }
 //种植
@@ -529,11 +530,11 @@ VOID CPvz::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	const char* shellcode = "\x60\x6A\x01\x6A\x07\x8B\x0D\x28\xAE\x29\x00\x6A\x01\x6A\x01\xE8\xB3\x94\x00\x00\x61\xC3";
-	DWORD eBaseAddress = ReadTOMemory(dwPid, baseAddress + 0x29CE88);
+	DWORD eBaseAddress = ReadTOMemory(dwPid, baseAddress + 0x297C54);
 	DWORD value = ReadTOMemory(dwPid, eBaseAddress + 0x320);
 	WriteToMemory(dwPid, 0x348, shellcode, 22);
 	WriteMovECX(dwPid, value + 0x7C, 0x348 + 0x5);
-	WriteCall(dwPid, 0x348 + 0xF, 0x956F0);
+	WriteCall(dwPid, 0x348 + 0xF, 0x9B280);
 	WritePush(dwPid, dwXP, 0x348 + 0xD);
 	WritePush(dwPid, dwYP, 0x348 + 0xB);
 	WritePush(dwPid, dwID, 0x348 + 0x3);
@@ -546,15 +547,15 @@ VOID CPvz::PeaSDamage(bool dwSwitch)
 	if (!check_dwPid(dwPid)) return;
 	protectAddress(dwPid, 0x52F);
 	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\xC6\x46\x24\x01\x75\x16";
-	WriteToMemory(dwPid, 0xA552E, patch1, 6);
+	WriteToMemory(dwPid, 0xAC55E, patch1, 6);
 	const char* patch2 = "\x80\x7E\x08\x01\x0F\x84\x2A\x55\x9C\xFE\x80\x7E\x08\x02\x0F\x84\x20\x55\x9C\xFE\x80\x7E\x08\x03\x0F\x84\x16\x55\x9C\xFE\xC6\x46\x24\x01\x0F\x85\x22\x55\x9C\xFE\xE9\x07\x55\x9C\xFE";
 	WriteToMemory(dwPid, 0x52F, patch2, 45);
-	if(dwSwitch == 1) WriteJump(dwPid, 0xA552E, 0x52F);
-	WriteConditionJump(dwPid,0x52F + 0x4,0xA5533,true);
-	WriteConditionJump(dwPid, 0x52F + 0xE, 0xA5533, true);
-	WriteConditionJump(dwPid, 0x52F + 0x18, 0xA5533, true);
-	WriteConditionJump(dwPid, 0x52F + 0x22, 0xA654A, false);
-	WriteJump(dwPid, 0x52F + 0x28, 0xA5533);
+	if(dwSwitch == 1) WriteJump(dwPid, 0xAC55E, 0x52F);
+	WriteConditionJump(dwPid,0x52F + 0x4,0xAC563,true);
+	WriteConditionJump(dwPid, 0x52F + 0xE, 0xAC563, true);
+	WriteConditionJump(dwPid, 0x52F + 0x18, 0xAC563, true);
+	WriteConditionJump(dwPid, 0x52F + 0x22, 0xA554A, false);
+	WriteJump(dwPid, 0x52F + 0x28, 0xAC564);
 }
 // 僵尸掉卡
 VOID CPvz::ZombieDC(bool dwSwitch)
@@ -566,49 +567,53 @@ VOID CPvz::ZombieDC(bool dwSwitch)
 	protectAddress(dwPid, 0xF32);
 	protectAddress(dwPid, 0x400);
 	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x66\x90" : "\xC6\x83\x9C\x00\x00\x00\x01"; //濒死判断
-	WriteToMemory(dwPid, 0x100AC4, patch1, 7);
+	WriteToMemory(dwPid, 0x105EE4, patch1, 7);
 	const char* patch2 = "\xC6\x83\x9C\x00\x00\x00\x01\x60\xBA\x80\x00\x00\x00\x8B\x0D\x10\x06\xE1\x00\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x04\xFF\x73\x18\xFF\x73\x14\xE8\x86\x53\x85\xFF\x61\xE9\x9B\x0A\x8C\xFF";
 	WriteToMemory(dwPid, 0xF32, patch2, 48);
-	const char* patch3 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\xFF\x77\x7C\x83\xEC\x08"; //修改随机数
-	WriteToMemory(dwPid, 0xAB677, patch3, 6);
+	const char* patch3 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\xFF\x77\x7C\x83\xEC\x08";  //掉落物品随机 
+	WriteToMemory(dwPid, 0xB2AC7, patch3, 6);
 	const char* patch4 = "\xFF\x77\x7C\x83\xEC\x08\x81\x7F\x7C\xFF\xFF\xFF\xFF\x0F\x85\x6A\xB6\xC2\xFF\xA1\x00\x00\x00\x00\x89\x47\x7C\xE9\x5D\xB6\xC2\xFF";
 	WriteToMemory(dwPid, 0xF62, patch4, 32);
-	const char* patch5 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\xFF\x87\x70\x03\x00\x00"; //掉落物品随机
-	WriteToMemory(dwPid, 0x95F83, patch5, 6);
-	const char* patch6 = "\xFF\x87\x70\x03\x00\x00\xFF\x05\xC8\xDA\xB9\x00\x83\x3D\xC8\xDA\xB9\x00\x10\x74\x09\x0F\x1F\x40\x00\xE9\x6B\x5F\x89\xFC\xC7\x05\xC8\xDA\xB9\x00\x00\x00\x00\x00\xE9\x5C\x5F\x89\xFC";
+	const char* patch5 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\xFF\x87\x74\x03\x00\x00"; //修改随机数
+	WriteToMemory(dwPid, 0x9C583, patch5, 6);
+	const char* patch6 = "\xFF\x87\x74\x03\x00\x00\xFF\x05\xC8\xDA\xB9\x00\x83\x3D\xC8\xDA\xB9\x00\x10\x74\x09\x0F\x1F\x40\x00\xE9\x6B\x5F\x89\xFC\xC7\x05\xC8\xDA\xB9\x00\x00\x00\x00\x00\xE9\x5C\x5F\x89\xFC";
 	WriteToMemory(dwPid, 0xF82, patch6, 45);
 	const char* patch7 = (dwSwitch == 1) ? "\xE9\x8F\x74\xFE\x00\x66\x90" : "\xC7\x47\x64\x00\x00\x00\x00"; //灰烬判断
-	WriteToMemory(dwPid, 0xA8B6C, patch7, 7);
+	WriteToMemory(dwPid, 0xAFCCC, patch7, 7);
 	const char* patch8 = "\xC7\x47\x64\x00\x00\x00\x00\x60\x8B\xD7\x8B\x0D\x10\x06\x4B\x01\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x04\xFF\x72\x18\xFF\x72\x14\xBA\x80\x00\x00\x00\xE8\x84\x53\x00\xFF\x61\xE9\x41\x8B\x01\xFF";
 	WriteToMemory(dwPid, 0xFAF, patch8, 50);
 	const char* patch9 = (dwSwitch == 1) ? "\xE9\x8F\x74\xFE\x00\x66\x90" : "\xC7\x47\x40\x01\x00\x00\x00"; //小推车判断
-	WriteToMemory(dwPid, 0x100F6F, patch9, 7);
+	WriteToMemory(dwPid, 0x10672F, patch9, 7);
 	const char* patch10 = "\xC7\x47\x40\x01\x00\x00\x00\x80\xBF\x9C\x00\x00\x00\x01\x0F\x84\x62\x0F\xD4\xDF\x60\x8B\xD7\x8B\x0D\x10\x06\x33\x01\xBE\x32\x00\x00\x00\x68\x88\x87\x00\x00\x6A\x04\xFF\x72\x18\xFF\x72\x14\xBA\x80\x00\x00\x00\xE8\x77\x53\xCD\xDF\x61\xE9\x37\x0F\xD4\xDF";
 	WriteToMemory(dwPid, 0x4D9, patch10, 63);
-	WriteJump(dwPid, 0xF5D, 0x100AC9);
-	if (dwSwitch == 1)WriteJump(dwPid, 0x100AC4, 0xF32);
-	WriteCall(dwPid, 0xF57, 0x953B0);
-	DWORD eBaseAddress = ReadTOMemory(dwPid, baseAddress + 0x29CE88);
+	if (dwSwitch == 1)WriteJump(dwPid, 0x105EE4, 0xF32);
+	WriteJump(dwPid, 0xF5D, 0x105EE9);
+	WriteCall(dwPid, 0xF57, 0x9A210);
+	DWORD eBaseAddress = ReadTOMemory(dwPid, baseAddress + 0x297C54);
 	WriteMovECX(dwPid, eBaseAddress + 0x708, 0xF3F);
-	if (dwSwitch == 1)WriteJump(dwPid, 0xAB677,0xF62);
-	WriteConditionJump(dwPid, 0xF6F, 0xAB67C, false);
-	WriteJump(dwPid, 0xF7D, 0xAB67C);
-	WriteMovEAX(dwPid, baseAddress + 0x29DAC8 , 0xF75);
-	if (dwSwitch == 1)WriteJump(dwPid, 0x95F83, 0xF82);
-	WriteINC(dwPid, baseAddress + 0x29DAC8, 0xF88);
-	WriteCMPXZero(dwPid, baseAddress + 0x29DAC8, 0xF8E);
-	WriteJump(dwPid, 0xF9B, 0x95F89);
-	WriteJump(dwPid, 0xFAA, 0x95F89);
-	if (dwSwitch == 1)WriteJump(dwPid, 0xA8B6C, 0xFAF);
-	WriteMOVXZero(dwPid, baseAddress + 0x29DAC8, 0xFA0);
+
+	if (dwSwitch == 1)WriteJump(dwPid, 0xB2AC7,0xF62);
+	WriteConditionJump(dwPid, 0xF6F, 0xB2ACB, false);
+	WriteJump(dwPid, 0xF7D, 0xB2ACC);
+	WriteMovEAX(dwPid, baseAddress + 0x28B0B8, 0xF75);
+
+	if (dwSwitch == 1)WriteJump(dwPid, 0x9C583, 0xF82);
+	WriteINC(dwPid, baseAddress + 0x28B0B8, 0xF88);
+	WriteCMPXZero(dwPid, baseAddress + 0x28B0B8, 0xF8E);
+	WriteJump(dwPid, 0xF9B, 0x9C588);
+	WriteJump(dwPid, 0xFAA, 0x9C588);
+
+	if (dwSwitch == 1)WriteJump(dwPid, 0xAFCCC, 0xFAF);
+	WriteMOVXZero(dwPid, baseAddress + 0x28B0B8, 0xFA0);
 	WriteMovECX(dwPid, eBaseAddress + 0x708, 0xFB9);
-	WriteCall(dwPid, 0xFD6, 0x953B0);
-	WriteJump(dwPid, 0xFDC, 0xA8B73);
-	if (dwSwitch == 1)WriteJump(dwPid, 0x100F6F, 0x4D9);
+	WriteCall(dwPid, 0xFD6, 0x9A210);
+	WriteJump(dwPid, 0xFDC, 0xAFCD1);
+
+	if (dwSwitch == 1)WriteJump(dwPid, 0x10672F, 0x4D9);
 	WriteMovECX(dwPid, eBaseAddress + 0x708, 0x4F0);
-	WriteCall(dwPid, 0x50D, 0x953B0);
-	WriteJump(dwPid, 0x513, 0x100F74);
-	WriteConditionJump(dwPid, 0x4E7, 0x100F73, true);
+	WriteCall(dwPid, 0x50D, 0x9A210);
+	WriteJump(dwPid, 0x513, 0x106734);
+	WriteConditionJump(dwPid, 0x4E7, 0x106733, true);
 	CloseHandle(hProcess);
 }
 
@@ -619,7 +624,7 @@ VOID CPvz::NotSubvert(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90" : "\x89\x46\x10";
-	WriteToMemory(dwPid, 0xC5911, patch, 3);
+	WriteToMemory(dwPid, 0xC9E81 , patch, 3);
 }
 
 // 樱桃瞬爆
@@ -628,25 +633,18 @@ VOID CPvz::CherryFast(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	protectAddress(dwPid, 0x5BD);
 	if (!check_dwPid(dwPid)) return;
-	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\x89\x86\x9C\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC943F, patch1,6);
-	const char* patch2 = "\x83\xBE\x84\x00\x00\x00\x02\x75\x0D\x0F\x1F\x40\x00\xB8\x00\x00\x00\x00\x90\x90\x90\x90\x89\x86\x9C\x00\x00\x00\xE9\x27\x94\x31\xFF";
-	WriteToMemory(dwPid, 0x5BD, patch2, 33);
-	if (dwSwitch == 1)WriteJump(dwPid,0xC943F, 0x5BD);
-	WriteJump(dwPid, 0x5D9 ,0xC9445);
+	const char* patch1 = (dwSwitch == 1) ? "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x83\x9C\x00\x00\x00\x64\x00\x00\x00";
+	WriteToMemory(dwPid, 0xCAEEE, patch1,10);
+	const char* patch2 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x64\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC747B, patch2, 10);
 }
 // 樱桃不爆
 VOID CPvz::CherryNo(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
-	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\x89\x86\x9C\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC943F, patch1, 6);
-	const char* patch2 = "\x83\xBE\x84\x00\x00\x00\x02\x75\x0A\x0F\x1F\x40\x00\x90\xE9\x32\x94\x31\xFF\x89\x86\x9C\x00\x00\x00\xE9\x27\x94\x31\xFF";
-	WriteToMemory(dwPid, 0x606, patch2, 30);
-	if (dwSwitch == 1)WriteJump(dwPid, 0xC943F, 0x606);
-	WriteJump(dwPid, 0x614, 0xC9445);
-	WriteJump(dwPid, 0x61F, 0xC9445);
+	const char* patch1 = (dwSwitch == 1) ? "\xE9\xE7\x01\x00\x00\x90" : "\x0F\x8F\xE6\x01\x00\x00";
+	WriteToMemory(dwPid, 0xC72B6, patch1, 6);
 }
 //猫丝子瞬吸
 VOID CPvz::MeowFast(bool dwSwitch)
@@ -654,7 +652,7 @@ VOID CPvz::MeowFast(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x83\x9C\x00\x00\x00\x2C\x01\x00\x00";
-	WriteToMemory(dwPid, 0xC69AE, patch1, 10);
+	WriteToMemory(dwPid, 0xCAF89, patch1, 10);
 }
 //荷鲁斯刀刀暴击
 VOID CPvz::LoursMC(bool dwSwitch)
@@ -662,14 +660,8 @@ VOID CPvz::LoursMC(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	protectAddress(dwPid, 0x6BF);
-	const char* patch1 = (dwSwitch == 1) ? "\xEB\x04" :"\x7D\x04";
-	WriteToMemory(dwPid, 0xC3BD8, patch1, 2);
-	const char* patch2 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90":"\x8B\x8F\xBC\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC3BCD, patch2, 6);
-	const char* patch3 = "\xC7\x87\xBC\x00\x00\x00\x00\x10\x00\x00\x8B\x8F\xBC\x00\x00\x00\xE9\xBE\x3B\x17\xFF";
-	WriteToMemory(dwPid, 0x6BF, patch3, 21);
-	if(dwSwitch == 1)WriteJump(dwPid, 0xC3BCD , 0x6BF);
-	WriteJump(dwPid, 0x6CF, 0xC3BD3);
+	const char* patch1 = (dwSwitch == 1) ? "\x89\xA7\xBC\x00\x00\x00" :"\x89\x8F\xBC\x00\x00\x00";
+	WriteToMemory(dwPid, 0xC813F, patch1, 6);
 }
 // 植物无敌
 VOID CPvz::GodMode(bool dwSwitch)
@@ -677,7 +669,7 @@ VOID CPvz::GodMode(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90" :"\x2B\xC7";
-	WriteToMemory(dwPid, 0xC5997, patch, 2);
+	WriteToMemory(dwPid, 0xC9F07, patch, 2);
 }
 // 取消荣光骄傲状态
 VOID CPvz::Point(bool dwSwitch)
@@ -685,7 +677,7 @@ VOID CPvz::Point(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\xC7\x85\xF8\x02\x00\x00\x00\x00\x00\x00\x90\x90":"\x88\x95\xF8\x02\x00\x00\x8B\x80\x14\x08\x00\x00"; //硬塞进去的，依靠bug运行（
-	WriteToMemory(dwPid, 0xD1358, patch, 12);
+	WriteToMemory(dwPid, 0xD5EA8, patch, 12);
 }
 //导藓批量种植
 VOID CPvz::DX(bool dwSwitch)
@@ -707,12 +699,12 @@ VOID CPvz::Point2(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	protectAddress(dwPid, 0xF00);
-	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x66\x0F\x1F\x44\x00\x00" :"\x8B\x81\x14\x08\x00\x00\x0F\xB7\x40\x20\x66"; //含bug运行
-	WriteToMemory(dwPid, 0x91FB2, patch1, 11);
-	const char* patch2 = "\x66\xC7\x40\x20\x06\x00\x66\xC7\x40\x24\x06\x00\x66\xC7\x40\x28\x06\x00\x66\xC7\x40\x2C\x03\x00\x66\xC7\x40\x30\x02\x00\x0F\xB7\x40\x20\x66\x89\x87\xA8\x03\x00\x00\xE9\x00\x00\x00\x00";
+	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90\x90\x90\x90\x90\x90" :"\x8B\x81\x14\x08\x00\x00\x0F\xB7\x40\x20\x66"; //含bug运行
+	WriteToMemory(dwPid, 0x93B42, patch1, 10);
+	const char* patch2 = "\x66\xC7\x47\x20\x06\x00\x66\xC7\x47\x24\x06\x00\x66\xC7\x47\x28\x06\x00\x66\xC7\x47\x2C\x03\x00\x66\xC7\x47\x30\x02\x00\x8B\x81\x14\x08\x00\x00\x0F\xB7\x40\x20\x66\x89\x87\xA8\x03\x00\x00\xE9\x00\x00\x00\x00";
 	WriteToMemory(dwPid, 0xF00, patch2, 46);
-	WriteJump(dwPid, 0xF00+0x29, 0x91FB7);
-	if(dwSwitch == 1)WriteJump(dwPid, 0x91FB2, 0xF00);
+	WriteJump(dwPid, 0xF00+0x29+0x6, 0x93B4C);
+	if(dwSwitch == 1)WriteJump(dwPid, 0x93B42, 0xF00);
 }
 //光菱角帧伤害
 VOID CPvz::LingSDamage(bool dwSwitch)
@@ -721,11 +713,11 @@ VOID CPvz::LingSDamage(bool dwSwitch)
 	if (!check_dwPid(dwPid)) return;
 	protectAddress(dwPid, 0x7F1);
 	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x0F\x1F\x00" : "\x8B\x47\x38\xB9\x96\x00\x00\x00";
-	WriteToMemory(dwPid, 0xA4B9D, patch1, 8);
+	WriteToMemory(dwPid, 0xABBDD, patch1, 8);
 	const char* patch2 = "\xB8\x02\x00\x00\x00\xB9\x96\x00\x00\x00\xE9\x96\x4B\x84\xFE";
 	WriteToMemory(dwPid, 0x7F1, patch2, 15);
-	WriteJump(dwPid, 0x7F1+0xA, 0xA4BA5);
-	if (dwSwitch == 1)WriteJump(dwPid, 0xA4B9D, 0x7F1);
+	WriteJump(dwPid, 0x7F1+0xA, 0xABBE5);
+	if (dwSwitch == 1)WriteJump(dwPid, 0xABBDD, 0x7F1);
 }
 //苹果鼓瑟手无冷却
 VOID CPvz::ApplayerNoCD(bool dwSwitch)
@@ -733,9 +725,9 @@ VOID CPvz::ApplayerNoCD(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x83\x9C\x00\x00\x00\xB0\x04\x00\x00";
-	WriteToMemory(dwPid, 0xC6AE0, patch1, 10);
+	WriteToMemory(dwPid, 0xCB124, patch1, 10);
 	const char* patch2 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x60\x09\x00\x00";
-	WriteToMemory(dwPid, 0xC42D1, patch2, 10);
+	WriteToMemory(dwPid, 0xC8831, patch2, 10);
 }
 //苹果鼓瑟手无延迟
 VOID CPvz::ApplayerNoLag(bool dwSwitch)
@@ -743,7 +735,7 @@ VOID CPvz::ApplayerNoLag(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x2C\x01\x00\x00";
-	WriteToMemory(dwPid, 0xC4323, patch1, 10);
+	WriteToMemory(dwPid, 0xC8883, patch1, 10);
 }
 //车前草吸收无冷却
 VOID CPvz::PlantageNoCD(bool dwSwitch)
@@ -751,9 +743,9 @@ VOID CPvz::PlantageNoCD(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x86\x9C\x00\x00\x00\x05\x00\x00\x00" : "\xC7\x86\x9C\x00\x00\x00\xD0\x07\x00\x00";
-	WriteToMemory(dwPid, 0xC3728, patch1, 10);
+	WriteToMemory(dwPid, 0xC7C78, patch1, 10);
 	const char* patch2 = (dwSwitch == 1) ? "\xC7\x86\x9C\x00\x00\x00\x92\x00\x00\x00" : "\xC7\x86\x9C\x00\x00\x00\xFA\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC5019, patch2, 10);
+	WriteToMemory(dwPid, 0xC9579, patch2, 10);
 }
 //向日葵无cd生产
 VOID CPvz::SunFlowerNoCD(bool dwSwitch)
@@ -761,11 +753,11 @@ VOID CPvz::SunFlowerNoCD(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\xB8\x0B\x00\x00";
-	WriteToMemory(dwPid, 0xC2CC5, patch1, 10);
+	WriteToMemory(dwPid, 0xC7215, patch1, 10);
 	const char* patch2 = (dwSwitch == 1) ? "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x83\x9C\x00\x00\x00\xEE\x02\x00\x00";
-	WriteToMemory(dwPid, 0xC68F3, patch2, 10);
+	WriteToMemory(dwPid, 0xCAECE, patch2, 10);
 	const char* patch3 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x24\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x55\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC2BA1, patch3, 10);
+	WriteToMemory(dwPid, 0xC70F1, patch3, 10);
 }
 //豌豆无冷却
 VOID CPvz::PeaNoCD(bool dwSwitch)
@@ -773,7 +765,7 @@ VOID CPvz::PeaNoCD(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x0F\x85\x6C\x03\x00\x00";
-	WriteToMemory(dwPid, 0xC27E7, patch1, 6);
+	WriteToMemory(dwPid, 0xC6D37, patch1, 6);
 }
 //超级闪电芦苇
 VOID CPvz::SuperReed(bool dwSwitch)
@@ -781,30 +773,30 @@ VOID CPvz::SuperReed(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xB9\x66\x66\x66\x66" : "\xB9\x2C\x01\x00\x00";
-	WriteToMemory(dwPid, 0xC765B, patch1, 5);
+	WriteToMemory(dwPid, 0xCBCBB, patch1, 5);
 	const char* patch2 = (dwSwitch == 1) ? "\x8B\x56\x08" : "\x8B\x52\x08";
-	WriteToMemory(dwPid, 0xC762B, patch2, 3);
+	WriteToMemory(dwPid, 0xCBC8B, patch2, 3);
 }
-//超级闪电芦苇
+//滇池花
 VOID CPvz::PowerFlowerNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x86\x9C\x00\x00\x00\x00\x00\x00\x00" :"\xC7\x86\x9C\x00\x00\x00\x96\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC91A2, patch1, 10);
+	WriteToMemory(dwPid, 0xCDA09, patch1, 10);
 }
-//光菱角帧伤害
+//永远最大
 VOID CPvz::AwayMax(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	protectAddress(dwPid, 0x749);
 	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\x89\xB9\xBC\x00\x00\x00";
-	WriteToMemory(dwPid, 0xC901B, patch1, 6);
+	WriteToMemory(dwPid, 0xCD80B, patch1, 6);
 	const char* patch2 = "\xC7\x81\xBC\x00\x00\x00\x05\x00\x00\x00\xE9\x12\x90\x39\xFF";
 	WriteToMemory(dwPid, 0x749, patch2, 15);
-	WriteJump(dwPid, 0x749 + 0xA, 0xC9021);
-	if (dwSwitch == 1)WriteJump(dwPid, 0xC901B, 0x749);
+	WriteJump(dwPid, 0x749 + 0xA, 0xCD811);
+	if (dwSwitch == 1)WriteJump(dwPid, 0xCD80B, 0x749);
 }
 //物品不消失
 VOID CPvz::ItemNoDie(bool dwSwitch)
@@ -812,28 +804,30 @@ VOID CPvz::ItemNoDie(bool dwSwitch)
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\x90\x90\x90" : "\x83\xC0\xFF";
-	WriteToMemory(dwPid, 0xABC71, patch1, 3);
+	WriteToMemory(dwPid, 0xB30C1, patch1, 3);
 }
 //天上狂掉阳光
 VOID CPvz::SunNoDelay(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
-	const char* patch1 = (dwSwitch == 1) ? "\xB8\x01\x00\x00\x00\x90" : "\x8B\x87\xD0\x03\x00\x00";
-	WriteToMemory(dwPid, 0x9950D, patch1, 6);
+	const char* patch1 = (dwSwitch == 1) ? "\xB8\x01\x00\x00\x00\x90" : "\x8B\x87\xD4\x03\x00\x00";
+	WriteToMemory(dwPid, 0x9FB39, patch1, 6);
 }
 //一键布阵
 VOID CPvz::BuildTheArray()
 {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
-	const char* patch1 = "\xC6\x47\x2F\x00";
-	WriteToMemory(dwPid, 0x95774, patch1, 4);
+	const char* patch1 = "\xC6\x40\x2F\x00";
+	WriteToMemory(dwPid, 0x982C3, patch1, 4);
 	Sleep(10);
-	patch1 = "\x80\x7F\x2F\x00";
-	WriteToMemory(dwPid, 0x95774, patch1, 4);
+	patch1 = "\x80\x78\x2F\x00";
+	WriteToMemory(dwPid, 0x982C3, patch1, 4);
 	for (int X = 1; X <= 9; ++X) {
+		Sleep(80);
 		for (int Y = 1; Y <= 5; ++Y) {
+			Sleep(80);
 			int ID;
 			do {
 				ID = rand() % 15; // 生成1~15范围内的随机ID
@@ -866,10 +860,10 @@ VOID CPvz::ClearPlant()
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch1 = "\xC6\x47\x2F\x00";
-	WriteToMemory(dwPid, 0x95774, patch1, 4);
+	WriteToMemory(dwPid, 0x9B304, patch1, 4);
 	Sleep(10);
 	patch1 = "\x80\x7F\x2F\x00";
-	WriteToMemory(dwPid, 0x95774, patch1, 4);
+	WriteToMemory(dwPid, 0x9B304, patch1, 4);
 }
 //清空子弹
 VOID CPvz::ClearBullet()
@@ -877,10 +871,10 @@ VOID CPvz::ClearBullet()
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch1 = "\xC6\x42\x24\x01";
-	WriteToMemory(dwPid, 0x8F8A8, patch1, 4);
+	WriteToMemory(dwPid, 0x90738, patch1, 4);
 	Sleep(10);
 	patch1 = "\x80\x7A\x24\x00";
-	WriteToMemory(dwPid, 0x8F8A8, patch1, 4);
+	WriteToMemory(dwPid, 0x90738, patch1, 4);
 }
 //清空僵尸
 VOID CPvz::ClearZombie()
@@ -888,9 +882,53 @@ VOID CPvz::ClearZombie()
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-	const char* patch1 = "\xC6\x42\x2F\x01";
-	WriteToMemory(dwPid, 0x8F865, patch1, 4);
+	const char* patch1 = "\xC6\x47\x2F\x01";
+	WriteToMemory(dwPid, 0x9B374, patch1, 4);
 	Sleep(10);
-	patch1 = "\x80\x7A\x2F\x00 ";
-	WriteToMemory(dwPid, 0x8F865, patch1, 4);
+	patch1 = "\x80\x7F\x2F\x00 ";
+	WriteToMemory(dwPid, 0x9B374, patch1, 4);
+	DWORD baseAddress = get_baseAddress(hProcess);
+	DWORD targetAddress = baseAddress + 0x297C54;
+	DWORD dwNum = 0;
+	DWORD dwTimer = 0x0;
+	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); //读取targetAddress对应的值(基址->内存基址)
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); //读取战场基址对应的值(内存基址 +708->战场基址)
+	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x400), &dwTimer, sizeof(DWORD), NULL); //将dwNum写入控制阳光的地址
+}
+//修复崩溃bug
+VOID CPvz::FixCrashBug()
+{
+	DWORD dwPid = GetGamePid();
+	if (!check_dwPid(dwPid)) return;
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+	const char* patch1 = "\xEB\x14";
+	WriteToMemory(dwPid, 0x185C7A, patch1, 2);
+}
+//红针花线
+VOID CPvz::ToHongZhen()
+{
+	DWORD dwPid = GetGamePid();
+	if (!check_dwPid(dwPid)) return;
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+	DWORD baseAddress = get_baseAddress(hProcess);
+	DWORD targetAddress = baseAddress + 0x297C54;
+	DWORD dwNum = 0;
+	DWORD dwSwitcher = 0x1;
+	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); //读取targetAddress对应的值(基址->内存基址)
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x814), &dwNum, sizeof(DWORD), NULL); //读取战场基址对应的值(内存基址 +708->战场基址)
+	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x4), &dwSwitcher, sizeof(BYTE), NULL);
+}
+//导向寄线
+VOID CPvz::ToDaoXiangJi()
+{
+	DWORD dwPid = GetGamePid();
+	if (!check_dwPid(dwPid)) return;
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+	DWORD baseAddress = get_baseAddress(hProcess);
+	DWORD targetAddress = baseAddress + 0x297C54;
+	DWORD dwNum = 0;
+	DWORD dwSwitcher = 0x0;
+	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); //读取targetAddress对应的值(基址->内存基址)
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x814), &dwNum, sizeof(DWORD), NULL); //读取战场基址对应的值(内存基址 +708->战场基址)
+	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x4), &dwSwitcher, sizeof(BYTE), NULL);
 }

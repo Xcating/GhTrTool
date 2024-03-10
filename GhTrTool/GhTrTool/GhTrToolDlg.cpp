@@ -109,6 +109,9 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_SunNoDelay, &CGhTrToolDlg::OnBnClickedBtnSunNoDelay)
 	ON_BN_CLICKED(IDC_BTN_BuildTheArray, &CGhTrToolDlg::OnBnClickedBtnBuildTheArray)
 	ON_BN_CLICKED(IDC_BTN_ClearZombie, &CGhTrToolDlg::OnBnClickedBtnClearZombie)
+	ON_BN_CLICKED(IDC_BTN_FixCrashBug, &CGhTrToolDlg::OnBnClickedBtnFixCrashBug)
+	ON_BN_CLICKED(IDC_BTN_ToDaoXiangJi, &CGhTrToolDlg::OnBnClickedBtnToDaoXiangJi)
+	ON_BN_CLICKED(IDC_BTN_ToHongZhen, &CGhTrToolDlg::OnBnClickedBtnToHongZhen)
 	ON_BN_CLICKED(IDC_BTN_ClearPlant, &CGhTrToolDlg::OnBnClickedBtnClearPlant)
 	ON_BN_CLICKED(IDC_BTN_ClearBullet, &CGhTrToolDlg::OnBnClickedBtnClearBullet)
 	ON_BN_CLICKED(IDC_BTN_Plant2, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
@@ -515,7 +518,8 @@ void CGhTrToolDlg::OnBnClickedBtnTheWorld()
 
 void CGhTrToolDlg::OnBnClickedBtnNoModelCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NoModelCD);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
+	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NoModelCD);	
+	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
@@ -686,6 +690,24 @@ void CGhTrToolDlg::OnBnClickedBtnClearZombie()
 {
 	CPvz pvz = CPvz();
 	pvz.ClearZombie();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnFixCrashBug()
+{
+	CPvz pvz = CPvz();
+	pvz.FixCrashBug();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnToDaoXiangJi()
+{
+	CPvz pvz = CPvz();
+	pvz.ToDaoXiangJi();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnToHongZhen()
+{
+	CPvz pvz = CPvz();
+	pvz.ToHongZhen();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnClearPlant()

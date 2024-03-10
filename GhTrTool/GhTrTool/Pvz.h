@@ -1,6 +1,6 @@
 #pragma once
 
-#define GAME_NAME L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16k"
+#define GAME_NAME L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l"
 
 class CPvz
 {
@@ -97,5 +97,11 @@ public:
     VOID ClearZombie();
     //清空子弹
     VOID ClearBullet();
+    //修复崩溃bug
+    VOID FixCrashBug();
+    //切换至导向线
+    VOID ToDaoXiangJi();
+    //切换至红针线
+    VOID ToHongZhen();
 };
 

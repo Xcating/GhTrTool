@@ -78,6 +78,9 @@ public:
     afx_msg void OnBnClickedBtnClearPlant();
     afx_msg void OnBnClickedBtnClearBullet();
     afx_msg void OnBnClickedBtnClearZombie();
+    afx_msg void OnBnClickedBtnFixCrashBug();
+    afx_msg void OnBnClickedBtnToHongZhen();
+    afx_msg void OnBnClickedBtnToDaoXiangJi();
     afx_msg void UpdateText();
     afx_msg void OnBnClickedBtnPlantIDList();
     void OnTimer(UINT_PTR nIDEvent);
