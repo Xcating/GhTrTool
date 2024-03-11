@@ -23,4 +23,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CListCtrl m_List;
+	CListCtrl m_List2;
+	CListCtrl m_List3;
 };

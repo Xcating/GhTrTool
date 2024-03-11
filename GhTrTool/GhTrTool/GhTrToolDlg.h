@@ -75,6 +75,7 @@ public:
     afx_msg void OnBnClickedBtnSunNoDelay();
     afx_msg void OnBnClickedBtnBuildTheArray();
     afx_msg void OnBnClickedBtnModifySeedPacket();
+    afx_msg void OnBnClickedBtnDifficultySwitcher();
     afx_msg void OnBnClickedBtnClearPlant();
     afx_msg void OnBnClickedBtnClearBullet();
     afx_msg void OnBnClickedBtnClearZombie();

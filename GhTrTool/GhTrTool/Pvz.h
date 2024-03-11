@@ -7,10 +7,16 @@ class CPvz
 public:
     CPvz();
     ~CPvz();
+    VOID WriteConfig();
     // 修改阳光的值
     VOID ModifySunValue(DWORD dwSun);
+    //修改卡槽数量
     VOID SeedPacket(DWORD dwSP);
+    //修改卡槽内容
     VOID ModifySeedPacket(DWORD dwID,DWORD dwNum);
+    //修改存档难度
+    VOID DifficultySwitcher(DWORD dwDiff);
+    //种植植物
     VOID Plant(DWORD dwXP, DWORD dwYP,DWORD dwID);
 
 private:

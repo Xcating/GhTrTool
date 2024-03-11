@@ -70,6 +70,7 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BTN_SUN, &CGhTrToolDlg::OnBnClickedBtnSun)
 	ON_BN_CLICKED(IDC_BTN_SP, &CGhTrToolDlg::OnBnClickedBtnSeedPacket)
 	ON_BN_CLICKED(IDC_BTN_ModifySeedPacket, &CGhTrToolDlg::OnBnClickedBtnModifySeedPacket)
+	ON_BN_CLICKED(IDC_BTN_DifficultySwitcher, &CGhTrToolDlg::OnBnClickedBtnDifficultySwitcher)
 	ON_BN_CLICKED(IDC_BTN_Plant, &CGhTrToolDlg::OnBnClickedBtnPlant)
     ON_BN_CLICKED(IDC_BTN_SUN_NOP, &CGhTrToolDlg::OnBnClickedBtnSunNop)
     ON_BN_CLICKED(IDC_BTN_NO_CD, &CGhTrToolDlg::OnBnClickedBtnNoCd)
@@ -116,6 +117,8 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_ClearBullet, &CGhTrToolDlg::OnBnClickedBtnClearBullet)
 	ON_BN_CLICKED(IDC_BTN_Plant2, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
 	ON_BN_CLICKED(IDC_BTN_Plant3, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
+	ON_BN_CLICKED(IDC_BTN_Plant4, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
+	ON_BN_CLICKED(IDC_BTN_Plant5, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
 END_MESSAGE_MAP()
 // CGhTrToolDlg 消息处理程序
 HBRUSH CGhTrToolDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
@@ -278,15 +281,23 @@ void CGhTrToolDlg::OnBnClickedBtnSun()
 {
     DWORD dwSun = GetDlgItemInt(IDC_EDIT_SUN);
 
-    CPvz pvz = CPvz();
+    CPvz pvz = CPvz(); pvz.WriteConfig();
     pvz.ModifySunValue(dwSun);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnDifficultySwitcher()
+{
+	DWORD dwDiff = GetDlgItemInt(IDC_EDIT_Diff);
+
+	CPvz pvz = CPvz(); pvz.WriteConfig();
+	pvz.DifficultySwitcher(dwDiff);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnModifySeedPacket()
 {
 	DWORD dwID = GetDlgItemInt(IDC_EDIT_SPID);
 	DWORD dwNum = GetDlgItemInt(IDC_EDIT_SPNUM);
-	CPvz pvz = CPvz();
+	CPvz pvz = CPvz(); pvz.WriteConfig();
 	pvz.ModifySeedPacket(dwID , dwNum);
 }
 
@@ -294,7 +305,7 @@ void CGhTrToolDlg::OnBnClickedBtnSeedPacket()
 {
 	DWORD dwSP = GetDlgItemInt(IDC_EDIT_SP2);
 
-	CPvz pvz = CPvz();
+	CPvz pvz = CPvz(); pvz.WriteConfig();
 	pvz.SeedPacket(dwSP);
 }
 
@@ -303,7 +314,7 @@ void CGhTrToolDlg::OnBnClickedBtnPlant()
 	DWORD dwXP = GetDlgItemInt(IDC_EDIT_XP);
 	DWORD dwYP = GetDlgItemInt(IDC_EDIT_YP);
 	DWORD dwID = GetDlgItemInt(IDC_EDIT_ID);
-	CPvz pvz = CPvz();
+	CPvz pvz = CPvz(); pvz.WriteConfig();
 	if (dwXP == 0 && dwYP == 0)
 	{
 		for (int X = 1; X <= 9; ++X) 
@@ -341,12 +352,12 @@ void CGhTrToolDlg::OnBnClickedBtnSunNop()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.SunNop(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.SunNop(0);
 	}
 }
@@ -359,12 +370,12 @@ void CGhTrToolDlg::OnBnClickedBtnNoCd()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.NoCd(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.NoCd(0);
 	}
 }
@@ -373,7 +384,7 @@ void CGhTrToolDlg::OnBnClickedBtnNoCd()
 void CGhTrToolDlg::OnBnClickedBtnBGId()
 {
     DWORD dwBGId = GetDlgItemInt(IDC_EDIT_BGId);
-    CPvz pvz = CPvz();
+    CPvz pvz = CPvz(); pvz.WriteConfig();
     pvz.ModifyBGIdValue(dwBGId);
 }
 
@@ -385,12 +396,12 @@ void CGhTrToolDlg::OnBnClickedBtnBuild()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Build(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Build(0);
 	}
 }
@@ -403,12 +414,12 @@ void CGhTrToolDlg::OnBnClickedBtnAuto()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Auto(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Auto(0);
 	}
 }
@@ -421,12 +432,12 @@ void CGhTrToolDlg::OnBnClickedBtnCard()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Card(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Card(0);
 	}
 }
@@ -438,12 +449,12 @@ void CGhTrToolDlg::OnBnClickedBtnPoint()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Point(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Point(0);
 	}
 }
@@ -454,12 +465,12 @@ void CGhTrToolDlg::OnBnClickedBtnPoint2()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Point2(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Point2(0);
 	}
 }
@@ -470,12 +481,12 @@ void CGhTrToolDlg::OnBnClickedBtnDX()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.DX(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.DX(0);
 	}
 }
@@ -487,12 +498,12 @@ void CGhTrToolDlg::OnBnClickedBtnFast()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Fast(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Fast(0);
 	}
 }
@@ -505,12 +516,12 @@ void CGhTrToolDlg::OnBnClickedBtnTheWorld()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.TheWorld(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.TheWorld(0);
 	}
 }
@@ -523,12 +534,12 @@ void CGhTrToolDlg::OnBnClickedBtnNoModelCD()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.NoModelCD(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.NoModelCD(0);
 	}
 }
@@ -540,12 +551,12 @@ void CGhTrToolDlg::OnBnClickedBtnMowers()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Mowers(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.Mowers(0);
 	}
 }
@@ -556,12 +567,12 @@ void CGhTrToolDlg::OnBnClickedBtnPeaSDamage()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.PeaSDamage(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.PeaSDamage(0);
 	}
 }
@@ -572,12 +583,12 @@ void CGhTrToolDlg::OnBnClickedBtnNoBuildTime()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.NoBuildTime(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.NoBuildTime(0);
 	}
 }
@@ -588,12 +599,12 @@ void CGhTrToolDlg::OnBnClickedBtnNoSunMax()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.NoSunMax(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.NoSunMax(0);
 	}
 }
@@ -604,12 +615,12 @@ void CGhTrToolDlg::OnBnClickedBtnZombieDC()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.ZombieDC(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.ZombieDC(0);
 	}
 }
@@ -621,12 +632,12 @@ void CGhTrToolDlg::OnBnClickedBtnNotSubvert()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.NotSubvert(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.NotSubvert(0);
 	}
 }
@@ -638,12 +649,12 @@ void CGhTrToolDlg::OnBnClickedBtnGodMode()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.GodMode(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.GodMode(0);
 	}
 }
@@ -654,12 +665,12 @@ void CGhTrToolDlg::OnBnClickedBtnItemNoDie()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.ItemNoDie(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.ItemNoDie(0);
 	}
 }
@@ -670,55 +681,55 @@ void CGhTrToolDlg::OnBnClickedBtnSunNoDelay()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.SunNoDelay(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.SunNoDelay(0);
 	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnBuildTheArray()
 {
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.BuildTheArray();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnClearZombie()
 {
-	CPvz pvz = CPvz();
+	CPvz pvz = CPvz(); pvz.WriteConfig();
 	pvz.ClearZombie();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnFixCrashBug()
 {
-	CPvz pvz = CPvz();
+	CPvz pvz = CPvz(); pvz.WriteConfig();
 	pvz.FixCrashBug();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnToDaoXiangJi()
 {
-	CPvz pvz = CPvz();
+	CPvz pvz = CPvz(); pvz.WriteConfig();
 	pvz.ToDaoXiangJi();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnToHongZhen()
 {
-	CPvz pvz = CPvz();
+	CPvz pvz = CPvz(); pvz.WriteConfig();
 	pvz.ToHongZhen();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnClearPlant()
 {
-	CPvz pvz = CPvz();
+	CPvz pvz = CPvz(); pvz.WriteConfig();
 	pvz.ClearPlant();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnClearBullet()
 {
-	CPvz pvz = CPvz();
+	CPvz pvz = CPvz(); pvz.WriteConfig();
 	pvz.ClearBullet();
 }
 
@@ -728,12 +739,12 @@ void CGhTrToolDlg::OnBnClickedBtnSuperReed()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.SuperReed(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.SuperReed(0);
 	}
 }
@@ -744,12 +755,12 @@ void CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.PowerFlowerNoCD(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.PowerFlowerNoCD(0);
 	}
 }
@@ -760,12 +771,12 @@ void CGhTrToolDlg::OnBnClickedBtnAwayMax()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.AwayMax(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.AwayMax(0);
 	}
 }
@@ -776,12 +787,12 @@ void CGhTrToolDlg::OnBnClickedBtnApplayerNoCD()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.ApplayerNoCD(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.ApplayerNoCD(0);
 	}
 }
@@ -792,12 +803,12 @@ void CGhTrToolDlg::OnBnClickedBtnApplayerNoLag()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.ApplayerNoLag(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.ApplayerNoLag(0);
 	}
 }
@@ -808,12 +819,12 @@ void CGhTrToolDlg::OnBnClickedBtnPlantageNoCD()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.PlantageNoCD(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.PlantageNoCD(0);
 	}
 }
@@ -824,12 +835,12 @@ void CGhTrToolDlg::OnBnClickedBtnPeaNoCD()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.PeaNoCD(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.PeaNoCD(0);
 	}
 }
@@ -840,12 +851,12 @@ void CGhTrToolDlg::OnBnClickedBtnSunFlowerNoCD()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.SunFlowerNoCD(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.SunFlowerNoCD(0);
 	}
 }
@@ -856,12 +867,12 @@ void CGhTrToolDlg::OnBnClickedBtnLingSDamage()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.LingSDamage(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.LingSDamage(0);
 	}
 }
@@ -872,19 +883,19 @@ void CGhTrToolDlg::OnBnClickedBtnIgnoreSun()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.IgnoreSun(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.IgnoreSun(0);
 	}
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSummonCup()
 {
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.SummonCup();
 }
 
@@ -894,12 +905,12 @@ void CGhTrToolDlg::OnBnClickedBtnLoursMC()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.LoursMC(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.LoursMC(0);
 	}
 }
@@ -910,12 +921,12 @@ void CGhTrToolDlg::OnBnClickedBtnMeowFast()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.MeowFast(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.MeowFast(0);
 	}
 }
@@ -926,12 +937,12 @@ void CGhTrToolDlg::OnBnClickedBtnCherryNo()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.CherryNo(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.CherryNo(0);
 	}
 }
@@ -943,12 +954,12 @@ void CGhTrToolDlg::OnBnClickedBtnCherryFast()
 	int checkState = pCheck->GetCheck();
 	if (checkState == BST_CHECKED)
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.CherryFast(1);
 	}
 	else
 	{
-		CPvz pvz = CPvz();
+		CPvz pvz = CPvz(); pvz.WriteConfig();
 		pvz.CherryFast(0);
 	}
 }

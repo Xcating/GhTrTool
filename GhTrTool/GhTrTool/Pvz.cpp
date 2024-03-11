@@ -5,6 +5,9 @@
 #include <Psapi.h>
 #include <chrono>
 #include <sstream>
+#include <fstream>
+#include <filesystem>
+#include <\GhTrTool\GhTrTool\GhTrTool\json.hpp>
 CPvz::CPvz()
 {
 }
@@ -326,6 +329,27 @@ VOID check_result(BOOL result)
 	else
 		MessageBox(NULL, TEXT("写入失败，请联系作者"), TEXT("Error"), MB_OK | MB_ICONERROR);
 }
+VOID CPvz::WriteConfig()
+{
+	DWORD dwPid = GetGamePid();
+	if (!check_dwPid(dwPid)) return;
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+	wchar_t szExePath[MAX_PATH];
+	if (GetModuleFileNameEx(hProcess, NULL, szExePath, MAX_PATH) == 0)
+	{
+		CloseHandle(hProcess);
+		return;
+	}
+	std::filesystem::path exePath(szExePath);
+	std::filesystem::path configPath = exePath.parent_path() / "definition" / "config.json";
+	nlohmann::json configJson2;
+	if (!std::filesystem::exists(configPath)) {
+		std::ofstream configFileOut(configPath);
+		configJson2["isCheat"] = true;
+		configFileOut << configJson2.dump(4);
+		configFileOut.close();
+	}
+}
 // 修改阳光的值
 VOID CPvz::ModifySunValue(DWORD dwSun) //Sun指的是阳光
 {
@@ -336,9 +360,9 @@ VOID CPvz::ModifySunValue(DWORD dwSun) //Sun指的是阳光
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
 	DWORD dwNum = 0;
-	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); //读取targetAddress对应的值(基址->内存基址)
-	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); //读取战场基址对应的值(内存基址 +708->战场基址)
-	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x384), &dwSun, sizeof(DWORD), NULL); //将dwNum写入控制阳光的地址
+	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); 
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); 
+	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x384), &dwSun, sizeof(DWORD), NULL); 
 	check_result(result);
 	CloseHandle(hProcess);
 }
@@ -891,9 +915,9 @@ VOID CPvz::ClearZombie()
 	DWORD targetAddress = baseAddress + 0x297C54;
 	DWORD dwNum = 0;
 	DWORD dwTimer = 0x0;
-	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); //读取targetAddress对应的值(基址->内存基址)
-	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); //读取战场基址对应的值(内存基址 +708->战场基址)
-	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x400), &dwTimer, sizeof(DWORD), NULL); //将dwNum写入控制阳光的地址
+	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); 
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); 
+	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x400), &dwTimer, sizeof(DWORD), NULL); 
 }
 //修复崩溃bug
 VOID CPvz::FixCrashBug()
@@ -907,6 +931,17 @@ VOID CPvz::FixCrashBug()
 //红针花线
 VOID CPvz::ToHongZhen()
 {
+	std::filesystem::path configFolderPath("C:\\ProgramData\\GhTrTool");
+	if (!std::filesystem::exists(configFolderPath)) {
+		std::filesystem::create_directory(configFolderPath);
+	}
+	std::filesystem::path configFilePath = configFolderPath / "config.json";
+	nlohmann::json configJson;
+	if (std::filesystem::exists(configFilePath)) {
+		std::ifstream configFileIn(configFilePath);
+		configFileIn >> configJson;
+		configFileIn.close();
+	}
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
@@ -914,13 +949,32 @@ VOID CPvz::ToHongZhen()
 	DWORD targetAddress = baseAddress + 0x297C54;
 	DWORD dwNum = 0;
 	DWORD dwSwitcher = 0x1;
-	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); //读取targetAddress对应的值(基址->内存基址)
-	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x814), &dwNum, sizeof(DWORD), NULL); //读取战场基址对应的值(内存基址 +708->战场基址)
+	int response;
+	if (!std::filesystem::exists(configFilePath)) MessageBox(NULL, L"使用该功能前，请先备份存档。本功能会污染你的存档！！！", L"提示", MB_OK);
+	if (!std::filesystem::exists(configFilePath)) response = MessageBox(NULL, L"是否继续修改你的存档？", L"提示", MB_OK | MB_ICONQUESTION | MB_OKCANCEL);
+	if (response == IDCANCEL) return;
+	configJson["isModifyArchive"] = true;
+	std::ofstream configFileOut(configFilePath);
+	configFileOut << configJson.dump(4);
+	configFileOut.close();
+	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); 
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x814), &dwNum, sizeof(DWORD), NULL);
 	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x4), &dwSwitcher, sizeof(BYTE), NULL);
 }
 //导向寄线
 VOID CPvz::ToDaoXiangJi()
 {
+	std::filesystem::path configFolderPath("C:\\ProgramData\\GhTrTool");
+	if (!std::filesystem::exists(configFolderPath)) {
+		std::filesystem::create_directory(configFolderPath);
+	}
+	std::filesystem::path configFilePath = configFolderPath / "config.json";
+	nlohmann::json configJson;
+	if (std::filesystem::exists(configFilePath)) {
+		std::ifstream configFileIn(configFilePath);
+		configFileIn >> configJson;
+		configFileIn.close();
+	}
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
@@ -928,7 +982,65 @@ VOID CPvz::ToDaoXiangJi()
 	DWORD targetAddress = baseAddress + 0x297C54;
 	DWORD dwNum = 0;
 	DWORD dwSwitcher = 0x0;
-	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); //读取targetAddress对应的值(基址->内存基址)
-	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x814), &dwNum, sizeof(DWORD), NULL); //读取战场基址对应的值(内存基址 +708->战场基址)
+	int response;
+	if (!std::filesystem::exists(configFilePath)) MessageBox(NULL, L"使用该功能前，请先备份存档。本功能会污染你的存档！！！", L"提示", MB_OK);
+	if (!std::filesystem::exists(configFilePath)) response = MessageBox(NULL, L"是否继续修改你的存档？", L"提示", MB_OK | MB_ICONQUESTION | MB_OKCANCEL);
+	if (response == IDCANCEL) return;
+	configJson["isModifyArchive"] = true;
+	std::ofstream configFileOut(configFilePath);
+	configFileOut << configJson.dump(4);
+	configFileOut.close();
+	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); 
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x814), &dwNum, sizeof(DWORD), NULL); 
 	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x4), &dwSwitcher, sizeof(BYTE), NULL);
+}
+//切换难度
+VOID CPvz::DifficultySwitcher(DWORD dwDiff)
+{
+	std::filesystem::path configFolderPath("C:\\ProgramData\\GhTrTool");
+	if (!std::filesystem::exists(configFolderPath)) {
+		std::filesystem::create_directory(configFolderPath);
+	}
+	std::filesystem::path configFilePath = configFolderPath / "config.json";
+	nlohmann::json configJson;
+	if (std::filesystem::exists(configFilePath)) {
+		std::ifstream configFileIn(configFilePath);
+		configFileIn >> configJson;
+		configFileIn.close();
+	}
+	DWORD dwPid = GetGamePid();
+	if (!check_dwPid(dwPid)) return;
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+	DWORD baseAddress = get_baseAddress(hProcess);
+	DWORD targetAddress = baseAddress + 0x297C54;
+	DWORD dwNum = 0;
+	int response;
+	if (dwDiff > 4) { MessageBox(NULL, L"你所选的难度不存在，请查看难度ID表后填写", L"警告", MB_ICONWARNING | MB_OK); return; }
+	if(!std::filesystem::exists(configFilePath)) MessageBox(NULL, L"使用该功能前，请先备份存档。本功能会污染你的存档！！！", L"提示", MB_OK);
+	if (!std::filesystem::exists(configFilePath)) response = MessageBox(NULL, L"是否继续修改你的存档？", L"提示", MB_OK | MB_ICONQUESTION | MB_OKCANCEL);
+	if (response == IDCANCEL) return;
+	configJson["isModifyArchive"] = true;
+	std::ofstream configFileOut(configFilePath);
+	configFileOut << configJson.dump(4);
+	configFileOut.close();
+	switch (dwDiff) {
+		case 0x0:
+			MessageBox(NULL, L"将切换到简单 Easy模式", L"提示", MB_OK);
+			break;
+		case 0x1:
+			MessageBox(NULL, L"将切换到正常 Medium模式", L"提示", MB_OK);
+			break;
+		case 0x2:
+			MessageBox(NULL, L"将切换到较难 Hard模式", L"提示", MB_OK);
+			break;
+		case 0x3:
+			MessageBox(NULL, L"将切换到特难 Impossible模式", L"提示", MB_OK);
+			break;
+		case 0x4:
+			MessageBox(NULL, L"将切换到失衡 Unbalanced模式", L"提示", MB_OK);
+			break;
+	}
+	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); 
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x814), &dwNum, sizeof(DWORD), NULL); 
+	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x8), &dwDiff, sizeof(DWORD), NULL); 
 }
