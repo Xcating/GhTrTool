@@ -12,7 +12,6 @@ CPvz::CPvz()
 {
 }
 
-
 CPvz::~CPvz()
 {
 }
@@ -23,7 +22,13 @@ DWORD CPvz::GetGamePid()
 
 	if (hWnd == NULL)
 	{
-		return -1;
+		auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+		std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11o] [" << millis << L"]").str();
+		HWND hWnd = ::FindWindow(NULL, wstr.c_str());
+		if (hWnd == NULL)
+		{
+			return -1;
+		}
 	}
 
 	DWORD dwPid = 0;
@@ -89,6 +94,17 @@ BOOL check_dwPid(DWORD dwPid)
 		return false;
 	}
 	return true;
+}
+BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
+	DWORD dwPid;
+	GetWindowThreadProcessId(hwnd, &dwPid);
+	auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11o] [" << millis << L"]").str();
+	if (dwPid == lParam) {
+		SetWindowText(hwnd, wstr.c_str());
+		return FALSE;
+	}
+	return TRUE;
 }
 DWORD ReadTOMemory(DWORD dwPid, DWORD targetAddress) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
@@ -349,7 +365,9 @@ VOID CPvz::WriteConfig()
 		configFileOut << configJson2.dump(4);
 		configFileOut.close();
 	}
+	EnumWindows(EnumWindowsProc, dwPid);
 }
+
 // 修改阳光的值
 VOID CPvz::ModifySunValue(DWORD dwSun) //Sun指的是阳光
 {

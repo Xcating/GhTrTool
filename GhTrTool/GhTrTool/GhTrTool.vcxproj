@@ -218,9 +218,10 @@
     <None Include="res\GhTrTool.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\bitmap1.bmp" />
-    <Image Include="res\bitmap3.bmp" />
+    <Image Include="res\GhTrTool.bmp" />
     <Image Include="res\GhTrTool.ico" />
+    <Image Include="res\GhTrTool.png" />
+    <Image Include="res\Logo.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

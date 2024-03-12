@@ -77,10 +77,13 @@
     <Image Include="res\GhTrTool.ico">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="res\bitmap3.bmp">
+    <Image Include="res\Logo.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="res\bitmap1.bmp">
+    <Image Include="res\GhTrTool.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\GhTrTool.png">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
