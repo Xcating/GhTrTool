@@ -23,7 +23,7 @@ DWORD CPvz::GetGamePid()
 	if (hWnd == NULL)
 	{
 		auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-		std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11o] [" << millis << L"]").str();
+		std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11p] [" << millis << L"]").str();
 		HWND hWnd = ::FindWindow(NULL, wstr.c_str());
 		if (hWnd == NULL)
 		{
@@ -99,7 +99,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 	DWORD dwPid;
 	GetWindowThreadProcessId(hwnd, &dwPid);
 	auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-	std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11o] [" << millis << L"]").str();
+	std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11p] [" << millis << L"]").str();
 	if (dwPid == lParam) {
 		SetWindowText(hwnd, wstr.c_str());
 		return FALSE;
@@ -596,7 +596,7 @@ VOID CPvz::PeaSDamage(bool dwSwitch)
 	WriteConditionJump(dwPid,0x52F + 0x4,0xAC563,true);
 	WriteConditionJump(dwPid, 0x52F + 0xE, 0xAC563, true);
 	WriteConditionJump(dwPid, 0x52F + 0x18, 0xAC563, true);
-	WriteConditionJump(dwPid, 0x52F + 0x22, 0xA554A, false);
+	WriteConditionJump(dwPid, 0x52F + 0x22, 0xAC579, false);
 	WriteJump(dwPid, 0x52F + 0x28, 0xAC564);
 }
 // 僵尸掉卡
