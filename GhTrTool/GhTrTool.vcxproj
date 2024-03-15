@@ -216,6 +216,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.gitignore" />
+    <None Include="..\CHANGELOG.md" />
+    <None Include="..\README.md" />
     <None Include="res\GhTrTool.rc2" />
   </ItemGroup>
   <ItemGroup>
