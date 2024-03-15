@@ -231,29 +231,18 @@ void CGhTrToolDlg::OnPaint()
 		CDialogEx::OnPaint();
 	}
 }
-BOOL check_dwPid2(DWORD dwPid)
-{
-	if (dwPid == -1)
-	{
-		MessageBox(NULL, L"游戏未找到，请打开游戏后点击功能", L"Info", MB_OK);
-		return false;
-	}
-	return true;
-}
-//当用户拖动最小化窗口时系统调用此函数取得光标
-//显示。
 HCURSOR CGhTrToolDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 void CGhTrToolDlg::ToggleFeature(UINT nID, void (CPvz::* featureFunc)(bool))
 {
+	CPvz pvz;
 	CButton* pCheck = (CButton*)GetDlgItem(nID);
-	if (!check_dwPid2(GetGamePid())) {
+	if (!pvz.check_dwPid(GetGamePid(),false)) {
 		pCheck->SetCheck(BST_UNCHECKED);
 		return;
 	}
-	CPvz pvz;
 	pvz.WriteConfig();
 	bool isFeatureEnabled = pCheck->GetCheck() == BST_CHECKED;
 	(pvz.*featureFunc)(isFeatureEnabled);
@@ -344,10 +333,13 @@ void CGhTrToolDlg::OnBnClickedBtnSeedPacket()
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPlant() {
+	DWORD dwPid = GetGamePid();
 	DWORD dwXP = GetDlgItemInt(IDC_EDIT_XP);
 	DWORD dwYP = GetDlgItemInt(IDC_EDIT_YP);
 	DWORD dwID = GetDlgItemInt(IDC_EDIT_ID);
 	CPvz pvz = CPvz();
+	DWORD dwPid2 = GetGamePid();
+	if (!pvz.check_dwPid(dwPid2, true)) return;
 	pvz.WriteConfig();
 	PlantAtPositions(pvz, dwXP, dwYP, dwID);
 }

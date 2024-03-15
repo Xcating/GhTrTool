@@ -183,7 +183,7 @@ VOID RunTheMemory(DWORD dwPid, DWORD codeCaveOffset) {
  * @param isMessage 是否会提示消息，true为提示，false不提示
  * @return BOOL 如果PID有效返回true，否则返回false。
  */
-BOOL check_dwPid(DWORD dwPid,BOOL isMessage)
+BOOL CPvz::check_dwPid(DWORD dwPid,BOOL isMessage)
 {
 	if (dwPid == -1)
 	{

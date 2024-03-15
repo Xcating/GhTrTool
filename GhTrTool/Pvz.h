@@ -20,7 +20,8 @@ public:
     VOID DifficultySwitcher(DWORD dwDiff);
     //种植植物
     VOID Plant(DWORD dwXP, DWORD dwYP,DWORD dwID);
-
+    //检查pid合法性
+    BOOL check_dwPid(DWORD dwPid, BOOL isMessage);
 private:
     nlohmann::json ReadConfigFile(const std::filesystem::path& configFilePath);
     void WriteConfigFile(const std::filesystem::path& configFilePath, const nlohmann::json& configJson);
