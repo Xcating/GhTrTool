@@ -9,6 +9,7 @@ public:
     CPvz();
     ~CPvz();
     std::filesystem::path GetConfigFilePath();
+    BOOL check_battlefield(DWORD dwPid);
     VOID WriteConfig();
     // 修改阳光的值
     VOID ModifySunValue(DWORD dwSun);

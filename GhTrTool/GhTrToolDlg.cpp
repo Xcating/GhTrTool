@@ -339,6 +339,11 @@ void CGhTrToolDlg::OnBnClickedBtnPlant() {
 	DWORD dwID = GetDlgItemInt(IDC_EDIT_ID);
 	CPvz pvz = CPvz();
 	DWORD dwPid2 = GetGamePid();
+	if (!pvz.check_battlefield(dwPid))
+	{
+		MessageBoxA(NULL, "未进入战场", "提示", MB_OK);
+		return;
+	}
 	if (!pvz.check_dwPid(dwPid2, true)) return;
 	pvz.WriteConfig();
 	PlantAtPositions(pvz, dwXP, dwYP, dwID);

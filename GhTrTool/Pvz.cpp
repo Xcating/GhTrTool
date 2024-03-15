@@ -499,7 +499,7 @@ bool WriteCall(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
  * @param dwPid 目标进程PID
  * @return BOOL 如果战场可用返回true，否则返回false。
  */
-BOOL check_battlefield(DWORD dwPid) {
+BOOL CPvz::check_battlefield(DWORD dwPid) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD eBaseAddress = ReadTOMemory(dwPid, baseAddress + 0x297C54);
@@ -557,6 +557,11 @@ VOID CPvz::ModifySunValue(DWORD dwSun)
 {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid, true)) return;
+	if (!check_battlefield(dwPid))
+	{
+		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
+		return;
+	}
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
@@ -577,6 +582,11 @@ VOID CPvz::SeedPacket(DWORD dwSP)
 
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid, true)) return;
+	if (!check_battlefield(dwPid))
+	{
+		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
+		return;
+	}
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
@@ -599,6 +609,11 @@ VOID CPvz::ModifySeedPacket(DWORD dwID,DWORD dwNum)
 	dwNum--;
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid, true)) return;
+	if (!check_battlefield(dwPid))
+	{
+		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
+		return;
+	}
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
@@ -1207,6 +1222,11 @@ int CPvz::GenerateValidRandomID(const std::vector<int>& invalidIDs) {
 VOID CPvz::BuildTheArray() {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid, true)) return;
+	if (!check_battlefield(dwPid))
+	{
+		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
+		return;
+	}
 	const char* patch = "\xC6\x40\x2F\x00";
 	WriteToMemory(dwPid, 0x982C3, patch, 4);
 	std::vector<int> invalidIDs = { 2, 4, 6, 9, 13 };
@@ -1227,6 +1247,11 @@ VOID CPvz::BuildTheArray() {
 VOID CPvz::ClearPlant()
 {
 	DWORD dwPid = GetGamePid();
+	if (!check_battlefield(dwPid))
+	{
+		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
+		return;
+	}
 	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = "\xC6\x47\x2F\x00";
 	WriteToMemory(dwPid, 0x9B304, patch1, 4);
@@ -1241,6 +1266,11 @@ VOID CPvz::ClearBullet()
 {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid, true)) return;
+	if (!check_battlefield(dwPid))
+	{
+		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
+		return;
+	}
 	const char* patch1 = "\xC6\x42\x24\x01";
 	WriteToMemory(dwPid, 0x90738, patch1, 4);
 	Sleep(10);
@@ -1254,6 +1284,11 @@ VOID CPvz::ClearZombie()
 {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid, true)) return;
+	if (!check_battlefield(dwPid))
+	{
+		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
+		return;
+	}
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	const char* patch1 = "\xC6\x47\x2F\x01";
 	WriteToMemory(dwPid, 0x9B374, patch1, 4);
