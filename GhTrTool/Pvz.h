@@ -30,77 +30,77 @@ private:
     DWORD GetGamePid();
 public:
     // 种植不减阳光
-    VOID SunNop(bool dwSwitch);
+    VOID SunNop(bool isFeatureEnabled);
     // 种植免冷却
-    VOID NoCd(bool dwSwitch);
+    VOID NoCd(bool isFeatureEnabled);
     // 修改背景id
     VOID ModifyBGIdValue(DWORD dwBGId);
     // 重复建造、无需荷叶
-    VOID Build(bool dwSwitch);
+    VOID Build(bool isFeatureEnabled);
     // 自动收集阳光
-    VOID Auto(bool dwSwitch);
+    VOID Auto(bool isFeatureEnabled);
     // 帧伤
-    VOID Card(bool dwSwitch);
+    VOID Card(bool isFeatureEnabled);
     // 加速阳光金币
-    VOID Fast(bool dwSwitch);
+    VOID Fast(bool isFeatureEnabled);
     // 更好的高级暂停
-    VOID TheWorld(bool dwSwitch);
+    VOID TheWorld(bool isFeatureEnabled);
     // 没有技能冷却
-    VOID NoModelCD(bool dwSwitch);
+    VOID NoModelCD(bool isFeatureEnabled);
     // 障碍物自动消失
-    VOID NoBuildTime(bool dwSwitch);
+    VOID NoBuildTime(bool isFeatureEnabled);
     // 豌豆类子弹帧伤
-    VOID PeaSDamage(bool dwSwitch);
+    VOID PeaSDamage(bool isFeatureEnabled);
     //小推车不动
-    VOID Mowers(bool dwSwitch);
+    VOID Mowers(bool isFeatureEnabled);
     //没有阳光限制
-    VOID NoSunMax(bool dwSwitch);
+    VOID NoSunMax(bool isFeatureEnabled);
     // 僵尸死亡掉落卡片
-    VOID ZombieDC(bool dwSwitch);
+    VOID ZombieDC(bool isFeatureEnabled);
     // 植物不被魅惑
-    VOID NotSubvert(bool dwSwitch);
+    VOID NotSubvert(bool isFeatureEnabled);
     // 植物无敌模式
-    VOID GodMode(bool dwSwitch);
+    VOID GodMode(bool isFeatureEnabled);
     //荷鲁斯刀刀暴击
-    VOID LoursMC(bool dwSwitch);
+    VOID LoursMC(bool isFeatureEnabled);
     // 荣光拒绝骄傲
-    VOID Point(bool dwSwitch);
+    VOID Point(bool isFeatureEnabled);
     // 进入关卡修改荣光
-    VOID Point2(bool dwSwitch);
+    VOID Point2(bool isFeatureEnabled);
     // 导藓批量种植
-    VOID DX(bool dwSwitch);
+    VOID DX(bool isFeatureEnabled);
     // 樱桃瞬炸
-    VOID CherryFast(bool dwSwitch);
+    VOID CherryFast(bool isFeatureEnabled);
     // 樱桃不炸
-    VOID CherryNo(bool dwSwitch);
+    VOID CherryNo(bool isFeatureEnabled);
     //猫丝子无延迟
-    VOID MeowFast(bool dwSwitch);
+    VOID MeowFast(bool isFeatureEnabled);
     //召唤奖杯过关
     VOID SummonCup();
     //忽略阳光种植
-    VOID IgnoreSun(bool dwSwitch);
+    VOID IgnoreSun(bool isFeatureEnabled);
     //光菱角帧伤
-    VOID LingSDamage(bool dwSwitch);
+    VOID LingSDamage(bool isFeatureEnabled);
     //苹果鼓瑟手无冷却
-    VOID ApplayerNoCD(bool dwSwitch);
+    VOID ApplayerNoCD(bool isFeatureEnabled);
     //苹果鼓瑟手无延迟
-    VOID ApplayerNoLag(bool dwSwitch);
+    VOID ApplayerNoLag(bool isFeatureEnabled);
     //车前草无冷却
-    VOID PlantageNoCD(bool dwSwitch);
+    VOID PlantageNoCD(bool isFeatureEnabled);
     //向日葵产出无冷却
-    VOID SunFlowerNoCD(bool dwSwitch);
+    VOID SunFlowerNoCD(bool isFeatureEnabled);
     //豌豆无冷却
-    VOID PeaNoCD(bool dwSwitch);
+    VOID PeaNoCD(bool isFeatureEnabled);
     //超级闪电芦苇
-    VOID SuperReed(bool dwSwitch);
+    VOID SuperReed(bool isFeatureEnabled);
     //牡丹无冷却
-    VOID PowerFlowerNoCD(bool dwSwitch);
+    VOID PowerFlowerNoCD(bool isFeatureEnabled);
     //牡丹永远最大
-    VOID AwayMax(bool dwSwitch);
+    VOID AwayMax(bool isFeatureEnabled);
     //牡丹永远最大
-    VOID ItemNoDie(bool dwSwitch);
+    VOID ItemNoDie(bool isFeatureEnabled);
     //阳光无延迟生成
-    VOID SunNoDelay(bool dwSwitch);
+    VOID SunNoDelay(bool isFeatureEnabled);
     //一键布阵
     VOID BuildTheArray();
     //清空僵尸
