@@ -88,7 +88,7 @@ BOOL CPvz::WriteMemory(HANDLE hProcess, DWORD address, DWORD value)
  */
 std::wstring getTitle() {
 	auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-	std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11p] [" << millis << L"]").str();
+	std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11q] [" << millis << L"]").str();
 	return wstr;
 }
 /**
@@ -204,7 +204,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 	DWORD dwPid;
 	GetWindowThreadProcessId(hwnd, &dwPid);
 	auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-	std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11p] [" << millis << L"]").str();
+	std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11q] [" << millis << L"]").str();
 	if (dwPid == lParam) {
 		SetWindowText(hwnd, wstr.c_str());
 		return FALSE;
