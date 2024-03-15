@@ -32,6 +32,8 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+    void ToggleFeature(UINT nID, void(CPvz::* featureFunc)(bool));
+    void PlantAtPositions(CPvz& pvz, DWORD dwXP, DWORD dwYP, DWORD dwID);
 	DECLARE_MESSAGE_MAP()
 public:
     afx_msg void OnBnClickedBtnSun();

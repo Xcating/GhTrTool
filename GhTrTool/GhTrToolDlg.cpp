@@ -246,7 +246,42 @@ HCURSOR CGhTrToolDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
-
+void CGhTrToolDlg::ToggleFeature(UINT nID, void (CPvz::* featureFunc)(bool))
+{
+	CButton* pCheck = (CButton*)GetDlgItem(nID);
+	if (!check_dwPid2(GetGamePid())) {
+		pCheck->SetCheck(BST_UNCHECKED);
+		return;
+	}
+	CPvz pvz;
+	pvz.WriteConfig();
+	bool isFeatureEnabled = pCheck->GetCheck() == BST_CHECKED;
+	(pvz.*featureFunc)(isFeatureEnabled);
+}
+void CGhTrToolDlg::PlantAtPositions(CPvz& pvz, DWORD dwXP, DWORD dwYP, DWORD dwID) {
+	if (dwXP == 0 && dwYP == 0) {
+		for (int X = 1; X <= 9; ++X) {
+			for (int Y = 1; Y <= 5; ++Y) {
+				pvz.Plant(X, Y, dwID);
+			}
+		}
+	}
+	else if (dwXP == 0) {
+		for (int X = 1; X <= 9; ++X) {
+			pvz.Plant(X, dwYP, dwID);
+			Sleep(80);
+		}
+	}
+	else if (dwYP == 0) {
+		for (int Y = 1; Y <= 5; ++Y) {
+			pvz.Plant(dwXP, Y, dwID);
+			Sleep(80);
+		}
+	}
+	else {
+		pvz.Plant(dwXP, dwYP, dwID);
+	}
+}
 void CGhTrToolDlg::UpdateText()
 {
 	int pid = GetGamePid();
@@ -308,75 +343,24 @@ void CGhTrToolDlg::OnBnClickedBtnSeedPacket()
 	pvz.SeedPacket(dwSP);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnPlant()
-{
+void CGhTrToolDlg::OnBnClickedBtnPlant() {
 	DWORD dwXP = GetDlgItemInt(IDC_EDIT_XP);
 	DWORD dwYP = GetDlgItemInt(IDC_EDIT_YP);
 	DWORD dwID = GetDlgItemInt(IDC_EDIT_ID);
-	CPvz pvz = CPvz(); pvz.WriteConfig();
-	if (dwXP == 0 && dwYP == 0)
-	{
-		for (int X = 1; X <= 9; ++X) 
-		{
-			for (int Y = 1; Y <= 5; ++Y)
-			{
-				pvz.Plant(X, Y, dwID);
-			}
-		}
-	}
-	else if (dwXP == 0)
-	{
-		for (int X = 1; X <= 9; ++X)
-		{
-			pvz.Plant(X, dwYP, dwID);
-			Sleep(80);
-		}
-	}
-	else if (dwYP == 0)
-	{
-		for (int Y = 1; Y <= 5; ++Y)
-		{
-			pvz.Plant(dwXP, Y, dwID);
-			Sleep(80);
-		}
-	}
-	else
-		pvz.Plant(dwXP,dwYP,dwID);
+	CPvz pvz = CPvz();
+	pvz.WriteConfig();
+	PlantAtPositions(pvz, dwXP, dwYP, dwID);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSunNop()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SUN_NOP);
-	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.SunNop(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.SunNop(0);
-	}
+	ToggleFeature(IDC_BTN_SUN_NOP, &CPvz::SunNop);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnNoCd()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NO_CD);
-	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.NoCd(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.NoCd(0);
-	}
+	ToggleFeature(IDC_BTN_NO_CD, &CPvz::NoCd);
 }
 
 
@@ -390,304 +374,97 @@ void CGhTrToolDlg::OnBnClickedBtnBGId()
 
 void CGhTrToolDlg::OnBnClickedBtnBuild()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_BUILD);
-	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Build(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Build(0);
-	}
+	ToggleFeature(IDC_BTN_BUILD, &CPvz::Build);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnAuto()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_AUTO);
-	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Auto(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Auto(0);
-	}
+	ToggleFeature(IDC_BTN_AUTO, &CPvz::Auto);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnCard()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_CARD);
-	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Card(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Card(0);
-	}
+	ToggleFeature(IDC_BTN_CARD, &CPvz::Card);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPoint()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_POINT);
-	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Point(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Point(0);
-	}
+	ToggleFeature(IDC_BTN_POINT, &CPvz::Point);
 }
 void CGhTrToolDlg::OnBnClickedBtnPoint2()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_POINT2);
-	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Point2(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Point2(0);
-	}
+	ToggleFeature(IDC_BTN_POINT2, &CPvz::Point2);
 }
 void CGhTrToolDlg::OnBnClickedBtnDX()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_DX);
-	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.DX(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.DX(0);
-	}
+	ToggleFeature(IDC_BTN_DX, &CPvz::DX);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnFast()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_Fast);
-	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Fast(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Fast(0);
-	}
+	ToggleFeature(IDC_BTN_Fast, &CPvz::Fast);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnTheWorld()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_TheWorld);
-	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.TheWorld(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.TheWorld(0);
-	}
+	ToggleFeature(IDC_BTN_TheWorld, &CPvz::TheWorld);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnNoModelCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NoModelCD);	
-	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.NoModelCD(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.NoModelCD(0);
-	}
+	ToggleFeature(IDC_BTN_NoModelCD, &CPvz::NoModelCD);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnMowers()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_Mowers);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Mowers(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.Mowers(0);
-	}
+	ToggleFeature(IDC_BTN_Mowers, &CPvz::Mowers);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPeaSDamage()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PeaSDamage);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.PeaSDamage(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.PeaSDamage(0);
-	}
+	ToggleFeature(IDC_BTN_PeaSDamage, &CPvz::PeaSDamage);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnNoBuildTime()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NoBuildTime);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.NoBuildTime(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.NoBuildTime(0);
-	}
+	ToggleFeature(IDC_BTN_NoBuildTime, &CPvz::NoBuildTime);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnNoSunMax()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NOSUNMAX);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.NoSunMax(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.NoSunMax(0);
-	}
+	ToggleFeature(IDC_BTN_NOSUNMAX, &CPvz::NoSunMax);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnZombieDC()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ZombieDC);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.ZombieDC(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.ZombieDC(0);
-	}
+	ToggleFeature(IDC_BTN_ZombieDC, &CPvz::ZombieDC);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnNotSubvert()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_NotSubvert);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.NotSubvert(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.NotSubvert(0);
-	}
+	ToggleFeature(IDC_BTN_NotSubvert, &CPvz::NotSubvert);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnGodMode()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_GodMode);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.GodMode(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.GodMode(0);
-	}
+	ToggleFeature(IDC_BTN_GodMode, &CPvz::GodMode);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnItemNoDie()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ItemNoDie);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.ItemNoDie(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.ItemNoDie(0);
-	}
+	ToggleFeature(IDC_BTN_ItemNoDie, &CPvz::ItemNoDie);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSunNoDelay()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SunNoDelay);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.SunNoDelay(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.SunNoDelay(0);
-	}
+	ToggleFeature(IDC_BTN_SunNoDelay, &CPvz::SunNoDelay);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnBuildTheArray()
@@ -734,162 +511,52 @@ void CGhTrToolDlg::OnBnClickedBtnClearBullet()
 
 void CGhTrToolDlg::OnBnClickedBtnSuperReed()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SuperReed);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.SuperReed(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.SuperReed(0);
-	}
+	ToggleFeature(IDC_BTN_SuperReed, &CPvz::SuperReed);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PowerFlowerNoCD);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.PowerFlowerNoCD(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.PowerFlowerNoCD(0);
-	}
+	ToggleFeature(IDC_BTN_PowerFlowerNoCD, &CPvz::PowerFlowerNoCD);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnAwayMax()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_AwayMax);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.AwayMax(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.AwayMax(0);
-	}
+	ToggleFeature(IDC_BTN_AwayMax, &CPvz::AwayMax);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnApplayerNoCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ApplayerNoCD);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.ApplayerNoCD(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.ApplayerNoCD(0);
-	}
+	ToggleFeature(IDC_BTN_ApplayerNoCD, &CPvz::ApplayerNoCD);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnApplayerNoLag()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_ApplayerNoLag);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.ApplayerNoLag(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.ApplayerNoLag(0);
-	}
+	ToggleFeature(IDC_BTN_ApplayerNoLag, &CPvz::ApplayerNoLag);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPlantageNoCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PlantageNoCD);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.PlantageNoCD(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.PlantageNoCD(0);
-	}
+	ToggleFeature(IDC_BTN_PlantageNoCD, &CPvz::PlantageNoCD);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPeaNoCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_PeaNoCD); 	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.PeaNoCD(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.PeaNoCD(0);
-	}
+	ToggleFeature(IDC_BTN_PeaNoCD, &CPvz::PeaNoCD);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSunFlowerNoCD()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_SunFlowerNoCD);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.SunFlowerNoCD(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.SunFlowerNoCD(0);
-	}
+	ToggleFeature(IDC_BTN_SunFlowerNoCD, &CPvz::SunFlowerNoCD);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnLingSDamage()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_LingSDamage);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.LingSDamage(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.LingSDamage(0);
-	}
+	ToggleFeature(IDC_BTN_LingSDamage, &CPvz::LingSDamage);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnIgnoreSun()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_IgnoreSun);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.IgnoreSun(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.IgnoreSun(0);
-	}
+	ToggleFeature(IDC_BTN_IgnoreSun, &CPvz::IgnoreSun);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSummonCup()
@@ -900,65 +567,21 @@ void CGhTrToolDlg::OnBnClickedBtnSummonCup()
 
 void CGhTrToolDlg::OnBnClickedBtnLoursMC()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_LoursMC);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.LoursMC(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.LoursMC(0);
-	}
+	ToggleFeature(IDC_BTN_LoursMC, &CPvz::LoursMC);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnMeowFast()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_MeowFast);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.MeowFast(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.MeowFast(0);
-	}
+	ToggleFeature(IDC_BTN_MeowFast, &CPvz::Fast);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnCherryNo()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_CherryNo);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.CherryNo(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.CherryNo(0);
-	}
+	ToggleFeature(IDC_BTN_CherryNo, &CPvz::CherryNo);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnCherryFast()
 {
-	CButton* pCheck = (CButton*)GetDlgItem(IDC_BTN_CherryFast);	if (!check_dwPid2(GetGamePid())) { pCheck->SetCheck(BST_UNCHECKED); return; }
-	int checkState = pCheck->GetCheck();
-	if (checkState == BST_CHECKED)
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.CherryFast(1);
-	}
-	else
-	{
-		CPvz pvz = CPvz(); pvz.WriteConfig();
-		pvz.CherryFast(0);
-	}
+	ToggleFeature(IDC_BTN_CherryFast, &CPvz::CherryFast);
 }
