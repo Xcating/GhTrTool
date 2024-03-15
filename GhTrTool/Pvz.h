@@ -101,6 +101,7 @@ public:
     VOID ItemNoDie(bool isFeatureEnabled);
     //阳光无延迟生成
     VOID SunNoDelay(bool isFeatureEnabled);
+    int GenerateValidRandomID(const std::vector<int>& invalidIDs);
     //一键布阵
     VOID BuildTheArray();
     //清空僵尸
