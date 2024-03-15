@@ -365,3 +365,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /resources/yanzou/gangqin/output.mp3
+
+#特殊的
+/GhTrTool/RCa61764
