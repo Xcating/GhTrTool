@@ -180,13 +180,15 @@ VOID RunTheMemory(DWORD dwPid, DWORD codeCaveOffset) {
  * 检查游戏进程的PID是否有效。
  *
  * @param dwPid 游戏进程PID
+ * @param isMessage 是否会提示消息，true为提示，false不提示
  * @return BOOL 如果PID有效返回true，否则返回false。
  */
-BOOL check_dwPid(DWORD dwPid)
+BOOL check_dwPid(DWORD dwPid,BOOL isMessage)
 {
 	if (dwPid == -1)
 	{
-		MessageBox(NULL, L"游戏未找到，请打开游戏后点击功能", L"Info", MB_OK);
+		if(isMessage)
+			MessageBox(NULL, L"游戏未找到，请打开游戏后点击功能", L"Info", MB_OK);
 		return false;
 	}
 	return true;
@@ -218,10 +220,6 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
  */
 DWORD ReadTOMemory(DWORD dwPid, DWORD targetAddress) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-	if (hProcess == NULL) {
-		MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
-		return 0;
-	}
 	DWORD value = 0;
 	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &value, sizeof(DWORD), NULL);
 	return value;
@@ -359,10 +357,6 @@ bool WritePush(DWORD dwPid, DWORD Number,DWORD offset) {
  */
 bool WriteMovECX(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-	if (hProcess == NULL) {
-		MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
-		return false;
-	}
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + offset;
 	DWORD dwOldProtect = 0;
@@ -383,10 +377,6 @@ bool WriteMovECX(DWORD dwPid, DWORD Address, DWORD offset) {
  */
 bool WriteMovEAX(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-	if (hProcess == NULL) {
-		MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
-		return false;
-	}
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + offset;
 	DWORD dwOldProtect = 0;
@@ -407,10 +397,6 @@ bool WriteMovEAX(DWORD dwPid, DWORD Address, DWORD offset) {
  */
 bool WriteMovEAXToHEX(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-	if (hProcess == NULL) {
-		MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
-		return false;
-	}
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + offset;
 	DWORD dwOldProtect = 0;
@@ -431,10 +417,6 @@ bool WriteMovEAXToHEX(DWORD dwPid, DWORD Address, DWORD offset) {
  */
 bool WriteMOVXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-	if (hProcess == NULL) {
-		MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
-		return false;
-	}
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + offset;
 	DWORD dwOldProtect = 0;
@@ -455,10 +437,6 @@ bool WriteMOVXZero(DWORD dwPid, DWORD Address, DWORD offset) {
  */
 bool WriteCMPXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-	if (hProcess == NULL) {
-		MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
-		return false;
-	}
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + offset;
 	DWORD dwOldProtect = 0;
@@ -479,10 +457,6 @@ bool WriteCMPXZero(DWORD dwPid, DWORD Address, DWORD offset) {
  */
 bool WriteINC(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
-	if (hProcess == NULL) {
-		MessageBox(NULL, L"游戏未找到", L"提示", MB_OK);
-		return false;
-	}
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + offset;
 	DWORD dwOldProtect = 0;
@@ -555,7 +529,7 @@ VOID check_result(BOOL result)
 VOID CPvz::WriteConfig()
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, false)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	wchar_t szExePath[MAX_PATH];
 	if (GetModuleFileNameEx(hProcess, NULL, szExePath, MAX_PATH) == 0)
@@ -582,8 +556,7 @@ VOID CPvz::WriteConfig()
 VOID CPvz::ModifySunValue(DWORD dwSun)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
-
+	if (!check_dwPid(dwPid, true)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
@@ -603,7 +576,7 @@ VOID CPvz::SeedPacket(DWORD dwSP)
 {
 
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
@@ -625,7 +598,7 @@ VOID CPvz::ModifySeedPacket(DWORD dwID,DWORD dwNum)
 {
 	dwNum--;
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
@@ -644,7 +617,7 @@ VOID CPvz::ModifySeedPacket(DWORD dwID,DWORD dwNum)
  */
 VOID CPvz::SunNop(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* nop = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x29\xBE\x84\x03\x00\x00";
 	WriteToMemory(dwPid, 0x9C439, nop, 6);
 }
@@ -655,7 +628,7 @@ VOID CPvz::SunNop(bool dwSwitch) {
  */
 VOID CPvz::NoCd(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x42\x24\x00\x00\x00\x00\x90\x90\x90" : "\x89\x42\x24\xC7\x42\x20\x00\x00\x00\x00";
 	WriteToMemory(dwPid, 0xEA679, patch1, 10);
 	const char* patch2 = (dwSwitch == 1) ? "\x90\x90" : "\x39\x08";
@@ -669,7 +642,7 @@ VOID CPvz::NoCd(bool dwSwitch) {
 VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
@@ -687,7 +660,7 @@ VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
  */
 VOID CPvz::Build(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90\x90" : "\xFF\x24\x85\xDC\x9C\x3A\x00";
 	WriteToMemory(dwPid, 0x99AD1, patch, 7);
 }
@@ -699,7 +672,7 @@ VOID CPvz::Build(bool dwSwitch) {
 VOID CPvz::Auto(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90":"\x0F\x84\xC4\x01\x00\x00";
 	WriteToMemory(dwPid, 0xB31EE, patch, 6);
 }
@@ -710,7 +683,7 @@ VOID CPvz::Auto(bool dwSwitch)
  */
 VOID CPvz::Card(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90" : "\xC6\x46\x24\x01"; 
 	WriteToMemory(dwPid, 0xAC55E, patch, 4);
 }
@@ -721,7 +694,7 @@ VOID CPvz::Card(bool dwSwitch) {
  */
 VOID CPvz::Fast(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch = (dwSwitch == 1) ? "\x89\x97\x00\x04\x00\x00":"\x89\x8F\x00\x04\x00\x00";
 	WriteToMemory(dwPid, 0x9FD01, patch, 6);
 }
@@ -732,7 +705,7 @@ VOID CPvz::Fast(bool dwSwitch) {
  */
 VOID CPvz::TheWorld(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90" : "\x83\xF8\x32";
 	WriteToMemory(dwPid, 0x9C862, patch, 3);
 }
@@ -743,7 +716,7 @@ VOID CPvz::TheWorld(bool dwSwitch) {
  */
 VOID CPvz::NoModelCD(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	protectAddress(dwPid, 0x43A);
 	const char* patch = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x66\x90" : "\x0F\xBF\x87\xC4\x03\x00\x00";
 	WriteToMemory(dwPid, 0x916E2, patch, 7);
@@ -759,7 +732,7 @@ VOID CPvz::NoModelCD(bool dwSwitch) {
  */
 VOID CPvz::NoSunMax(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x89\x81\x84\x03\x00\x00";
 	WriteToMemory(dwPid, 0x8F64D, patch, 6);
 }
@@ -780,7 +753,7 @@ VOID CPvz::NoBuildTime(bool dwSwitch){
  */
 VOID CPvz::IgnoreSun(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch = (dwSwitch == 1) ? "\xB8\x3F\x3F\x3F\x3F\x90" : "\x8B\x83\x84\x03\x00\x00";
 	WriteToMemory(dwPid, 0x8FADA, patch, 6);
 }
@@ -791,7 +764,7 @@ VOID CPvz::IgnoreSun(bool dwSwitch) {
  */
 VOID CPvz::Mowers(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90\x90\x90":"\xF3\x0F\x11\x87\x84\x00\x00\x00";
 	WriteToMemory(dwPid, 0xC28B2, patch, 8);
 }
@@ -802,7 +775,7 @@ VOID CPvz::Mowers(bool dwSwitch) {
 void CPvz::SummonCup() {
 	DWORD dwPid = GetGamePid();
 	protectAddress(dwPid, 0x45E);
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	if (!check_battlefield(dwPid))
 	{
 		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
@@ -828,7 +801,7 @@ VOID CPvz::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
 {
 	dwXP--; dwYP--;
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	if (!check_battlefield(dwPid))
 	{
 		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
@@ -856,7 +829,7 @@ VOID CPvz::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
 VOID CPvz::PeaSDamage(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	protectAddress(dwPid, 0x52F);
 	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\xC6\x46\x24\x01\x75\x16";
 	WriteToMemory(dwPid, 0xAC55E, patch1, 6);
@@ -878,7 +851,7 @@ VOID CPvz::PeaSDamage(bool dwSwitch)
 VOID CPvz::ZombieDC(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	protectAddress(dwPid, 0xF32);
@@ -941,7 +914,7 @@ VOID CPvz::ZombieDC(bool dwSwitch)
 VOID CPvz::NotSubvert(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90" : "\x89\x46\x10";
 	WriteToMemory(dwPid, 0xC9E81 , patch, 3);
 }
@@ -955,7 +928,7 @@ VOID CPvz::CherryFast(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
 	protectAddress(dwPid, 0x5BD);
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x83\x9C\x00\x00\x00\x64\x00\x00\x00";
 	WriteToMemory(dwPid, 0xCAEEE, patch1,10);
 	const char* patch2 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x64\x00\x00\x00";
@@ -970,7 +943,7 @@ VOID CPvz::CherryFast(bool dwSwitch)
 VOID CPvz::CherryNo(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xE9\xE7\x01\x00\x00\x90" : "\x0F\x8F\xE6\x01\x00\x00";
 	WriteToMemory(dwPid, 0xC72B6, patch1, 6);
 }
@@ -983,7 +956,7 @@ VOID CPvz::CherryNo(bool dwSwitch)
 VOID CPvz::MeowFast(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x83\x9C\x00\x00\x00\x2C\x01\x00\x00";
 	WriteToMemory(dwPid, 0xCAF89, patch1, 10);
 }
@@ -996,7 +969,7 @@ VOID CPvz::MeowFast(bool dwSwitch)
 VOID CPvz::LoursMC(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	protectAddress(dwPid, 0x6BF);
 	const char* patch1 = (dwSwitch == 1) ? "\x89\xA7\xBC\x00\x00\x00" :"\x89\x8F\xBC\x00\x00\x00";
 	WriteToMemory(dwPid, 0xC813F, patch1, 6);
@@ -1010,7 +983,7 @@ VOID CPvz::LoursMC(bool dwSwitch)
 VOID CPvz::GodMode(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90" :"\x2B\xC7";
 	WriteToMemory(dwPid, 0xC9F07, patch, 2);
 }
@@ -1023,7 +996,7 @@ VOID CPvz::GodMode(bool dwSwitch)
 VOID CPvz::Point(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch = (dwSwitch == 1) ? "\xC7\x85\xF8\x02\x00\x00\x00\x00\x00\x00\x90\x90":"\x88\x95\xF8\x02\x00\x00\x8B\x80\x14\x08\x00\x00"; //硬塞进去的，依靠bug运行（
 	WriteToMemory(dwPid, 0xD5EA8, patch, 12);
 }
@@ -1036,7 +1009,7 @@ VOID CPvz::Point(bool dwSwitch)
 VOID CPvz::DX(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\x6A\x09\x90\x90\x90\x90" : "\xFF\xB6\x84\x00\x00\x00";
 	WriteToMemory(dwPid, 0x9424E, patch1, 6);
 	const char* patch2 = (dwSwitch == 1) ? "\x6A\x0D" : "\x6A\x09";
@@ -1054,7 +1027,7 @@ VOID CPvz::DX(bool dwSwitch)
 VOID CPvz::Point2(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	protectAddress(dwPid, 0xF00);
 	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90\x90\x90\x90\x90\x90" :"\x8B\x81\x14\x08\x00\x00\x0F\xB7\x40\x20\x66"; //含bug运行
 	WriteToMemory(dwPid, 0x93B42, patch1, 10);
@@ -1071,7 +1044,7 @@ VOID CPvz::Point2(bool dwSwitch)
 VOID CPvz::LingSDamage(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	protectAddress(dwPid, 0x7F1);
 	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x0F\x1F\x00" : "\x8B\x47\x38\xB9\x96\x00\x00\x00";
 	WriteToMemory(dwPid, 0xABBDD, patch1, 8);
@@ -1088,7 +1061,7 @@ VOID CPvz::LingSDamage(bool dwSwitch)
 VOID CPvz::ApplayerNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x83\x9C\x00\x00\x00\xB0\x04\x00\x00";
 	WriteToMemory(dwPid, 0xCB124, patch1, 10);
 	const char* patch2 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x60\x09\x00\x00";
@@ -1102,7 +1075,7 @@ VOID CPvz::ApplayerNoCD(bool dwSwitch)
 VOID CPvz::ApplayerNoLag(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x2C\x01\x00\x00";
 	WriteToMemory(dwPid, 0xC8883, patch1, 10);
 }
@@ -1114,7 +1087,7 @@ VOID CPvz::ApplayerNoLag(bool dwSwitch)
 VOID CPvz::PlantageNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x86\x9C\x00\x00\x00\x05\x00\x00\x00" : "\xC7\x86\x9C\x00\x00\x00\xD0\x07\x00\x00";
 	WriteToMemory(dwPid, 0xC7C78, patch1, 10);
 	const char* patch2 = (dwSwitch == 1) ? "\xC7\x86\x9C\x00\x00\x00\x92\x00\x00\x00" : "\xC7\x86\x9C\x00\x00\x00\xFA\x00\x00\x00";
@@ -1128,7 +1101,7 @@ VOID CPvz::PlantageNoCD(bool dwSwitch)
 VOID CPvz::SunFlowerNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\xB8\x0B\x00\x00";
 	WriteToMemory(dwPid, 0xC7215, patch1, 10);
 	const char* patch2 = (dwSwitch == 1) ? "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x83\x9C\x00\x00\x00\xEE\x02\x00\x00";
@@ -1144,7 +1117,7 @@ VOID CPvz::SunFlowerNoCD(bool dwSwitch)
 VOID CPvz::PeaNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x0F\x85\x6C\x03\x00\x00";
 	WriteToMemory(dwPid, 0xC6D37, patch1, 6);
 }
@@ -1156,7 +1129,7 @@ VOID CPvz::PeaNoCD(bool dwSwitch)
 VOID CPvz::SuperReed(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xB9\x66\x66\x66\x66" : "\xB9\x2C\x01\x00\x00";
 	WriteToMemory(dwPid, 0xCBCBB, patch1, 5);
 	const char* patch2 = (dwSwitch == 1) ? "\x8B\x56\x08" : "\x8B\x52\x08";
@@ -1170,7 +1143,7 @@ VOID CPvz::SuperReed(bool dwSwitch)
 VOID CPvz::PowerFlowerNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x86\x9C\x00\x00\x00\x00\x00\x00\x00" :"\xC7\x86\x9C\x00\x00\x00\x96\x00\x00\x00";
 	WriteToMemory(dwPid, 0xCDA09, patch1, 10);
 }
@@ -1182,7 +1155,7 @@ VOID CPvz::PowerFlowerNoCD(bool dwSwitch)
 VOID CPvz::AwayMax(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	protectAddress(dwPid, 0x749);
 	const char* patch1 = (dwSwitch == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\x89\xB9\xBC\x00\x00\x00";
 	WriteToMemory(dwPid, 0xCD80B, patch1, 6);
@@ -1199,7 +1172,7 @@ VOID CPvz::AwayMax(bool dwSwitch)
 VOID CPvz::ItemNoDie(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\x90\x90\x90" : "\x83\xC0\xFF";
 	WriteToMemory(dwPid, 0xB30C1, patch1, 3);
 }
@@ -1211,7 +1184,7 @@ VOID CPvz::ItemNoDie(bool dwSwitch)
 VOID CPvz::SunNoDelay(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (dwSwitch == 1) ? "\xB8\x01\x00\x00\x00\x90" : "\x8B\x87\xD4\x03\x00\x00";
 	WriteToMemory(dwPid, 0x9FB39, patch1, 6);
 }
@@ -1222,7 +1195,7 @@ VOID CPvz::SunNoDelay(bool dwSwitch)
 VOID CPvz::BuildTheArray()
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = "\xC6\x40\x2F\x00";
 	WriteToMemory(dwPid, 0x982C3, patch1, 4);
 	Sleep(10);
@@ -1264,7 +1237,7 @@ VOID CPvz::BuildTheArray()
 VOID CPvz::ClearPlant()
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = "\xC6\x47\x2F\x00";
 	WriteToMemory(dwPid, 0x9B304, patch1, 4);
 	Sleep(10);
@@ -1277,7 +1250,7 @@ VOID CPvz::ClearPlant()
 VOID CPvz::ClearBullet()
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = "\xC6\x42\x24\x01";
 	WriteToMemory(dwPid, 0x90738, patch1, 4);
 	Sleep(10);
@@ -1290,7 +1263,7 @@ VOID CPvz::ClearBullet()
 VOID CPvz::ClearZombie()
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	const char* patch1 = "\xC6\x47\x2F\x01";
 	WriteToMemory(dwPid, 0x9B374, patch1, 4);
@@ -1311,7 +1284,7 @@ VOID CPvz::ClearZombie()
 VOID CPvz::FixCrashBug()
 {
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	const char* patch1 = "\xEB\x14";
 	WriteToMemory(dwPid, 0x185C7A, patch1, 2);
@@ -1325,7 +1298,7 @@ VOID CPvz::ToHongZhen()
 	nlohmann::json configJson = ReadConfigFile(configFilePath);
 
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
@@ -1353,7 +1326,7 @@ VOID CPvz::ToDaoXiangJi()
 	nlohmann::json configJson = ReadConfigFile(configFilePath);
 
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
@@ -1408,7 +1381,7 @@ VOID CPvz::DifficultySwitcher(DWORD dwDiff)
 	nlohmann::json configJson = ReadConfigFile(configFilePath);
 
 	DWORD dwPid = GetGamePid();
-	if (!check_dwPid(dwPid)) return;
+	if (!check_dwPid(dwPid, true)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;

@@ -280,7 +280,6 @@ void CGhTrToolDlg::OnBnClickedBtnPlantIDList()
 void CGhTrToolDlg::OnBnClickedBtnSun()
 {
     DWORD dwSun = GetDlgItemInt(IDC_EDIT_SUN);
-
     CPvz pvz = CPvz(); pvz.WriteConfig();
     pvz.ModifySunValue(dwSun);
 }
