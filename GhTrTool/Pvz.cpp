@@ -1,13 +1,13 @@
 ﻿#include "stdafx.h"
+#include "json.hpp"
 #include "Pvz.h"
-#include <TlHelp32.h>
-#include <string>
-#include <Psapi.h>
 #include <chrono>
-#include <sstream>
-#include <fstream>
 #include <filesystem>
-#include <\GhTrTool\GhTrTool\json.hpp>
+#include <fstream>
+#include <Psapi.h>
+#include <sstream>
+#include <string>
+#include <TlHelp32.h>
 CPvz::CPvz()
 {
 }
@@ -15,16 +15,93 @@ CPvz::CPvz()
 CPvz::~CPvz()
 {
 }
-// 获取游戏的 PID
+/**
+ * 获取工具配置文件的路径。
+ *
+ * @return std::filesystem::path 返回工具配置文件的路径。
+ */
+std::filesystem::path CPvz::GetConfigFilePath()
+{
+	std::filesystem::path configFolderPath("C:\\ProgramData\\GhTrTool");
+	if (!std::filesystem::exists(configFolderPath)) {
+		std::filesystem::create_directory(configFolderPath);
+	}
+	return configFolderPath / "config.json";
+}
+/**
+ * 读取配置文件的内容到JSON对象。
+ *
+ * @param configFilePath 包含配置文件路径的filesystem::path对象。
+ * @return nlohmann::json 返回配置信息的JSON对象。
+ */
+nlohmann::json CPvz::ReadConfigFile(const std::filesystem::path& configFilePath)
+{
+	nlohmann::json configJson;
+	if (std::filesystem::exists(configFilePath)) {
+		std::ifstream configFileIn(configFilePath);
+		configFileIn >> configJson;
+		configFileIn.close();
+	}
+	return configJson;
+}
+/**
+ * 将配置信息写入指定的配置文件。
+ *
+ * @param configFilePath 包含配置文件路径的filesystem::path对象。
+ * @param configJson 包含配置信息的JSON对象。
+ */
+void CPvz::WriteConfigFile(const std::filesystem::path& configFilePath, const nlohmann::json& configJson)
+{
+	std::ofstream configFileOut(configFilePath);
+	configFileOut << configJson.dump(4);
+	configFileOut.close();
+}
+/**
+ * 从指定的地址读取内存中的DWORD值。
+ *
+ * @param hProcess 要读取的进程的句柄。
+ * @param address 要读取的内存地址。
+ * @return DWORD 返回从内存中读取的DWORD值。
+ */
+DWORD CPvz::ReadMemory(HANDLE hProcess, DWORD address)
+{
+	DWORD dwNum = 0;
+	ReadProcessMemory(hProcess, (LPCVOID)address, &dwNum, sizeof(DWORD), NULL);
+	return dwNum;
+}
+/**
+ * 向指定的地址写入DWORD值到内存中。
+ *
+ * @param hProcess 要写入的进程的句柄。
+ * @param address 要写入的内存地址。
+ * @param value 要写入的DWORD值。
+ * @return BOOL 返回是否写入成功。
+ */
+BOOL CPvz::WriteMemory(HANDLE hProcess, DWORD address, DWORD value)
+{
+	return WriteProcessMemory(hProcess, (LPVOID)address, &value, sizeof(BYTE), NULL);
+}
+/**
+ * 获取被修改后的游戏标题。
+ *
+ * @return std::wstring 返回被修改后的游戏标题。
+ */
+std::wstring getTitle() {
+	auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11p] [" << millis << L"]").str();
+	return wstr;
+}
+/**
+ * 获取游戏的PID。
+ *
+ * @return DWORD 返回游戏的PID。
+ */
 DWORD CPvz::GetGamePid()
 {
 	HWND hWnd = ::FindWindow(NULL, GAME_NAME);
-
 	if (hWnd == NULL)
 	{
-		auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-		std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11p] [" << millis << L"]").str();
-		HWND hWnd = ::FindWindow(NULL, wstr.c_str());
+		hWnd = ::FindWindow(NULL, getTitle().c_str());
 		if (hWnd == NULL)
 		{
 			return -1;
@@ -36,7 +113,12 @@ DWORD CPvz::GetGamePid()
 
 	return dwPid;
 }
-//获取模块基址
+/**
+ * 获取指定进程的模块基址。
+ *
+ * @param hProcess 进程句柄
+ * @return DWORD 返回指定进程的模块基址。
+ */
 DWORD GetModuleBaseAddress(HANDLE hProcess, const wchar_t* moduleName) {
 	MODULEENTRY32W moduleEntry = { sizeof(moduleEntry) };
 	DWORD baseAddress = 0;
@@ -56,7 +138,12 @@ DWORD GetModuleBaseAddress(HANDLE hProcess, const wchar_t* moduleName) {
 
 	return baseAddress;
 }
-//获取模块基址(函数通用)
+/**
+ * 获取游戏进程的模块基址。
+ *
+ * @param hProcess 进程句柄
+ * @return DWORD 返回游戏进程的模块基址。
+ */
 DWORD get_baseAddress(HANDLE hProcess)
 {
 	DWORD baseAddress = GetModuleBaseAddress(hProcess, L"PlantsVsZombies.exe"); //首先读取大写的
@@ -64,7 +151,12 @@ DWORD get_baseAddress(HANDLE hProcess)
 		baseAddress = GetModuleBaseAddress(hProcess, L"plantsvszombies.exe");
 	return baseAddress;
 }
-//创建线程，运行指定内存
+/**
+ * 在指定进程内创建线程，并运行指定内存地址的代码。
+ *
+ * @param dwPid 目标进程PID
+ * @param codeCaveOffset 代码偏移量
+ */
 VOID RunTheMemory(DWORD dwPid, DWORD codeCaveOffset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
@@ -84,8 +176,12 @@ VOID RunTheMemory(DWORD dwPid, DWORD codeCaveOffset) {
 	}
 	CloseHandle(hProcess);
 }
-
-//
+/**
+ * 检查游戏进程的PID是否有效。
+ *
+ * @param dwPid 游戏进程PID
+ * @return BOOL 如果PID有效返回true，否则返回false。
+ */
 BOOL check_dwPid(DWORD dwPid)
 {
 	if (dwPid == -1)
@@ -95,6 +191,13 @@ BOOL check_dwPid(DWORD dwPid)
 	}
 	return true;
 }
+/**
+ * 枚举Windows窗口进程，为找到的窗口设置标题。
+ *
+ * @param hwnd 窗口句柄
+ * @param lParam 附加的参数
+ * @return BOOL 枚举是否继续。
+ */
 BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 	DWORD dwPid;
 	GetWindowThreadProcessId(hwnd, &dwPid);
@@ -106,6 +209,13 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 	}
 	return TRUE;
 }
+/**
+ * 从指定进程的内存中读取数据。
+ *
+ * @param dwPid 目标进程PID
+ * @param targetAddress 目标内存地址
+ * @return DWORD 返回读取的数据。
+ */
 DWORD ReadTOMemory(DWORD dwPid, DWORD targetAddress) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -116,7 +226,15 @@ DWORD ReadTOMemory(DWORD dwPid, DWORD targetAddress) {
 	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &value, sizeof(DWORD), NULL);
 	return value;
 }
-// 通用的内存写入函数
+/**
+ * 向指定进程的内存中写入数据。
+ *
+ * @param dwPid 目标进程PID
+ * @param offset 目标内存偏移
+ * @param data 要写入的数据指针
+ * @param size 要写入的数据大小
+ * @return bool 写入成功返回true，否则返回false。
+ */
 bool WriteToMemory(DWORD dwPid, DWORD offset, const char* data, size_t size) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -132,7 +250,12 @@ bool WriteToMemory(DWORD dwPid, DWORD offset, const char* data, size_t size) {
 	CloseHandle(hProcess);
 	return result;
 }
-//修改内存保护措施，用于写入空地址
+/**
+ * 修改指定进程内存保护设置。
+ *
+ * @param dwPid 目标进程PID
+ * @param offset 内存偏移量
+ */
 void protectAddress(DWORD dwPid, DWORD offset) {
 	HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD dwOldProtect;
@@ -140,7 +263,14 @@ void protectAddress(DWORD dwPid, DWORD offset) {
 	DWORD targetAddress = baseAddress + offset;
 	VirtualProtectEx(hProc, (LPVOID)targetAddress, 1024, PAGE_EXECUTE_READWRITE, &dwOldProtect);
 }
-//在指定内存写入Jump操作码
+/**
+ * 在指定内存写入Jump操作码。
+ *
+ * @param dwPid 目标进程PID
+ * @param sourceOffset 源内存偏移
+ * @param targetOffset 目标内存偏移
+ * @return bool 写入成功返回true，否则返回false。
+ */
 bool WriteJump(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -160,7 +290,15 @@ bool WriteJump(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//在指定内存写入Je或者Jne操作码
+/**
+ * 在指定内存写入条件跳转(Je或Jne)操作码。
+ *
+ * @param dwPid 目标进程PID
+ * @param sourceOffset 源内存偏移
+ * @param targetOffset 目标内存偏移
+ * @param JE 如果为true写入Je，false写入Jne
+ * @return bool 写入成功返回true，否则返回false。
+ */
 bool WriteConditionJump(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset,bool JE) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -188,7 +326,14 @@ bool WriteConditionJump(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset,bool
 	CloseHandle(hProcess);
 	return result;
 }
-//在指定内存写入Push操作码
+/**
+ * 在指定内存写入Push操作码。
+ *
+ * @param dwPid 目标进程PID
+ * @param Number 要写入的数值
+ * @param offset 内存偏移量
+ * @return bool 写入成功返回true，否则返回false。
+ */
 bool WritePush(DWORD dwPid, DWORD Number,DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -204,7 +349,14 @@ bool WritePush(DWORD dwPid, DWORD Number,DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//在指定内存写入Mov Ecx,[PlantsVsZombies.exe+0x00000]操作码
+/**
+ * 在指定内存写入Mov Ecx,[地址]操作码。
+ *
+ * @param dwPid 目标进程PID
+ * @param Address 要写入的地址
+ * @param offset 内存偏移
+ * @return bool 写入成功返回true，否则返回false。
+ */
 bool WriteMovECX(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -221,7 +373,14 @@ bool WriteMovECX(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//在指定内存写入Mov Eax,[PlantsVsZombies.exe+0x00000]操作码
+/**
+ * 在指定内存写入Mov Eax,[地址]操作码。
+ *
+ * @param dwPid 目标进程PID
+ * @param Address 要写入的地址
+ * @param offset 内存偏移
+ * @return bool 写入成功返回true，否则返回false。
+ */
 bool WriteMovEAX(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -238,7 +397,14 @@ bool WriteMovEAX(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//在指定内存写入Mov EAX,0x00000 操作码
+/**
+ * 在指定内存写入Mov EAX,0x00000操作码。
+ *
+ * @param dwPid 目标进程PID
+ * @param Address 要写入的十六进制值
+ * @param offset 内存偏移
+ * @return bool 写入成功返回true，否则返回false。
+ */
 bool WriteMovEAXToHEX(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -255,7 +421,14 @@ bool WriteMovEAXToHEX(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//在指定内存写入Mov [PlantsVsZombies.exe+0x00000], 00000000 操作码
+/**
+ * 在指定内存写入Mov指令，将值设为0。
+ *
+ * @param dwPid 目标进程PID
+ * @param Address 要写入的地址
+ * @param offset 内存偏移
+ * @return bool 写入成功返回true，否则返回false。
+ */
 bool WriteMOVXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -272,7 +445,14 @@ bool WriteMOVXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//在指定内存写入Cmp [PlantsVsZombies.exe+0x00000], 00000000 操作码
+/**
+ * 在指指定内存写入Cmp指令，比较值是否为0。
+ *
+ * @param dwPid 目标进程PID
+ * @param Address 要比较的地址
+ * @param offset 内存偏移
+ * @return bool 写入成功返回true，否则返回false。
+ */
 bool WriteCMPXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -289,7 +469,14 @@ bool WriteCMPXZero(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//在指定内存写入Inc [PlantsVsZombies.exe+0x00000] 操作码
+/**
+ * 在指定内存写入Inc指令，增加地址处的值。
+ *
+ * @param dwPid 目标进程PID
+ * @param Address 要增加值的地址
+ * @param offset 内存偏移
+ * @return bool 写入成功返回true，否则返回false。
+ */
 bool WriteINC(DWORD dwPid, DWORD Address, DWORD offset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -306,7 +493,14 @@ bool WriteINC(DWORD dwPid, DWORD Address, DWORD offset) {
 	CloseHandle(hProcess);
 	return result;
 }
-//在指定内存写入Call 操作码
+/**
+ * 在指定内存写入Call指令，用于调用函数。
+ *
+ * @param dwPid 目标进程PID
+ * @param sourceOffset 源内存偏移
+ * @param targetOffset 目标函数的内存偏移
+ * @return bool 写入成功返回true，否则返回false。
+ */
 bool WriteCall(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	if (hProcess == NULL) {
@@ -325,6 +519,12 @@ bool WriteCall(DWORD dwPid, DWORD sourceOffset, DWORD targetOffset) {
 	CloseHandle(hProcess);
 	return result;
 }
+/**
+ * 检查战场状态是否可用。
+ *
+ * @param dwPid 目标进程PID
+ * @return BOOL 如果战场可用返回true，否则返回false。
+ */
 BOOL check_battlefield(DWORD dwPid) {
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
@@ -337,7 +537,11 @@ BOOL check_battlefield(DWORD dwPid) {
 	return false;
 	CloseHandle(hProcess);
 }
-//检查是否可以写入
+/**
+ * 检查内存写入结果，并弹出相应消息框。
+ *
+ * @param result 写入结果
+ */
 VOID check_result(BOOL result)
 {
 	if (result)
@@ -345,6 +549,9 @@ VOID check_result(BOOL result)
 	else
 		MessageBox(NULL, TEXT("写入失败，请联系作者"), TEXT("Error"), MB_OK | MB_ICONERROR);
 }
+/**
+ * 写入配置文件。如果config.json不存在，则创建文件并设置"isCheat"为true。
+ */
 VOID CPvz::WriteConfig()
 {
 	DWORD dwPid = GetGamePid();
@@ -367,9 +574,12 @@ VOID CPvz::WriteConfig()
 	}
 	EnumWindows(EnumWindowsProc, dwPid);
 }
-
-// 修改阳光的值
-VOID CPvz::ModifySunValue(DWORD dwSun) //Sun指的是阳光
+/**
+ * 修改游戏中的阳光数量。
+ *
+ * @param DWORD dwSun 要设置的阳光数值。
+ */
+VOID CPvz::ModifySunValue(DWORD dwSun)
 {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
@@ -384,9 +594,12 @@ VOID CPvz::ModifySunValue(DWORD dwSun) //Sun指的是阳光
 	check_result(result);
 	CloseHandle(hProcess);
 }
-
-// 修改卡槽数量
-VOID CPvz::SeedPacket(DWORD dwSP) //SP指的是SeedPacket，种子包
+/**
+ * 修改游戏中的种子包（卡槽）数量。
+ *
+ * @param DWORD dwSP 要设置的卡槽数量。
+ */
+VOID CPvz::SeedPacket(DWORD dwSP)
 {
 
 	DWORD dwPid = GetGamePid();
@@ -402,9 +615,13 @@ VOID CPvz::SeedPacket(DWORD dwSP) //SP指的是SeedPacket，种子包
 	check_result(result);
 	CloseHandle(hProcess);
 }
-
-// 修改卡槽数量
-VOID CPvz::ModifySeedPacket(DWORD dwID,DWORD dwNum) //SP指的是SeedPacket，种子包 dwId指要替换的id，dwNum，要替换的卡槽号
+/**
+ * 替换种子包中特定卡槽的植物。
+ *
+ * @param DWORD dwID 要替换的种子包ID。
+ * @param DWORD dwNum 要替换的卡槽号码。
+ */
+VOID CPvz::ModifySeedPacket(DWORD dwID,DWORD dwNum)
 {
 	dwNum--;
 	DWORD dwPid = GetGamePid();
@@ -420,16 +637,22 @@ VOID CPvz::ModifySeedPacket(DWORD dwID,DWORD dwNum) //SP指的是SeedPacket，�
 	WriteProcessMemory(hProcess, (LPVOID)(dwNum1 + 0x1C + 0x38*dwNum), &dwID, sizeof(DWORD), NULL); //四层偏移
 	CloseHandle(hProcess);
 }
-
-// 使用通用函数的种植不减阳光
+/**
+ * 设置阳光消耗的NOP开关，使种植植物不减少阳光值。
+ *
+ * @param bool dwSwitch 设置为true启用NOP，false则恢复原代码。
+ */
 VOID CPvz::SunNop(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* nop = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x29\xBE\x84\x03\x00\x00";
 	WriteToMemory(dwPid, 0x9C439, nop, 6);
 }
-
-// 种植免冷却
+/**
+ * 设置种植植物无冷却的开关。
+ *
+ * @param bool dwSwitch 设置为true启用无冷却，false则恢复原代码。
+ */
 VOID CPvz::NoCd(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
@@ -438,7 +661,6 @@ VOID CPvz::NoCd(bool dwSwitch) {
 	const char* patch2 = (dwSwitch == 1) ? "\x90\x90" : "\x39\x08";
 	WriteToMemory(dwPid, 0xEA91D, patch2, 2); //bug
 }
-
 
 // 修改背景ID
 VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
@@ -948,116 +1170,103 @@ VOID CPvz::FixCrashBug()
 //红针花线
 VOID CPvz::ToHongZhen()
 {
-	std::filesystem::path configFolderPath("C:\\ProgramData\\GhTrTool");
-	if (!std::filesystem::exists(configFolderPath)) {
-		std::filesystem::create_directory(configFolderPath);
-	}
-	std::filesystem::path configFilePath = configFolderPath / "config.json";
-	nlohmann::json configJson;
-	if (std::filesystem::exists(configFilePath)) {
-		std::ifstream configFileIn(configFilePath);
-		configFileIn >> configJson;
-		configFileIn.close();
-	}
+	std::filesystem::path configFilePath = GetConfigFilePath();
+	nlohmann::json configJson = ReadConfigFile(configFilePath);
+
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
-	DWORD dwNum = 0;
-	DWORD dwSwitcher = 0x1;
-	int response;
-	if (!std::filesystem::exists(configFilePath)) MessageBox(NULL, L"使用该功能前，请先备份存档。本功能会污染你的存档！！！", L"提示", MB_OK);
-	if (!std::filesystem::exists(configFilePath)) response = MessageBox(NULL, L"是否继续修改你的存档？", L"提示", MB_OK | MB_ICONQUESTION | MB_OKCANCEL);
+
+	int response = 0;
+	if (!std::filesystem::exists(configFilePath)) {
+		MessageBox(NULL, L"使用该功能前，请先备份存档。本功能会污染你的存档！！！", L"提示", MB_OK);
+		response = MessageBox(NULL, L"是否继续修改你的存档？", L"提示", MB_OK | MB_ICONQUESTION | MB_OKCANCEL);
+	}
 	if (response == IDCANCEL) return;
+
 	configJson["isModifyArchive"] = true;
-	std::ofstream configFileOut(configFilePath);
-	configFileOut << configJson.dump(4);
-	configFileOut.close();
-	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); 
-	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x814), &dwNum, sizeof(DWORD), NULL);
-	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x4), &dwSwitcher, sizeof(BYTE), NULL);
+	WriteConfigFile(configFilePath, configJson);
+
+	DWORD dwNum = ReadMemory(hProcess, targetAddress);
+	dwNum = ReadMemory(hProcess, dwNum + 0x814);
+	BOOL result = WriteMemory(hProcess, dwNum + 0x4, 0x1);
 }
 //导向寄线
 VOID CPvz::ToDaoXiangJi()
 {
-	std::filesystem::path configFolderPath("C:\\ProgramData\\GhTrTool");
-	if (!std::filesystem::exists(configFolderPath)) {
-		std::filesystem::create_directory(configFolderPath);
-	}
-	std::filesystem::path configFilePath = configFolderPath / "config.json";
-	nlohmann::json configJson;
-	if (std::filesystem::exists(configFilePath)) {
-		std::ifstream configFileIn(configFilePath);
-		configFileIn >> configJson;
-		configFileIn.close();
-	}
+	std::filesystem::path configFilePath = GetConfigFilePath();
+	nlohmann::json configJson = ReadConfigFile(configFilePath);
+
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
-	DWORD dwNum = 0;
-	DWORD dwSwitcher = 0x0;
-	int response;
-	if (!std::filesystem::exists(configFilePath)) MessageBox(NULL, L"使用该功能前，请先备份存档。本功能会污染你的存档！！！", L"提示", MB_OK);
-	if (!std::filesystem::exists(configFilePath)) response = MessageBox(NULL, L"是否继续修改你的存档？", L"提示", MB_OK | MB_ICONQUESTION | MB_OKCANCEL);
+
+	int response = 0;
+	if (!std::filesystem::exists(configFilePath)) {
+		MessageBox(NULL, L"使用该功能前，请先备份存档。本功能会污染你的存档！！！", L"提示", MB_OK);
+		response = MessageBox(NULL, L"是否继续修改你的存档？", L"提示", MB_OK | MB_ICONQUESTION | MB_OKCANCEL);
+	}
 	if (response == IDCANCEL) return;
+
 	configJson["isModifyArchive"] = true;
-	std::ofstream configFileOut(configFilePath);
-	configFileOut << configJson.dump(4);
-	configFileOut.close();
-	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); 
-	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x814), &dwNum, sizeof(DWORD), NULL); 
-	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x4), &dwSwitcher, sizeof(BYTE), NULL);
+	WriteConfigFile(configFilePath, configJson);
+
+	DWORD dwNum = ReadMemory(hProcess, targetAddress);
+	dwNum = ReadMemory(hProcess, dwNum + 0x814);
+	BOOL result = WriteMemory(hProcess, dwNum + 0x4, 0x0);
 }
 //切换难度
+void CPvz::ShowDiffBox(DWORD dwDiff)
+{
+	switch (dwDiff) {
+	case 0x0:
+		MessageBox(NULL, L"将切换到简单 Easy模式", L"提示", MB_OK);
+		break;
+	case 0x1:
+		MessageBox(NULL, L"将切换到正常 Medium模式", L"提示", MB_OK);
+		break;
+	case 0x2:
+		MessageBox(NULL, L"将切换到较难 Hard模式", L"提示", MB_OK);
+		break;
+	case 0x3:
+		MessageBox(NULL, L"将切换到特难 Impossible模式", L"提示", MB_OK);
+		break;
+	case 0x4:
+		MessageBox(NULL, L"将切换到失衡 Unbalanced模式", L"提示", MB_OK);
+		break;
+	}
+}
+
 VOID CPvz::DifficultySwitcher(DWORD dwDiff)
 {
-	std::filesystem::path configFolderPath("C:\\ProgramData\\GhTrTool");
-	if (!std::filesystem::exists(configFolderPath)) {
-		std::filesystem::create_directory(configFolderPath);
-	}
-	std::filesystem::path configFilePath = configFolderPath / "config.json";
-	nlohmann::json configJson;
-	if (std::filesystem::exists(configFilePath)) {
-		std::ifstream configFileIn(configFilePath);
-		configFileIn >> configJson;
-		configFileIn.close();
-	}
+	std::filesystem::path configFilePath = GetConfigFilePath();
+	nlohmann::json configJson = ReadConfigFile(configFilePath);
+
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD baseAddress = get_baseAddress(hProcess);
 	DWORD targetAddress = baseAddress + 0x297C54;
-	DWORD dwNum = 0;
-	int response;
+
 	if (dwDiff > 4) { MessageBox(NULL, L"你所选的难度不存在，请查看难度ID表后填写", L"警告", MB_ICONWARNING | MB_OK); return; }
-	if(!std::filesystem::exists(configFilePath)) MessageBox(NULL, L"使用该功能前，请先备份存档。本功能会污染你的存档！！！", L"提示", MB_OK);
-	if (!std::filesystem::exists(configFilePath)) response = MessageBox(NULL, L"是否继续修改你的存档？", L"提示", MB_OK | MB_ICONQUESTION | MB_OKCANCEL);
-	if (response == IDCANCEL) return;
-	configJson["isModifyArchive"] = true;
-	std::ofstream configFileOut(configFilePath);
-	configFileOut << configJson.dump(4);
-	configFileOut.close();
-	switch (dwDiff) {
-		case 0x0:
-			MessageBox(NULL, L"将切换到简单 Easy模式", L"提示", MB_OK);
-			break;
-		case 0x1:
-			MessageBox(NULL, L"将切换到正常 Medium模式", L"提示", MB_OK);
-			break;
-		case 0x2:
-			MessageBox(NULL, L"将切换到较难 Hard模式", L"提示", MB_OK);
-			break;
-		case 0x3:
-			MessageBox(NULL, L"将切换到特难 Impossible模式", L"提示", MB_OK);
-			break;
-		case 0x4:
-			MessageBox(NULL, L"将切换到失衡 Unbalanced模式", L"提示", MB_OK);
-			break;
+
+	int response = 0;
+	if (!std::filesystem::exists(configFilePath)) {
+		MessageBox(NULL, L"使用该功能前，请先备份存档。本功能会污染你的存档！！！", L"提示", MB_OK);
+		response = MessageBox(NULL, L"是否继续修改你的存档？", L"提示", MB_OK | MB_ICONQUESTION | MB_OKCANCEL);
 	}
-	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); 
-	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x814), &dwNum, sizeof(DWORD), NULL); 
-	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x8), &dwDiff, sizeof(DWORD), NULL); 
+	if (response == IDCANCEL) return;
+
+	configJson["isModifyArchive"] = true;
+	WriteConfigFile(configFilePath, configJson);
+
+	ShowDiffBox(dwDiff);
+
+	DWORD dwNum = ReadMemory(hProcess, targetAddress);
+	dwNum = ReadMemory(hProcess, dwNum + 0x814);
+	BOOL result = WriteMemory(hProcess, dwNum + 0x8, dwDiff);
 }

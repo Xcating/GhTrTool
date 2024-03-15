@@ -1,5 +1,6 @@
-#pragma once
-
+﻿#pragma once
+#include <filesystem>
+#include "json.hpp"
 #define GAME_NAME L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l"
 
 class CPvz
@@ -7,6 +8,7 @@ class CPvz
 public:
     CPvz();
     ~CPvz();
+    std::filesystem::path GetConfigFilePath();
     VOID WriteConfig();
     // 修改阳光的值
     VOID ModifySunValue(DWORD dwSun);
@@ -20,6 +22,10 @@ public:
     VOID Plant(DWORD dwXP, DWORD dwYP,DWORD dwID);
 
 private:
+    nlohmann::json ReadConfigFile(const std::filesystem::path& configFilePath);
+    void WriteConfigFile(const std::filesystem::path& configFilePath, const nlohmann::json& configJson);
+    DWORD ReadMemory(HANDLE hProcess, DWORD address);
+    BOOL WriteMemory(HANDLE hProcess, DWORD address, DWORD value);
     // 获取游戏的 PID
     DWORD GetGamePid();
 public:
@@ -107,6 +113,8 @@ public:
     VOID FixCrashBug();
     //切换至导向线
     VOID ToDaoXiangJi();
+    //显示难度提示信息
+    void ShowDiffBox(DWORD dwDiff);
     //切换至红针线
     VOID ToHongZhen();
 };
