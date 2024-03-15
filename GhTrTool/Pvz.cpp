@@ -1046,7 +1046,11 @@ VOID CPvz::DX(bool dwSwitch)
 	const char* patch4 = (dwSwitch == 1) ? "\x83\x79\x18\x0D" :"\x83\x79\x18\x0D";
 	WriteToMemory(dwPid, 0x94F27, patch4, 4);
 }
-//进入游戏修改荣光
+/**
+ * 进入游戏修改荣光(废弃)
+ *
+ * @param dwSwitch 如果设为true，进入草坪会修改荣光；如果为false，则恢复正常。
+ */
 VOID CPvz::Point2(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -1059,7 +1063,11 @@ VOID CPvz::Point2(bool dwSwitch)
 	WriteJump(dwPid, 0xF00+0x29+0x6, 0x93B4C);
 	if(dwSwitch == 1)WriteJump(dwPid, 0x93B42, 0xF00);
 }
-//光菱角帧伤害
+/**
+ * 光菱角帧伤
+ *
+ * @param dwSwitch 如果设为true，光菱角造成帧伤；如果为false，则恢复正常。
+ */
 VOID CPvz::LingSDamage(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -1072,7 +1080,11 @@ VOID CPvz::LingSDamage(bool dwSwitch)
 	WriteJump(dwPid, 0x7F1+0xA, 0xABBE5);
 	if (dwSwitch == 1)WriteJump(dwPid, 0xABBDD, 0x7F1);
 }
-//苹果鼓瑟手无冷却
+/**
+ * 苹果鼓瑟手无冷却
+ *
+ * @param dwSwitch 如果设为true，苹果鼓瑟手无冷却；如果为false，则恢复正常。
+ */
 VOID CPvz::ApplayerNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -1082,7 +1094,11 @@ VOID CPvz::ApplayerNoCD(bool dwSwitch)
 	const char* patch2 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x60\x09\x00\x00";
 	WriteToMemory(dwPid, 0xC8831, patch2, 10);
 }
-//苹果鼓瑟手无延迟
+/**
+ * 苹果鼓瑟手无延迟
+ *
+ * @param dwSwitch 如果设为true，功能开启；如果为false，则恢复正常。
+ */
 VOID CPvz::ApplayerNoLag(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -1090,7 +1106,11 @@ VOID CPvz::ApplayerNoLag(bool dwSwitch)
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x2C\x01\x00\x00";
 	WriteToMemory(dwPid, 0xC8883, patch1, 10);
 }
-//车前草吸收无冷却
+/**
+ * 车前草无延迟无冷却
+ *
+ * @param dwSwitch 如果设为true，功能开启；如果为false，则恢复正常。
+ */
 VOID CPvz::PlantageNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -1100,7 +1120,11 @@ VOID CPvz::PlantageNoCD(bool dwSwitch)
 	const char* patch2 = (dwSwitch == 1) ? "\xC7\x86\x9C\x00\x00\x00\x92\x00\x00\x00" : "\xC7\x86\x9C\x00\x00\x00\xFA\x00\x00\x00";
 	WriteToMemory(dwPid, 0xC9579, patch2, 10);
 }
-//向日葵无cd生产
+/**
+ * 向日葵无冷却
+ *
+ * @param dwSwitch 如果设为true，功能开启；如果为false，则恢复正常。
+ */
 VOID CPvz::SunFlowerNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -1112,7 +1136,11 @@ VOID CPvz::SunFlowerNoCD(bool dwSwitch)
 	const char* patch3 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x24\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x55\x00\x00\x00";
 	WriteToMemory(dwPid, 0xC70F1, patch3, 10);
 }
-//豌豆无冷却
+/**
+ * 豌豆射手无冷却
+ *
+ * @param dwSwitch 如果设为true，功能开启；如果为false，则恢复正常。
+ */
 VOID CPvz::PeaNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -1120,7 +1148,11 @@ VOID CPvz::PeaNoCD(bool dwSwitch)
 	const char* patch1 = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x0F\x85\x6C\x03\x00\x00";
 	WriteToMemory(dwPid, 0xC6D37, patch1, 6);
 }
-//超级闪电芦苇
+/**
+ * 闪电芦苇第一次就到达最高伤害
+ *
+ * @param dwSwitch 如果设为true，功能开启；如果为false，则恢复正常。
+ */
 VOID CPvz::SuperReed(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -1130,7 +1162,11 @@ VOID CPvz::SuperReed(bool dwSwitch)
 	const char* patch2 = (dwSwitch == 1) ? "\x8B\x56\x08" : "\x8B\x52\x08";
 	WriteToMemory(dwPid, 0xCBC8B, patch2, 3);
 }
-//滇池花
+/**
+ * 滇池牡丹无冷却
+ *
+ * @param dwSwitch 如果设为true，功能开启；如果为false，则恢复正常。
+ */
 VOID CPvz::PowerFlowerNoCD(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -1138,7 +1174,11 @@ VOID CPvz::PowerFlowerNoCD(bool dwSwitch)
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x86\x9C\x00\x00\x00\x00\x00\x00\x00" :"\xC7\x86\x9C\x00\x00\x00\x96\x00\x00\x00";
 	WriteToMemory(dwPid, 0xCDA09, patch1, 10);
 }
-//永远最大
+/**
+ * 滇池牡丹子弹永远最大
+ *
+ * @param dwSwitch 如果设为true，功能开启；如果为false，则恢复正常。
+ */
 VOID CPvz::AwayMax(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -1151,7 +1191,11 @@ VOID CPvz::AwayMax(bool dwSwitch)
 	WriteJump(dwPid, 0x749 + 0xA, 0xCD811);
 	if (dwSwitch == 1)WriteJump(dwPid, 0xCD80B, 0x749);
 }
-//物品不消失
+/**
+ * 物品不消失
+ *
+ * @param dwSwitch 如果设为true，功能开启；如果为false，则恢复正常。
+ */
 VOID CPvz::ItemNoDie(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -1159,7 +1203,11 @@ VOID CPvz::ItemNoDie(bool dwSwitch)
 	const char* patch1 = (dwSwitch == 1) ? "\x90\x90\x90" : "\x83\xC0\xFF";
 	WriteToMemory(dwPid, 0xB30C1, patch1, 3);
 }
-//天上狂掉阳光
+/**
+ * 天上掉阳光无延迟
+ *
+ * @param dwSwitch 如果设为true，功能开启；如果为false，则恢复正常。
+ */
 VOID CPvz::SunNoDelay(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -1167,7 +1215,10 @@ VOID CPvz::SunNoDelay(bool dwSwitch)
 	const char* patch1 = (dwSwitch == 1) ? "\xB8\x01\x00\x00\x00\x90" : "\x8B\x87\xD4\x03\x00\x00";
 	WriteToMemory(dwPid, 0x9FB39, patch1, 6);
 }
-//一键布阵
+/**
+ * 随机全屏布阵
+ *
+ */
 VOID CPvz::BuildTheArray()
 {
 	DWORD dwPid = GetGamePid();
@@ -1207,7 +1258,9 @@ VOID CPvz::BuildTheArray()
 		}
 	}
 }
-//清空植物
+/**
+ * 清空植物
+ */
 VOID CPvz::ClearPlant()
 {
 	DWORD dwPid = GetGamePid();
@@ -1218,7 +1271,9 @@ VOID CPvz::ClearPlant()
 	patch1 = "\x80\x7F\x2F\x00";
 	WriteToMemory(dwPid, 0x9B304, patch1, 4);
 }
-//清空子弹
+/**
+ * 清空子弹
+ */
 VOID CPvz::ClearBullet()
 {
 	DWORD dwPid = GetGamePid();
@@ -1229,7 +1284,9 @@ VOID CPvz::ClearBullet()
 	patch1 = "\x80\x7A\x24\x00";
 	WriteToMemory(dwPid, 0x90738, patch1, 4);
 }
-//清空僵尸
+/**
+ * 清空僵尸
+ */
 VOID CPvz::ClearZombie()
 {
 	DWORD dwPid = GetGamePid();
@@ -1248,7 +1305,9 @@ VOID CPvz::ClearZombie()
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); 
 	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x400), &dwTimer, sizeof(DWORD), NULL); 
 }
-//修复崩溃bug
+/**
+ * 修复新版本进关卡崩溃bug
+ */
 VOID CPvz::FixCrashBug()
 {
 	DWORD dwPid = GetGamePid();
@@ -1257,7 +1316,9 @@ VOID CPvz::FixCrashBug()
 	const char* patch1 = "\xEB\x14";
 	WriteToMemory(dwPid, 0x185C7A, patch1, 2);
 }
-//红针花线
+/**
+ * 当前存档切换至红针花线
+ */
 VOID CPvz::ToHongZhen()
 {
 	std::filesystem::path configFilePath = GetConfigFilePath();
@@ -1283,7 +1344,9 @@ VOID CPvz::ToHongZhen()
 	dwNum = ReadMemory(hProcess, dwNum + 0x814);
 	BOOL result = WriteMemory(hProcess, dwNum + 0x4, 0x1);
 }
-//导向寄线
+/**
+ * 当前存档切换至导向蓟线
+ */
 VOID CPvz::ToDaoXiangJi()
 {
 	std::filesystem::path configFilePath = GetConfigFilePath();
@@ -1309,7 +1372,11 @@ VOID CPvz::ToDaoXiangJi()
 	dwNum = ReadMemory(hProcess, dwNum + 0x814);
 	BOOL result = WriteMemory(hProcess, dwNum + 0x4, 0x0);
 }
-//切换难度
+/**
+ * 苹果鼓瑟手无延迟
+ *
+ * @param dwDiff 难度的ID。
+ */
 void CPvz::ShowDiffBox(DWORD dwDiff)
 {
 	switch (dwDiff) {
@@ -1330,7 +1397,11 @@ void CPvz::ShowDiffBox(DWORD dwDiff)
 		break;
 	}
 }
-
+/**
+ * 切换当前存档难度
+ *
+ * @param dwDiff 目标切换难度的ID。
+ */
 VOID CPvz::DifficultySwitcher(DWORD dwDiff)
 {
 	std::filesystem::path configFilePath = GetConfigFilePath();
