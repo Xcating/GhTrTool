@@ -661,8 +661,11 @@ VOID CPvz::NoCd(bool dwSwitch) {
 	const char* patch2 = (dwSwitch == 1) ? "\x90\x90" : "\x39\x08";
 	WriteToMemory(dwPid, 0xEA91D, patch2, 2); //bug
 }
-
-// 修改背景ID
+/**
+ * 修改背景ID。
+ *
+ * @param dwBGId 要设置的背景ID。
+ */
 VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
 {
 	DWORD dwPid = GetGamePid();
@@ -677,18 +680,22 @@ VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
 	check_result(result);
 	CloseHandle(hProcess);
 }
-
-
-// 重复建造，无需荷叶
+/**
+ * 重复建造，无需荷叶。
+ *
+ * @param dwSwitch 如果设为true，允许重复建造而无需荷叶；如果为false，则恢复原始状态。
+ */
 VOID CPvz::Build(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90\x90" : "\xFF\x24\x85\xDC\x9C\x3A\x00";
 	WriteToMemory(dwPid, 0x99AD1, patch, 7);
 }
-
-
-// 自动收集阳光
+/**
+ * 自动收集阳光。
+ *
+ * @param dwSwitch 如果设为true，启用自动收集阳光功能；如果为false，则关闭该功能。
+ */
 VOID CPvz::Auto(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -696,32 +703,44 @@ VOID CPvz::Auto(bool dwSwitch)
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90":"\x0F\x84\xC4\x01\x00\x00";
 	WriteToMemory(dwPid, 0xB31EE, patch, 6);
 }
-
-// 全部帧伤
+/**
+ * 全部帧伤。
+ *
+ * @param dwSwitch 如果设为true，启用全部帧伤功能；如果为false，则关闭该功能。
+ */
 VOID CPvz::Card(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90" : "\xC6\x46\x24\x01"; 
 	WriteToMemory(dwPid, 0xAC55E, patch, 4);
 }
-
-// 加速僵尸出动
+/**
+ * 加速僵尸出动。
+ *
+ * @param dwSwitch 如果设为true，启用加速僵尸出动功能；如果为false，则关闭该功能。
+ */
 VOID CPvz::Fast(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\x89\x97\x00\x04\x00\x00":"\x89\x8F\x00\x04\x00\x00";
 	WriteToMemory(dwPid, 0x9FD01, patch, 6);
 }
-
-// 更好的高级暂停
+/**
+ * 更好的高级暂停。
+ *
+ * @param dwSwitch 如果设为true，启用更好的高级暂停功能；如果为false，则关闭该功能。
+ */
 VOID CPvz::TheWorld(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90" : "\x83\xF8\x32";
 	WriteToMemory(dwPid, 0x9C862, patch, 3);
 }
-
-//无主动技能冷却
+/**
+ * 无主动技能冷却。
+ *
+ * @param dwSwitch 如果设为true，取消主动技能冷却时间；如果为false，则恢复正常冷却时间。
+ */
 VOID CPvz::NoModelCD(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
@@ -733,34 +752,53 @@ VOID CPvz::NoModelCD(bool dwSwitch) {
 	if (dwSwitch == 1)WriteJump(dwPid, 0x916E2, 0x43A);
 	WriteJump(dwPid, 0x44A , 0x916E7);
 }
-
+/**
+ * 无限制阳光。
+ *
+ * @param dwSwitch 如果设为true，阳光被设置为无限制；如果为false，则恢复原始阳光限制。
+ */
 VOID CPvz::NoSunMax(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x89\x81\x84\x03\x00\x00";
 	WriteToMemory(dwPid, 0x8F64D, patch, 6);
 }
-
+/**
+ * 建筑物秒消失。
+ *
+ * @param dwSwitch 如果设为true，建筑物秒消失；如果为false，则需要建造消失时间正常。
+ */
 VOID CPvz::NoBuildTime(bool dwSwitch){
 	DWORD dwPid = GetGamePid(); 
 	const char* patch = (dwSwitch == 1) ? "\xC7\x86\x94\x00\x00\x00\x00\x00\x00\x00\x90\x90\x90\x90" : "\x89\x86\x94\x00\x00\x00\x85\xC0\x0F\x85\xDC\x01\x00\x00";
 	WriteToMemory(dwPid, 0xA98E3, patch, 14);
 }
-
+/**
+ * 忽略阳光。
+ *
+ * @param dwSwitch 如果设为true，可以无视阳光种植植物；如果为false，则需要阳光足够才可种植。
+ */
 VOID CPvz::IgnoreSun(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\xB8\x3F\x3F\x3F\x3F\x90" : "\x8B\x83\x84\x03\x00\x00";
 	WriteToMemory(dwPid, 0x8FADA, patch, 6);
 }
-
+/**
+ * 割草机不动。
+ *
+ * @param dwSwitch 如果设为true，割草机不动；如果为false，则割草机正常。
+ */
 VOID CPvz::Mowers(bool dwSwitch) {
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid)) return;
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90\x90\x90\x90\x90\x90":"\xF3\x0F\x11\x87\x84\x00\x00\x00";
 	WriteToMemory(dwPid, 0xC28B2, patch, 8);
 }
-//召唤奖杯
+/**
+ * 召唤奖杯。
+ * 只在草坪中有效，如果未进入草坪，则会弹出提示。
+ */
 void CPvz::SummonCup() {
 	DWORD dwPid = GetGamePid();
 	protectAddress(dwPid, 0x45E);
@@ -779,7 +817,13 @@ void CPvz::SummonCup() {
 	WriteCall(dwPid,0x45E + 0x1D, 0x9A210);
 	RunTheMemory(dwPid, 0x45E);
 }
-//种植
+/**
+ * 在游戏中种植指定植物。
+ *
+ * @param dwXP 植物的X坐标位置（通过传递值自动减1处理）。
+ * @param dwYP 植物的Y坐标位置（通过传递值自动减1处理）。
+ * @param dwID 植物的ID。
+ */
 VOID CPvz::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
 {
 	dwXP--; dwYP--;
@@ -804,7 +848,11 @@ VOID CPvz::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
 	WritePush(dwPid, dwID, 0x348 + 0x3);
 	RunTheMemory(dwPid, 0x348);
 }
-//豌豆子弹帧伤
+/**
+ * 豌豆子弹造成帧伤。
+ *
+ * @param dwSwitch 如果设为true，豌豆射手的子弹造成帧伤；如果为false，则恢复原始消失模式。
+ */
 VOID CPvz::PeaSDamage(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -821,7 +869,12 @@ VOID CPvz::PeaSDamage(bool dwSwitch)
 	WriteConditionJump(dwPid, 0x52F + 0x22, 0xAC579, false);
 	WriteJump(dwPid, 0x52F + 0x28, 0xAC564);
 }
-// 僵尸掉卡
+/**
+ * 改变僵尸死亡时是否掉落卡片。
+ *
+ * @param dwSwitch 控制僵尸死亡掉落卡片功能的开关。
+ * @return void 该函数不返回任何值。
+ */
 VOID CPvz::ZombieDC(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -879,9 +932,12 @@ VOID CPvz::ZombieDC(bool dwSwitch)
 	WriteConditionJump(dwPid, 0x4E7, 0x106733, true);
 	CloseHandle(hProcess);
 }
-
-
-// 植物不会被魅惑
+/**
+ * 确保植物不会被魅惑。
+ *
+ * @param dwSwitch 控制防止植物被魅惑功能的开关。
+ * @return void 该函数不返回任何值。
+ */
 VOID CPvz::NotSubvert(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -889,8 +945,12 @@ VOID CPvz::NotSubvert(bool dwSwitch)
 	const char* patch = (dwSwitch == 1) ? "\x90\x90\x90" : "\x89\x46\x10";
 	WriteToMemory(dwPid, 0xC9E81 , patch, 3);
 }
-
-// 樱桃瞬爆
+/**
+ * 改变樱桃炸弹的爆炸速度，使之可以瞬间爆炸。
+ *
+ * @param dwSwitch 控制樱桃炸弹瞬爆功能的开关。
+ * @return void 该函数不返回任何值。
+ */
 VOID CPvz::CherryFast(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -901,7 +961,12 @@ VOID CPvz::CherryFast(bool dwSwitch)
 	const char* patch2 = (dwSwitch == 1) ? "\xC7\x87\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x9C\x00\x00\x00\x64\x00\x00\x00";
 	WriteToMemory(dwPid, 0xC747B, patch2, 10);
 }
-// 樱桃不爆
+/**
+ * 防止樱桃炸弹爆炸。
+ *
+ * @param dwSwitch 控制防止樱桃炸弹爆炸功能的开关。
+ * @return void 该函数不返回任何值。
+ */
 VOID CPvz::CherryNo(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -909,7 +974,12 @@ VOID CPvz::CherryNo(bool dwSwitch)
 	const char* patch1 = (dwSwitch == 1) ? "\xE9\xE7\x01\x00\x00\x90" : "\x0F\x8F\xE6\x01\x00\x00";
 	WriteToMemory(dwPid, 0xC72B6, patch1, 6);
 }
-//猫丝子瞬吸
+/**
+ * 加快猫丝子的效果。
+ *
+ * @param dwSwitch 控制加快猫丝子效果功能的开关。
+ * @return void 该函数不返回任何值。
+ */
 VOID CPvz::MeowFast(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -917,7 +987,12 @@ VOID CPvz::MeowFast(bool dwSwitch)
 	const char* patch1 = (dwSwitch == 1) ? "\xC7\x83\x9C\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x83\x9C\x00\x00\x00\x2C\x01\x00\x00";
 	WriteToMemory(dwPid, 0xCAF89, patch1, 10);
 }
-//荷鲁斯刀刀暴击
+/**
+ * 荷鲁斯每次攻击都暴击。
+ *
+ * @param dwSwitch 控制荷鲁斯每次攻击都暴击的功能开关。
+ * @return void 该函数不返回任何值。
+ */
 VOID CPvz::LoursMC(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -926,7 +1001,12 @@ VOID CPvz::LoursMC(bool dwSwitch)
 	const char* patch1 = (dwSwitch == 1) ? "\x89\xA7\xBC\x00\x00\x00" :"\x89\x8F\xBC\x00\x00\x00";
 	WriteToMemory(dwPid, 0xC813F, patch1, 6);
 }
-// 植物无敌
+/**
+ * 植物无敌模式。
+ *
+ * @param dwSwitch 控制植物是否无敌的开关。
+ * @return void 该函数不返回任何值。
+ */
 VOID CPvz::GodMode(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -934,7 +1014,12 @@ VOID CPvz::GodMode(bool dwSwitch)
 	const char* patch = (dwSwitch == 1) ? "\x90\x90" :"\x2B\xC7";
 	WriteToMemory(dwPid, 0xC9F07, patch, 2);
 }
-// 取消荣光骄傲状态
+/**
+ * 取消荣光骄傲状态。
+ *
+ * @param dwSwitch 控制取消荣光骄傲状态功能的开关。
+ * @return void 该函数不返回任何值。
+ */
 VOID CPvz::Point(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
@@ -942,7 +1027,12 @@ VOID CPvz::Point(bool dwSwitch)
 	const char* patch = (dwSwitch == 1) ? "\xC7\x85\xF8\x02\x00\x00\x00\x00\x00\x00\x90\x90":"\x88\x95\xF8\x02\x00\x00\x8B\x80\x14\x08\x00\x00"; //硬塞进去的，依靠bug运行（
 	WriteToMemory(dwPid, 0xD5EA8, patch, 12);
 }
-//导藓批量种植
+/**
+ * 导藓批量种植效果的开关。
+ *
+ * @param dwSwitch 控制导藓批量种植效果是否开启的参数。
+ * @return void 该函数不返回任何值。
+ */
 VOID CPvz::DX(bool dwSwitch)
 {
 	DWORD dwPid = GetGamePid();
