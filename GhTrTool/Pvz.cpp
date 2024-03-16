@@ -94,7 +94,7 @@ DWORD CPvz::GetGamePid()
 		wchar_t title[256];
 		GetWindowText(hWnd, title, sizeof(title) / sizeof(title[0]));
 		std::wstring windowTitle = title;
-		std::wstring targetTitle = L"Plants Vs Zombies GhTr";
+		std::wstring targetTitle = L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l";
 		if (windowTitle.find(targetTitle) == 0)
 		{
 			DWORD dwPid = 0;
@@ -196,7 +196,11 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 	DWORD dwPid;
 	GetWindowThreadProcessId(hwnd, &dwPid);
 	auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-	std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11q] [" << millis << L"]").str();
+	#ifdef _DEBUG
+		std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [Debug Mode] [已被GhTrTool修改] [βver.0.11q] [" << millis << L"]").str();
+	#else
+		std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11q] [" << millis << L"]").str();
+	#endif
 	if (dwPid == lParam) {
 		SetWindowText(hwnd, wstr.c_str());
 		return FALSE;
