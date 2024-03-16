@@ -122,5 +122,7 @@ public:
     void ShowDiffBox(DWORD dwDiff);
     //切换至红针线
     VOID ToHongZhen();
+    //Ub不碎档
+    VOID NoUbBroken(bool isFeatureEnabled);
 };
 

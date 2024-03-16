@@ -1538,3 +1538,26 @@ VOID CPvz::ConvertToWiki(CString RawData)
 	SetClipboardText(outputData);
 	MessageBox(NULL, L"内容生成完毕，已复制到剪切板中", L"提示", MB_OK);
 }
+VOID CPvz::NoUbBroken(bool isFeatureEnabled)
+{
+	DWORD dwPid = GetGamePid();
+	if (!check_dwPid(dwPid, true)) return;
+	const char* patch1 = (isFeatureEnabled == 1) ? "\x83\x79\x08\x10" : "\x83\x79\x08\x04";
+	WriteToMemory(dwPid, 0x92052, patch1, 4);
+	const char* patch2 = (isFeatureEnabled == 1) ? "\x83\x78\x08\x10" : "\x83\x78\x08\x04";
+	WriteToMemory(dwPid, 0xD2ABD, patch2, 4);
+	const char* patch3 = (isFeatureEnabled == 1) ? "\x83\x7F\x08\x10" : "\x83\x7F\x08\x04";
+	WriteToMemory(dwPid, 0xCF1E0, patch3, 4);
+	const char* patch4 = (isFeatureEnabled == 1) ? "\x83\x7F\x08\x10" : "\x83\x7F\x08\xFE";
+	WriteToMemory(dwPid, 0xD0C4B, patch4, 4);
+	const char* patch5 = (isFeatureEnabled == 1) ? "\x83\x7F\x08\x10" : "\x83\x7F\x08\x04";
+	WriteToMemory(dwPid, 0xCF1F8, patch5, 4);
+	const char* patch6 = (isFeatureEnabled == 1) ? "\x83\x7B\x08\x10" : "\x83\x7B\x08\x04";
+	WriteToMemory(dwPid, 0xD0DF1, patch6, 4);
+	const char* patch7 = (isFeatureEnabled == 1) ? "\x83\x7B\x08\x10" : "\x83\x7B\x08\xFE";
+	WriteToMemory(dwPid, 0xD11B6, patch7, 4);
+	const char* patch8 = (isFeatureEnabled == 1) ? "\xB8\x04\x00\x00\x00\x90\x90\x90\x90" : "\x8B\x80\x14\x08\x00\x00\x8B\x40\x08";
+	WriteToMemory(dwPid, 0xF92AA, patch8, 9);
+	const char* patch9 = (isFeatureEnabled == 1) ? "\xB8\x04\x00\x00\x00\x90\x90\x90\x90" : "\x8B\x80\x14\x08\x00\x00\x8B\x40\x08";
+	WriteToMemory(dwPid, 0xF901A, patch9, 9);
+}

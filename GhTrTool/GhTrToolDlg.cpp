@@ -91,6 +91,7 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BTN_NotSubvert, &CGhTrToolDlg::OnBnClickedBtnNotSubvert)
     ON_BN_CLICKED(IDC_BTN_GodMode, &CGhTrToolDlg::OnBnClickedBtnGodMode)
 	ON_BN_CLICKED(IDC_BTN_ItemNoDie, &CGhTrToolDlg::OnBnClickedBtnItemNoDie)
+	ON_BN_CLICKED(IDC_BTN_NoUbBroken, &CGhTrToolDlg::OnBnClickedBtnNoUbBroken)
 	ON_BN_CLICKED(IDC_BTN_LingSDamage, &CGhTrToolDlg::OnBnClickedBtnLingSDamage)
 	ON_BN_CLICKED(IDC_BTN_IgnoreSun, &CGhTrToolDlg::OnBnClickedBtnIgnoreSun)
 	ON_BN_CLICKED(IDC_BTN_SummonCup, &CGhTrToolDlg::OnBnClickedBtnSummonCup)
@@ -453,6 +454,11 @@ void CGhTrToolDlg::OnBnClickedBtnGodMode()
 void CGhTrToolDlg::OnBnClickedBtnItemNoDie()
 {
 	ToggleFeature(IDC_BTN_ItemNoDie, &CPvz::ItemNoDie);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnNoUbBroken()
+{
+	ToggleFeature(IDC_BTN_NoUbBroken, &CPvz::NoUbBroken);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSunNoDelay()

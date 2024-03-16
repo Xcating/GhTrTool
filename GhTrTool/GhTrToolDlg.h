@@ -72,6 +72,7 @@ public:
     afx_msg void OnBnClickedBtnPowerFlowerNoCD();
     afx_msg void OnBnClickedBtnAwayMax();
     afx_msg void OnBnClickedBtnItemNoDie();
+    afx_msg void OnBnClickedBtnNoUbBroken();
     afx_msg void OnBnClickedBtnSunNoDelay();
     afx_msg void OnBnClickedBtnBuildTheArray();
     afx_msg void OnBnClickedBtnModifySeedPacket();
