@@ -6,6 +6,7 @@
 #include <fstream>
 #include <Psapi.h>
 #include <sstream>
+#include <cstdlib>
 #include <string>
 #include <TlHelp32.h>
 CPvz::CPvz()
@@ -197,7 +198,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 	GetWindowThreadProcessId(hwnd, &dwPid);
 	auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	#ifdef _DEBUG
-		std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [Debug Mode] [已被GhTrTool修改] [βver.0.11q] [" << millis << L"]").str();
+		std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [Debug] [已被GhTrTool修改] [βver.] [" << millis << L"]").str();
 	#else
 		std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11q] [" << millis << L"]").str();
 	#endif
@@ -1494,7 +1495,7 @@ VOID CPvz::ConvertToWiki(CString RawData)
 	{ "INFROLLZOMBIE", "永动轮僵尸"},
 	{ "MAGTRUCKZOMBIE", "磁铁车僵尸"}
 	};
-	std::string tempPath = std::getenv("TEMP");
+	std::string tempPath = getenv("TEMP");
 	std::ofstream aWrite(tempPath + "\\Temp_Output_Json_Level_File_InWiki.txt");
 	std::string aOutString = "{{WaveZombieList|header}}\n";
 	bool isStart = true;

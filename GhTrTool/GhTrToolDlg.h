@@ -12,7 +12,6 @@ class CGhTrToolDlg : public CDialogEx
 public:
 	CGhTrToolDlg(CWnd* pParent = NULL);	// 标准构造函数
     CStatic m_StaticText;
-    DWORD GetGamePid();
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_GhTrTool_DIALOG };
 #endif
