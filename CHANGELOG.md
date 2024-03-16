@@ -1,17 +1,8 @@
 # GhTrTool 0.11s ~ [2024-03-15~2024-03-16]
 ## 完整更新日志 
 ### 修复
-- **DEBUG**: 添加针对特定bug和警告的调试特定代码。
-  - 在DEBUG模式下实现了额外的检查逻辑。
-  - 修复了在某些条件下出现的bugs。
-  - 解决了所有编译器生成的警告。
-### 构建
-- **升级**: 更新C++编译器设置以支持Debug模式下的C++17功能。
-### 杂项
-- 执行了无实际运行影响的琐碎重构。
+- 旧版本残留BUG
 ### 特性
-- 添加了一个将level JSON数据转换成Wiki格式的新功能。
-  - 重构代码库，提高可读性和可维护性。
-  - 确保所有测试通过，并为转换器功能添加新的测试。
+- 添加了禁止在Unbalanced难度下，存档损坏(拯救已损坏存档，可以配合修改难度使用)
 
-![image](https://github.com/Xcating/GhTrTool/assets/82816129/9dbb8cb0-dafd-4dca-bd04-ab4478a98fa0)
+![image](https://github.com/Xcating/GhTrTool/assets/82816129/f085cd46-6ef1-44df-9665-261a617e8ce2)
