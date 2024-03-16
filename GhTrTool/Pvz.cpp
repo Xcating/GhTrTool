@@ -82,36 +82,28 @@ BOOL CPvz::WriteMemory(HANDLE hProcess, DWORD address, DWORD value)
 	return WriteProcessMemory(hProcess, (LPVOID)address, &value, sizeof(BYTE), NULL);
 }
 /**
- * 获取被修改后的游戏标题。
- *
- * @return std::wstring 返回被修改后的游戏标题。
- */
-std::wstring getTitle() {
-	auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-	std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11q] [" << millis << L"]").str();
-	return wstr;
-}
-/**
  * 获取游戏的PID。
  *
  * @return DWORD 返回游戏的PID。
  */
 DWORD CPvz::GetGamePid()
 {
-	HWND hWnd = ::FindWindow(NULL, GAME_NAME);
-	if (hWnd == NULL)
+	HWND hWnd = nullptr;
+	while ((hWnd = FindWindowEx(nullptr, hWnd, nullptr, nullptr)) != nullptr)
 	{
-		hWnd = ::FindWindow(NULL, getTitle().c_str());
-		if (hWnd == NULL)
+		wchar_t title[256];
+		GetWindowText(hWnd, title, sizeof(title) / sizeof(title[0]));
+		std::wstring windowTitle = title;
+		std::wstring targetTitle = L"Plants Vs Zombies GhTr";
+		if (windowTitle.find(targetTitle) == 0)
 		{
-			return -1;
+			DWORD dwPid = 0;
+			GetWindowThreadProcessId(hWnd, &dwPid);
+			return dwPid;
 		}
 	}
 
-	DWORD dwPid = 0;
-	::GetWindowThreadProcessId(hWnd, &dwPid);
-
-	return dwPid;
+	return -1;
 }
 /**
  * 获取指定进程的模块基址。
@@ -1428,4 +1420,118 @@ VOID CPvz::DifficultySwitcher(DWORD dwDiff)
 	DWORD dwNum = ReadMemory(hProcess, targetAddress);
 	dwNum = ReadMemory(hProcess, dwNum + 0x814);
 	BOOL result = WriteMemory(hProcess, dwNum + 0x8, dwDiff);
+}
+void PutNewString(std::string& theOut, int& theWave) {
+	if (theWave != 1)
+		theOut += "{{WaveZombieList|endwave}}\n";
+	theOut += "{{WaveZombieList|startwave|" + std::to_string(theWave) + "}}\n";
+	theWave++;
+}
+void SetClipboardText(const std::string& text) {
+	if (OpenClipboard(nullptr)) {
+		HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (text.length() + 1) * sizeof(char));
+		if (hMem != nullptr) {
+			char* pData = static_cast<char*>(GlobalLock(hMem));
+			if (pData != nullptr) {
+				strcpy_s(pData, text.length() + 1, text.c_str());
+				GlobalUnlock(hMem);
+				EmptyClipboard();
+				SetClipboardData(CF_TEXT, hMem);
+			}
+		}
+		CloseClipboard();
+	}
+}
+std::wstring GetClipboardText()
+{
+	std::wstring text;
+
+	if (OpenClipboard(nullptr))
+	{
+		HANDLE hData = GetClipboardData(CF_UNICODETEXT);
+		if (hData != nullptr)
+		{
+			wchar_t* pData = static_cast<wchar_t*>(GlobalLock(hData));
+			if (pData != nullptr)
+			{
+				text = pData;
+				GlobalUnlock(hData);
+			}
+		}
+		CloseClipboard();
+	}
+
+	return text;
+}
+VOID CPvz::ConvertToWiki(CString RawData)
+{
+	std::wstring wData(RawData.GetString());
+	std::string aData(CW2A(wData.c_str()));
+	using json = nlohmann::json;
+	json aLevelJson;
+	try {
+		aLevelJson = nlohmann::json::parse(aData);
+	}
+	catch (nlohmann::json::parse_error) {
+		MessageBox(NULL, L"该功能将把框内的关卡文件转化成WIKI形式的文本，复制到剪切板中", L"提示", MB_OK);
+		std::string errorMessage = "JSON解析失败，请你提供有效的关卡Json文件";
+		MessageBoxA(nullptr, errorMessage.c_str(), "Json解析错误", MB_OK);
+		return;
+	}
+	std::map<std::string, std::string> gNameMap = {
+	{ "NORMALZOMBIE" , "普通僵尸"},
+	{ "FLAGZOMBIE", "摇旗僵尸"},
+	{ "CONEZOMBIE", "路障星仪僵尸"},
+	{ "BUCKETZOMBIE", "持铁桶僵尸"},
+	{ "POLEZOMBIE", "撑魅惑杆僵尸"},
+	{ "FIREFLYZOMBIE", "萤火虫僵尸"},
+	{ "ARROWZOMBIE", "弓箭僵尸"},
+	{ "WITCHZOMBIE", "女巫僵尸"},
+	{ "INFROLLZOMBIE", "永动轮僵尸"},
+	{ "MAGTRUCKZOMBIE", "磁铁车僵尸"}
+	};
+	std::string tempPath = std::getenv("TEMP");
+	std::ofstream aWrite(tempPath + "\\Temp_Output_Json_Level_File_InWiki.txt");
+	std::string aOutString = "{{WaveZombieList|header}}\n";
+	bool isStart = true;
+	int aWave = 1;
+
+	if (aLevelJson.contains("ZombieList")) {
+		json aZombieArray = aLevelJson["ZombieList"];
+
+		for (const auto& aZombieJson : aZombieArray) {
+			std::string aZombieString = aZombieJson["Type"].get<std::string>();
+
+			if (aZombieString == "ENDNULLZOMBIE")
+				break;
+
+			if (aZombieString == "NULLZOMBIE") {
+				isStart = true;
+				continue;
+			}
+
+			if (isStart) {
+				PutNewString(aOutString, aWave);
+				isStart = false;
+			}
+
+			aOutString += "{{WaveZombieList|" + gNameMap[aZombieString] + "|";
+			aOutString += std::to_string(aZombieJson.contains("Row") ? aZombieJson["Row"].get<int>() : -1);
+			aOutString += "|";
+			aOutString += std::to_string(aZombieJson.contains("LowDif") ? aZombieJson["LowDif"].get<int>() : 0);
+			aOutString += "}}\n";
+		}
+
+		aOutString += "{{WaveZombieList|endwave}}\n";
+	}
+
+	aOutString += "{{WaveZombieList|foot}}";
+	aWrite << aOutString;
+	aWrite.close();
+	std::ifstream aRead(tempPath + "\\Temp_Output_Json_Level_File_InWiki.txt");
+	std::string outputData((std::istreambuf_iterator<char>(aRead)), std::istreambuf_iterator<char>());
+	aRead.close();
+	Sleep(500); //典
+	SetClipboardText(outputData);
+	MessageBox(NULL, L"内容生成完毕，已复制到剪切板中", L"提示", MB_OK);
 }

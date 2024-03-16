@@ -27,7 +27,6 @@ protected:
     BOOL m_bIsRed=1;
     CFont m_font;
     HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-    // 生成的消息映射函数
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
@@ -78,6 +77,7 @@ public:
     afx_msg void OnBnClickedBtnBuildTheArray();
     afx_msg void OnBnClickedBtnModifySeedPacket();
     afx_msg void OnBnClickedBtnDifficultySwitcher();
+    afx_msg void OnBnClickedBtnConvertToWiki();
     afx_msg void OnBnClickedBtnClearPlant();
     afx_msg void OnBnClickedBtnClearBullet();
     afx_msg void OnBnClickedBtnClearZombie();
@@ -87,4 +87,5 @@ public:
     afx_msg void UpdateText();
     afx_msg void OnBnClickedBtnPlantIDList();
     void OnTimer(UINT_PTR nIDEvent);
+    CEdit m_edit;
 };

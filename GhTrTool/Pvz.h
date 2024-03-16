@@ -19,17 +19,19 @@ public:
     VOID ModifySeedPacket(DWORD dwID,DWORD dwNum);
     //修改存档难度
     VOID DifficultySwitcher(DWORD dwDiff);
+    //修改存档难度
+    VOID ConvertToWiki(CString RawData);
     //种植植物
     VOID Plant(DWORD dwXP, DWORD dwYP,DWORD dwID);
     //检查pid合法性
     BOOL check_dwPid(DWORD dwPid, BOOL isMessage);
+    // 获取游戏的 PID
+    DWORD GetGamePid();
 private:
     nlohmann::json ReadConfigFile(const std::filesystem::path& configFilePath);
     void WriteConfigFile(const std::filesystem::path& configFilePath, const nlohmann::json& configJson);
     DWORD ReadMemory(HANDLE hProcess, DWORD address);
     BOOL WriteMemory(HANDLE hProcess, DWORD address, DWORD value);
-    // 获取游戏的 PID
-    DWORD GetGamePid();
 public:
     // 种植不减阳光
     VOID SunNop(bool isFeatureEnabled);

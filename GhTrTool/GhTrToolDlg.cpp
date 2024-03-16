@@ -7,7 +7,7 @@
 #include "GhTrToolDlg.h"
 #include "afxdialogex.h"
 #include<string>
-
+#include <sstream>
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -59,6 +59,7 @@ void CGhTrToolDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_STATIC_TEXT, m_StaticText);
+	DDX_Control(pDX, IDC_EDIT_JsonText, m_edit);
 }
 
 BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
@@ -71,6 +72,7 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_SP, &CGhTrToolDlg::OnBnClickedBtnSeedPacket)
 	ON_BN_CLICKED(IDC_BTN_ModifySeedPacket, &CGhTrToolDlg::OnBnClickedBtnModifySeedPacket)
 	ON_BN_CLICKED(IDC_BTN_DifficultySwitcher, &CGhTrToolDlg::OnBnClickedBtnDifficultySwitcher)
+	ON_BN_CLICKED(IDC_BTN_ConvertToWiki, &CGhTrToolDlg::OnBnClickedBtnConvertToWiki)
 	ON_BN_CLICKED(IDC_BTN_Plant, &CGhTrToolDlg::OnBnClickedBtnPlant)
     ON_BN_CLICKED(IDC_BTN_SUN_NOP, &CGhTrToolDlg::OnBnClickedBtnSunNop)
     ON_BN_CLICKED(IDC_BTN_NO_CD, &CGhTrToolDlg::OnBnClickedBtnNoCd)
@@ -139,12 +141,12 @@ HBRUSH CGhTrToolDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return hbr;
 }
 
-
 BOOL CGhTrToolDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 	// 将“关于...”菜单项添加到系统菜单中。
 	UpdateText();
+	m_edit.SetLimitText(100000);
 	SetDlgItemText(IDC_EDIT_YP, _T("0"));
 	SetDlgItemText(IDC_EDIT_XP, _T("0"));
 	SetDlgItemText(IDC_EDIT_ID, _T("1"));
@@ -193,20 +195,6 @@ void CGhTrToolDlg::OnSysCommand(UINT nID, LPARAM lParam)
 // 如果向对话框添加最小化按钮，则需要下面的代码
 //  来绘制该图标。  对于使用文档/视图模型的 MFC 应用程序，
 //  这将由框架自动完成。
-DWORD CGhTrToolDlg::GetGamePid()
-{
-	HWND hWnd = ::FindWindow(NULL, GAME_NAME);
-
-	if (hWnd == NULL)
-	{
-		return -1;
-	}
-
-	DWORD dwPid = 0;
-	::GetWindowThreadProcessId(hWnd, &dwPid);
-
-	return dwPid;
-}
 void CGhTrToolDlg::OnPaint()
 {
 	if (IsIconic())
@@ -239,7 +227,7 @@ void CGhTrToolDlg::ToggleFeature(UINT nID, void (CPvz::* featureFunc)(bool))
 {
 	CPvz pvz;
 	CButton* pCheck = (CButton*)GetDlgItem(nID);
-	if (!pvz.check_dwPid(GetGamePid(),false)) {
+	if (!pvz.check_dwPid(pvz.GetGamePid(),false)) {
 		pCheck->SetCheck(BST_UNCHECKED);
 		return;
 	}
@@ -273,7 +261,8 @@ void CGhTrToolDlg::PlantAtPositions(CPvz& pvz, DWORD dwXP, DWORD dwYP, DWORD dwI
 }
 void CGhTrToolDlg::UpdateText()
 {
-	int pid = GetGamePid();
+	CPvz pvz = CPvz();
+	int pid = pvz.GetGamePid();
 	if (pid == -1)
 	{
 		m_bIsRed = 1;
@@ -315,6 +304,13 @@ void CGhTrToolDlg::OnBnClickedBtnDifficultySwitcher()
 	CPvz pvz = CPvz(); pvz.WriteConfig();
 	pvz.DifficultySwitcher(dwDiff);
 }
+void CGhTrToolDlg::OnBnClickedBtnConvertToWiki()
+{
+	CString strText;
+	GetDlgItemText(IDC_EDIT_JsonText, strText);
+	CPvz pvz = CPvz();
+	pvz.ConvertToWiki(strText);
+}
 
 void CGhTrToolDlg::OnBnClickedBtnModifySeedPacket()
 {
@@ -333,12 +329,12 @@ void CGhTrToolDlg::OnBnClickedBtnSeedPacket()
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPlant() {
-	DWORD dwPid = GetGamePid();
+	CPvz pvz = CPvz();
+	DWORD dwPid = pvz.GetGamePid();
 	DWORD dwXP = GetDlgItemInt(IDC_EDIT_XP);
 	DWORD dwYP = GetDlgItemInt(IDC_EDIT_YP);
 	DWORD dwID = GetDlgItemInt(IDC_EDIT_ID);
-	CPvz pvz = CPvz();
-	DWORD dwPid2 = GetGamePid();
+	DWORD dwPid2 = pvz.GetGamePid();
 	if (!pvz.check_battlefield(dwPid))
 	{
 		MessageBoxA(NULL, "未进入战场", "提示", MB_OK);
