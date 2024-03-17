@@ -198,7 +198,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 	#ifdef _DEBUG
 		std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [Debug] [已被GhTrTool修改] [βver.] [" << millis << L"]").str();
 	#else
-		std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11s] [" << millis << L"]").str();
+		std::wstring wstr = (std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16l - [已被GhTrTool修改] [ver.0.11t] [" << millis << L"]").str();
 	#endif
 	if (dwPid == lParam) {
 		SetWindowText(hwnd, wstr.c_str());
