@@ -1541,6 +1541,7 @@ VOID CPvz::ConvertToWiki(CString RawData)
 VOID CPvz::NoUbBroken(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
+	protectAddress(dwPid, 0x300);
 	if (!check_dwPid(dwPid, true)) return;
 	const char* patch1 = (isFeatureEnabled == 1) ? "\x83\x79\x08\x10" : "\x83\x79\x08\x04";
 	WriteToMemory(dwPid, 0x92052, patch1, 4);
@@ -1556,8 +1557,19 @@ VOID CPvz::NoUbBroken(bool isFeatureEnabled)
 	WriteToMemory(dwPid, 0xD0DF1, patch6, 4);
 	const char* patch7 = (isFeatureEnabled == 1) ? "\x83\x7B\x08\x10" : "\x83\x7B\x08\xFE";
 	WriteToMemory(dwPid, 0xD11B6, patch7, 4);
-	const char* patch8 = (isFeatureEnabled == 1) ? "\xB8\x04\x00\x00\x00\x90\x90\x90\x90" : "\x8B\x80\x14\x08\x00\x00\x8B\x40\x08";
-	WriteToMemory(dwPid, 0xF92AA, patch8, 9);
-	const char* patch9 = (isFeatureEnabled == 1) ? "\xB8\x04\x00\x00\x00\x90\x90\x90\x90" : "\x8B\x80\x14\x08\x00\x00\x8B\x40\x08";
-	WriteToMemory(dwPid, 0xF901A, patch9, 9);
+	const char* patch8 = (isFeatureEnabled == 1) ? "\xE9\x00\x00\x00\x00\x0F\x1F\x40\x00" : "\x89\x47\x10\x8B\x86\x60\x02\x00\x00";
+	WriteToMemory(dwPid, 0xF92B3, patch8, 9);
+	const char* patch9 = (isFeatureEnabled == 1) ? "\xE9\x00\x00\x00\x00\x0F\x1F\x40\x00" : "\x8B\x40\x08\x89\x86\xD4\x01\x00\x00";
+	WriteToMemory(dwPid, 0xF9020, patch9, 9);
+	const char* patch10 = "\x83\xF8\xFE\x75\x16\x0F\x1F\x40\x00\xC7\x47\x10\x04\x00\x00\x00\x8B\x86\x60\x02\x00\x00\xE9\xA1\x92\x09\xFF\x89\x47\x10\x8B\x86\x60\x02\x00\x00\xE9\x93\x92\x09\xFF";
+	WriteToMemory(dwPid, 0x300, patch10, 41);
+	const char* patch11 = " \x8B\x40\x08\x83\xF8\xFE\x75\x14\x0F\x1F\x40\x00\xB8\x04\x00\x00\x00\x89\x86\xD4\x01\x00\x00\xE9\x0D\x90\x09\xFF\x89\x86\xD4\x01\x00\x00\xE9\x02\x90\x09\xFF";
+	WriteToMemory(dwPid, 0x3C0, patch11, 39);
+	if (isFeatureEnabled == 1) WriteJump(dwPid, 0xF92B3, 0x300);
+	WriteJump(dwPid, 0x316, 0xF92BC);
+	WriteJump(dwPid, 0x324, 0xF92BC);
+
+	if (isFeatureEnabled == 1) WriteJump(dwPid, 0xF9020, 0x3C1);
+	WriteJump(dwPid, 0x3D8, 0xF9029);
+	WriteJump(dwPid, 0x3E3, 0xF9029);
 }

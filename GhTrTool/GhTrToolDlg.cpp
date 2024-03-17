@@ -68,6 +68,13 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_COMMAND(ID_ABOUT, &CGhTrToolDlg::OnClickMenuAbout)
+	ON_COMMAND(ID_SaveDir, &CGhTrToolDlg::OnClickMenuOpenSaveDir)
+	ON_COMMAND(ID_UpdateLog, &CGhTrToolDlg::OnClickMenuAbout)
+	ON_COMMAND(ID_ChangeSave, &CGhTrToolDlg::OnClickMenuShowSaveFunction)
+	ON_COMMAND(ID_PlantID, &CGhTrToolDlg::OnClickMenuShowIDList)
+	ON_COMMAND(ID_BackGroundID, &CGhTrToolDlg::OnClickMenuShowIDList)
+	ON_COMMAND(ID_DiffID, &CGhTrToolDlg::OnClickMenuShowIDList)
     ON_BN_CLICKED(IDC_BTN_SUN, &CGhTrToolDlg::OnBnClickedBtnSun)
 	ON_BN_CLICKED(IDC_BTN_SP, &CGhTrToolDlg::OnBnClickedBtnSeedPacket)
 	ON_BN_CLICKED(IDC_BTN_ModifySeedPacket, &CGhTrToolDlg::OnBnClickedBtnModifySeedPacket)
@@ -141,12 +148,55 @@ HBRUSH CGhTrToolDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	}
 	return hbr;
 }
-
+VOID CGhTrToolDlg::OnClickMenuAbout()
+{
+	CAboutDlg dlgAbout;
+	dlgAbout.DoModal();
+}
+VOID CGhTrToolDlg::OnClickMenuShowIDList()
+{
+	PlantID dlg;
+	dlg.DoModal(); // 显示对话框
+}
+VOID CGhTrToolDlg::OnClickMenuOpenSaveDir()
+{
+	ShellExecute(NULL, L"open", L"C:\\ProgramData\\PerfectVoyage", NULL, NULL, SW_SHOWDEFAULT);
+}
+VOID CGhTrToolDlg::OnClickMenuShowSaveFunction()
+{
+	CPvz pvz = CPvz();
+	pvz.WriteConfig();
+	SwitchEnableSava = !SwitchEnableSava;
+	if (SwitchEnableSava)
+	{
+		GetDlgItem(IDC_BTN_DifficultySwitcher)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_EDIT_Diff)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BTN_ToDaoXiangJi)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BTN_ToHongZhen)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BTN_NoUbBroken)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_STATIC_DiffID)->ShowWindow(SW_SHOW);
+		AfxMessageBox(_T("已显示该类功能，请谨慎使用，你的存档以及游戏已被标记！"), MB_ICONINFORMATION | MB_OK);
+	}
+	else
+	{
+		      
+		GetDlgItem(IDC_BTN_DifficultySwitcher)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_EDIT_Diff)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_BTN_ToDaoXiangJi)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_BTN_ToHongZhen)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_BTN_NoUbBroken)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_STATIC_DiffID)->ShowWindow(SW_HIDE);
+		AfxMessageBox(_T("已禁用该类功能！"), MB_ICONINFORMATION | MB_OK);
+	}
+}
 BOOL CGhTrToolDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-	// 将“关于...”菜单项添加到系统菜单中。
 	UpdateText();
+	GetDlgItem(IDC_BTN_NoUbBroken)->ShowWindow(SW_HIDE);
+	CMenu* pMenu = new CMenu();
+	pMenu->LoadMenu(IDR_MENU1);  // 使用实际的菜单资源ID代替
+	SetMenu(pMenu);
 	m_edit.SetLimitText(100000);
 	SetDlgItemText(IDC_EDIT_YP, _T("0"));
 	SetDlgItemText(IDC_EDIT_XP, _T("0"));
@@ -192,7 +242,6 @@ void CGhTrToolDlg::OnSysCommand(UINT nID, LPARAM lParam)
 		CDialogEx::OnSysCommand(nID, lParam);
 	}
 }
-
 // 如果向对话框添加最小化按钮，则需要下面的代码
 //  来绘制该图标。  对于使用文档/视图模型的 MFC 应用程序，
 //  这将由框架自动完成。

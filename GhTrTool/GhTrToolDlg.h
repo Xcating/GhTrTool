@@ -25,8 +25,13 @@ protected:
     CBrush m_brush;
     BOOL m_bIsRed=1;
     CFont m_font;
+    BOOL SwitchEnableSava=0;
     HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	virtual BOOL OnInitDialog();
+    VOID OnClickMenuAbout();
+    VOID OnClickMenuShowIDList();
+    VOID OnClickMenuOpenSaveDir();
+    VOID OnClickMenuShowSaveFunction();
+    virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
