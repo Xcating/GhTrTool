@@ -1214,24 +1214,41 @@ int CPvz::GenerateValidRandomID(const std::vector<int>& invalidIDs) {
 /**
  * 随机全屏布阵
  */
-VOID CPvz::BuildTheArray() {
+VOID CPvz::BuildTheArray()
+{
 	DWORD dwPid = GetGamePid();
 	if (!check_dwPid(dwPid, true)) return;
-	if (!check_battlefield(dwPid))
-	{
-		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
-		return;
-	}
-	const char* patch = "\xC6\x40\x2F\x00";
-	WriteToMemory(dwPid, 0x982C3, patch, 4);
-	std::vector<int> invalidIDs = { 2, 4, 6, 9, 13 };
+	const char* patch1 = "\xC6\x47\x2F\x00";
+	WriteToMemory(dwPid, 0x9B304, patch1, 4);
+	Sleep(10);
+	patch1 = "\x80\x7F\x2F\x00";
+	WriteToMemory(dwPid, 0x9B304, patch1, 4);
 	for (int X = 1; X <= 9; ++X) {
+		Sleep(80);
 		for (int Y = 1; Y <= 5; ++Y) {
-			int ID = GenerateValidRandomID(invalidIDs);
-			Plant(X, Y, ID); 
-			if (ID == 9 || ID == 13) {
-				Plant(X, Y + 1, ID);
-				Plant(X + 1, Y + 1, ID);
+			Sleep(80);
+			int ID;
+			do {
+				ID = rand() % 15; // 生成1~15范围内的随机ID
+			} while (ID == 2 || ID == 6);
+			if (ID == 4 || ID == 9 || ID == 13)
+			{
+				if (ID == 9 || ID == 13)
+				{
+					Plant(X, Y + 1, ID);
+					Plant(X+1, Y, ID);
+					Sleep(10);
+					Plant(X + 1, Y + 1, ID);
+				}
+				Plant(X, Y, ID);
+				do {
+					ID = rand() % 15; // 生成0~15范围内的随机数
+				} while (ID == 4 || ID == 9 || ID == 13 || ID == 2 || ID == 6);
+				Plant(X, Y, ID);
+			}
+			else
+			{
+				Plant(X, Y, ID);
 			}
 		}
 	}
