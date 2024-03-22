@@ -31,7 +31,7 @@ private:
     nlohmann::json ReadConfigFile(const std::filesystem::path& configFilePath);
     void WriteConfigFile(const std::filesystem::path& configFilePath, const nlohmann::json& configJson);
     DWORD ReadMemory(HANDLE hProcess, DWORD address);
-    BOOL WriteMemory(HANDLE hProcess, DWORD address, DWORD value);
+    BOOL WriteByteMemory(HANDLE hProcess, DWORD address, DWORD value);
 public:
     // 种植不减阳光
     VOID SunNop(bool isFeatureEnabled);

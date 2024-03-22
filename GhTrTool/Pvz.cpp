@@ -76,7 +76,7 @@ DWORD CPvz::ReadMemory(HANDLE hProcess, DWORD address)
  * @param value 要写入的DWORD值。
  * @return BOOL 返回是否写入成功。
  */
-BOOL CPvz::WriteMemory(HANDLE hProcess, DWORD address, DWORD value)
+BOOL CPvz::WriteByteMemory(HANDLE hProcess, DWORD address, DWORD value)
 {
 	return WriteProcessMemory(hProcess, (LPVOID)address, &value, sizeof(BYTE), NULL);
 }
@@ -507,18 +507,6 @@ BOOL CPvz::check_battlefield(DWORD dwPid) {
 	CloseHandle(hProcess);
 }
 /**
- * 检查内存写入结果，并弹出相应消息框。
- *
- * @param result 写入结果
- */
-VOID check_result(BOOL result)
-{
-	if (result)
-		MessageBox(NULL, TEXT("写入内存成功"), TEXT("Info"), MB_OK);
-	else
-		MessageBox(NULL, TEXT("写入失败，请联系作者"), TEXT("Error"), MB_OK | MB_ICONERROR);
-}
-/**
  * 写入配置文件。如果config.json不存在，则创建文件并设置"isCheat"为true。
  */
 VOID CPvz::WriteConfig()
@@ -564,7 +552,6 @@ VOID CPvz::ModifySunValue(DWORD dwSun)
 	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL); 
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); 
 	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x384), &dwSun, sizeof(DWORD), NULL); 
-	check_result(result);
 	CloseHandle(hProcess);
 }
 /**
@@ -590,7 +577,6 @@ VOID CPvz::SeedPacket(DWORD dwSP)
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL); //一层偏移
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x14C), &dwNum, sizeof(DWORD), NULL); //二层偏移
 	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x24), &dwSP, sizeof(DWORD), NULL); //三层偏移
-	check_result(result);
 	CloseHandle(hProcess);
 }
 /**
@@ -660,7 +646,6 @@ VOID CPvz::ModifyBGIdValue(DWORD dwBGId)
 	ReadProcessMemory(hProcess, (LPCVOID)targetAddress, &dwNum, sizeof(DWORD), NULL);
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x708), &dwNum, sizeof(DWORD), NULL);
 	BOOL result=WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x164), &dwBGId, sizeof(DWORD), NULL);
-	check_result(result);
 	CloseHandle(hProcess);
 }
 /**
@@ -1352,7 +1337,7 @@ VOID CPvz::ToHongZhen()
 
 	DWORD dwNum = ReadMemory(hProcess, targetAddress);
 	dwNum = ReadMemory(hProcess, dwNum + 0x814);
-	BOOL result = WriteMemory(hProcess, dwNum + 0x4, 0x1);
+	BOOL result = WriteByteMemory(hProcess, dwNum + 0x4, 0x1);
 }
 /**
  * 当前存档切换至导向蓟线
@@ -1380,7 +1365,7 @@ VOID CPvz::ToDaoXiangJi()
 
 	DWORD dwNum = ReadMemory(hProcess, targetAddress);
 	dwNum = ReadMemory(hProcess, dwNum + 0x814);
-	BOOL result = WriteMemory(hProcess, dwNum + 0x4, 0x0);
+	BOOL result = WriteByteMemory(hProcess, dwNum + 0x4, 0x0);
 }
 /**
  * 苹果鼓瑟手无延迟
@@ -1439,7 +1424,7 @@ VOID CPvz::DifficultySwitcher(DWORD dwDiff)
 
 	DWORD dwNum = ReadMemory(hProcess, targetAddress);
 	dwNum = ReadMemory(hProcess, dwNum + 0x814);
-	BOOL result = WriteMemory(hProcess, dwNum + 0x8, dwDiff);
+	BOOL result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x8), &dwDiff, sizeof(DWORD), NULL);
 }
 void PutNewString(std::string& theOut, int& theWave) {
 	if (theWave != 1)
