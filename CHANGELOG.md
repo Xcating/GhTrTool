@@ -1,9 +1,10 @@
-# GhTrTool 0.11u ~ [2024-03-17]
+# GhTrTool 0.11u ~ [2024-04-14]
 ## 完整更新日志 
-### 修复
-- "Unbalanced不碎档功能" 会让所有存档都显示Unbalanced难度的bug
+### 更新
+- 对GhTr ~ Perfect Voyage 0.16m版本提供支持，停止支持之前的版本
 ### 特性
-- 添加了程序顶部页面栏，用于快捷使用某些功能
-- 将存档功能默认隐藏，可以点击快捷栏中的"修改存档功能"来显示
+- 重构代码,提升可读性和可维护性
+### 正在进行
+- 地址常数化
 
-![image](https://github.com/Xcating/GhTrTool/assets/82816129/f36342bc-c065-45ac-b32a-8bd57d8aa337)
+![image](https://github.com/Xcating/GhTrTool/assets/82816129/bf18c318-a437-4fd1-ba5e-9e3d37f36f00)
