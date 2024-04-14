@@ -76,12 +76,12 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_COMMAND(ID_BackGroundID, &CGhTrToolDlg::OnClickMenuShowIDList)
 	ON_COMMAND(ID_DiffID, &CGhTrToolDlg::OnClickMenuShowIDList)
     ON_BN_CLICKED(IDC_BTN_SUN, &CGhTrToolDlg::OnBnClickedBtnSun)
-	ON_BN_CLICKED(IDC_BTN_SP, &CGhTrToolDlg::OnBnClickedBtnSeedPacket)
-	ON_BN_CLICKED(IDC_BTN_ModifySeedPacket, &CGhTrToolDlg::OnBnClickedBtnModifySeedPacket)
+	ON_BN_CLICKED(IDC_BTN_SP, &CGhTrToolDlg::OnBnClickedBtnModifyCardNumber)
+	ON_BN_CLICKED(IDC_BTN_ModifyCardData, &CGhTrToolDlg::OnBnClickedBtnModifyCardData)
 	ON_BN_CLICKED(IDC_BTN_DifficultySwitcher, &CGhTrToolDlg::OnBnClickedBtnDifficultySwitcher)
 	ON_BN_CLICKED(IDC_BTN_ConvertToWiki, &CGhTrToolDlg::OnBnClickedBtnConvertToWiki)
 	ON_BN_CLICKED(IDC_BTN_Plant, &CGhTrToolDlg::OnBnClickedBtnPlant)
-    ON_BN_CLICKED(IDC_BTN_SUN_NOP, &CGhTrToolDlg::OnBnClickedBtnSunNop)
+    ON_BN_CLICKED(IDC_BTN_SUN_NOP, &CGhTrToolDlg::OnBnClickedBtnPlantNoSubSun)
     ON_BN_CLICKED(IDC_BTN_NO_CD, &CGhTrToolDlg::OnBnClickedBtnNoCd)
     ON_BN_CLICKED(IDC_BTN_BGId, &CGhTrToolDlg::OnBnClickedBtnBGId)
     ON_BN_CLICKED(IDC_BTN_BUILD, &CGhTrToolDlg::OnBnClickedBtnBuild)
@@ -148,23 +148,23 @@ HBRUSH CGhTrToolDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	}
 	return hbr;
 }
-VOID CGhTrToolDlg::OnClickMenuAbout()
+void CGhTrToolDlg::OnClickMenuAbout()
 {
 	CAboutDlg dlgAbout;
 	dlgAbout.DoModal();
 }
-VOID CGhTrToolDlg::OnClickMenuShowIDList()
+void CGhTrToolDlg::OnClickMenuShowIDList()
 {
 	PlantID dlg;
 	dlg.DoModal(); // 显示对话框
 }
-VOID CGhTrToolDlg::OnClickMenuOpenSaveDir()
+void CGhTrToolDlg::OnClickMenuOpenSaveDir()
 {
 	ShellExecute(NULL, L"open", L"C:\\ProgramData\\PerfectVoyage", NULL, NULL, SW_SHOWDEFAULT);
 }
-VOID CGhTrToolDlg::OnClickMenuShowSaveFunction()
+void CGhTrToolDlg::OnClickMenuShowSaveFunction()
 {
-	CPvz pvz = CPvz();
+	GhTrManager pvz = GhTrManager();
 	pvz.WriteConfig();
 	SwitchEnableSava = !SwitchEnableSava;
 	if (SwitchEnableSava)
@@ -209,7 +209,7 @@ BOOL CGhTrToolDlg::OnInitDialog()
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu != NULL)
 	{
-		BOOL bNameValid;
+		bool bNameValid;
 		CString strAboutMenu;
 		bNameValid = strAboutMenu.LoadString(IDS_ABOUTBOX);
 		ASSERT(bNameValid);
@@ -220,7 +220,7 @@ BOOL CGhTrToolDlg::OnInitDialog()
 		}
 	}
 
-	// 设置此对话框的图标。  当应用程序主窗口不是对话框时，框架将自动
+	// 设置此对话框的图标  当应用程序主窗口不是对话框时，框架将自动
 	//  执行此操作
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
@@ -243,8 +243,8 @@ void CGhTrToolDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 // 如果向对话框添加最小化按钮，则需要下面的代码
-//  来绘制该图标。  对于使用文档/视图模型的 MFC 应用程序，
-//  这将由框架自动完成。
+//  来绘制该图标  对于使用文档/视图模型的 MFC 应用程序，
+//  这将由框架自动完成
 void CGhTrToolDlg::OnPaint()
 {
 	if (IsIconic())
@@ -273,11 +273,11 @@ HCURSOR CGhTrToolDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
-void CGhTrToolDlg::ToggleFeature(UINT nID, void (CPvz::* featureFunc)(bool))
+void CGhTrToolDlg::ToggleFeature(UINT nID, void (GhTrManager::* featureFunc)(bool))
 {
-	CPvz pvz;
+	GhTrManager pvz;
 	CButton* pCheck = (CButton*)GetDlgItem(nID);
-	if (!pvz.check_dwPid(pvz.GetGamePid(),false)) {
+	if (!pvz.CheckGamePid(pvz.GetGamePid(),false)) {
 		pCheck->SetCheck(BST_UNCHECKED);
 		return;
 	}
@@ -285,7 +285,7 @@ void CGhTrToolDlg::ToggleFeature(UINT nID, void (CPvz::* featureFunc)(bool))
 	bool isFeatureEnabled = pCheck->GetCheck() == BST_CHECKED;
 	(pvz.*featureFunc)(isFeatureEnabled);
 }
-void CGhTrToolDlg::PlantAtPositions(CPvz& pvz, DWORD dwXP, DWORD dwYP, DWORD dwID) {
+void CGhTrToolDlg::PlantAtPositions(GhTrManager& pvz, DWORD dwXP, DWORD dwYP, DWORD dwID) {
 	if (dwXP == 0 && dwYP == 0) {
 		for (int X = 1; X <= 9; ++X) {
 			for (int Y = 1; Y <= 5; ++Y) {
@@ -311,7 +311,7 @@ void CGhTrToolDlg::PlantAtPositions(CPvz& pvz, DWORD dwXP, DWORD dwYP, DWORD dwI
 }
 void CGhTrToolDlg::UpdateText()
 {
-	CPvz pvz = CPvz();
+	GhTrManager pvz = GhTrManager();
 	int pid = pvz.GetGamePid();
 	if (pid == -1)
 	{
@@ -343,7 +343,7 @@ void CGhTrToolDlg::OnBnClickedBtnPlantIDList()
 void CGhTrToolDlg::OnBnClickedBtnSun()
 {
     DWORD dwSun = GetDlgItemInt(IDC_EDIT_SUN);
-    CPvz pvz = CPvz(); pvz.WriteConfig();
+    GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
     pvz.ModifySunValue(dwSun);
 }
 
@@ -351,285 +351,285 @@ void CGhTrToolDlg::OnBnClickedBtnDifficultySwitcher()
 {
 	DWORD dwDiff = GetDlgItemInt(IDC_EDIT_Diff);
 
-	CPvz pvz = CPvz(); pvz.WriteConfig();
+	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
 	pvz.DifficultySwitcher(dwDiff);
 }
 void CGhTrToolDlg::OnBnClickedBtnConvertToWiki()
 {
 	CString strText;
 	GetDlgItemText(IDC_EDIT_JsonText, strText);
-	CPvz pvz = CPvz();
+	GhTrManager pvz = GhTrManager();
 	pvz.ConvertToWiki(strText);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnModifySeedPacket()
+void CGhTrToolDlg::OnBnClickedBtnModifyCardData()
 {
 	DWORD dwID = GetDlgItemInt(IDC_EDIT_SPID);
 	DWORD dwNum = GetDlgItemInt(IDC_EDIT_SPNUM);
-	CPvz pvz = CPvz(); pvz.WriteConfig();
-	pvz.ModifySeedPacket(dwID , dwNum);
+	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
+	pvz.ModifyCardData(dwID , dwNum);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnSeedPacket()
+void CGhTrToolDlg::OnBnClickedBtnModifyCardNumber()
 {
 	DWORD dwSP = GetDlgItemInt(IDC_EDIT_SP2);
 
-	CPvz pvz = CPvz(); pvz.WriteConfig();
-	pvz.SeedPacket(dwSP);
+	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
+	pvz.ModifyCardNumber(dwSP);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPlant() {
-	CPvz pvz = CPvz();
+	GhTrManager pvz = GhTrManager();
 	DWORD dwPid = pvz.GetGamePid();
 	DWORD dwXP = GetDlgItemInt(IDC_EDIT_XP);
 	DWORD dwYP = GetDlgItemInt(IDC_EDIT_YP);
 	DWORD dwID = GetDlgItemInt(IDC_EDIT_ID);
 	DWORD dwPid2 = pvz.GetGamePid();
-	if (!pvz.check_battlefield(dwPid))
+	if (!pvz.CheckLawn(dwPid))
 	{
 		MessageBoxA(NULL, "未进入战场", "提示", MB_OK);
 		return;
 	}
-	if (!pvz.check_dwPid(dwPid2, true)) return;
+	if (!pvz.CheckGamePid(dwPid2, true)) return;
 	pvz.WriteConfig();
 	PlantAtPositions(pvz, dwXP, dwYP, dwID);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnSunNop()
+void CGhTrToolDlg::OnBnClickedBtnPlantNoSubSun()
 {
-	ToggleFeature(IDC_BTN_SUN_NOP, &CPvz::SunNop);
+	ToggleFeature(IDC_BTN_SUN_NOP, &GhTrManager::PlantNoSubSun);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnNoCd()
 {
-	ToggleFeature(IDC_BTN_NO_CD, &CPvz::NoCd);
+	ToggleFeature(IDC_BTN_NO_CD, &GhTrManager::NoCd);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnBGId()
 {
     DWORD dwBGId = GetDlgItemInt(IDC_EDIT_BGId);
-    CPvz pvz = CPvz(); pvz.WriteConfig();
+    GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
     pvz.ModifyBGIdValue(dwBGId);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnBuild()
 {
-	ToggleFeature(IDC_BTN_BUILD, &CPvz::Build);
+	ToggleFeature(IDC_BTN_BUILD, &GhTrManager::Build);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnAuto()
 {
-	ToggleFeature(IDC_BTN_AUTO, &CPvz::Auto);
+	ToggleFeature(IDC_BTN_AUTO, &GhTrManager::Auto);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnCard()
 {
-	ToggleFeature(IDC_BTN_CARD, &CPvz::Card);
+	ToggleFeature(IDC_BTN_CARD, &GhTrManager::Card);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPoint()
 {
-	ToggleFeature(IDC_BTN_POINT, &CPvz::Point);
+	ToggleFeature(IDC_BTN_POINT, &GhTrManager::Point);
 }
 void CGhTrToolDlg::OnBnClickedBtnPoint2()
 {
-	ToggleFeature(IDC_BTN_POINT2, &CPvz::Point2);
+	ToggleFeature(IDC_BTN_POINT2, &GhTrManager::Point2);
 }
 void CGhTrToolDlg::OnBnClickedBtnDX()
 {
-	ToggleFeature(IDC_BTN_DX, &CPvz::DX);
+	ToggleFeature(IDC_BTN_DX, &GhTrManager::DX);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnFast()
 {
-	ToggleFeature(IDC_BTN_Fast, &CPvz::Fast);
+	ToggleFeature(IDC_BTN_Fast, &GhTrManager::Fast);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnTheWorld()
 {
-	ToggleFeature(IDC_BTN_TheWorld, &CPvz::TheWorld);
+	ToggleFeature(IDC_BTN_TheWorld, &GhTrManager::TheWorld);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnNoModelCD()
 {
-	ToggleFeature(IDC_BTN_NoModelCD, &CPvz::NoModelCD);
+	ToggleFeature(IDC_BTN_NoModelCD, &GhTrManager::NoModelCD);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnMowers()
 {
-	ToggleFeature(IDC_BTN_Mowers, &CPvz::Mowers);
+	ToggleFeature(IDC_BTN_Mowers, &GhTrManager::Mowers);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPeaSDamage()
 {
-	ToggleFeature(IDC_BTN_PeaSDamage, &CPvz::PeaSDamage);
+	ToggleFeature(IDC_BTN_PeaSDamage, &GhTrManager::PeaSDamage);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnNoBuildTime()
 {
-	ToggleFeature(IDC_BTN_NoBuildTime, &CPvz::NoBuildTime);
+	ToggleFeature(IDC_BTN_NoBuildTime, &GhTrManager::NoBuildTime);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnNoSunMax()
 {
-	ToggleFeature(IDC_BTN_NOSUNMAX, &CPvz::NoSunMax);
+	ToggleFeature(IDC_BTN_NOSUNMAX, &GhTrManager::NoSunMax);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnZombieDC()
 {
-	ToggleFeature(IDC_BTN_ZombieDC, &CPvz::ZombieDC);
+	ToggleFeature(IDC_BTN_ZombieDC, &GhTrManager::ZombieDC);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnNotSubvert()
 {
-	ToggleFeature(IDC_BTN_NotSubvert, &CPvz::NotSubvert);
+	ToggleFeature(IDC_BTN_NotSubvert, &GhTrManager::NotSubvert);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnGodMode()
 {
-	ToggleFeature(IDC_BTN_GodMode, &CPvz::GodMode);
+	ToggleFeature(IDC_BTN_GodMode, &GhTrManager::GodMode);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnItemNoDie()
 {
-	ToggleFeature(IDC_BTN_ItemNoDie, &CPvz::ItemNoDie);
+	ToggleFeature(IDC_BTN_ItemNoDie, &GhTrManager::ItemNoDie);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnNoUbBroken()
 {
-	ToggleFeature(IDC_BTN_NoUbBroken, &CPvz::NoUbBroken);
+	ToggleFeature(IDC_BTN_NoUbBroken, &GhTrManager::NoUbBroken);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSunNoDelay()
 {
-	ToggleFeature(IDC_BTN_SunNoDelay, &CPvz::SunNoDelay);
+	ToggleFeature(IDC_BTN_SunNoDelay, &GhTrManager::SunNoDelay);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnBuildTheArray()
 {
-		CPvz pvz = CPvz(); pvz.WriteConfig();
+		GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
 		pvz.BuildTheArray();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnClearZombie()
 {
-	CPvz pvz = CPvz(); pvz.WriteConfig();
+	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
 	pvz.ClearZombie();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnFixCrashBug()
 {
-	CPvz pvz = CPvz(); pvz.WriteConfig();
+	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
 	pvz.FixCrashBug();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnToDaoXiangJi()
 {
-	CPvz pvz = CPvz(); pvz.WriteConfig();
+	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
 	pvz.ToDaoXiangJi();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnToHongZhen()
 {
-	CPvz pvz = CPvz(); pvz.WriteConfig();
+	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
 	pvz.ToHongZhen();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnClearPlant()
 {
-	CPvz pvz = CPvz(); pvz.WriteConfig();
+	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
 	pvz.ClearPlant();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnClearBullet()
 {
-	CPvz pvz = CPvz(); pvz.WriteConfig();
+	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
 	pvz.ClearBullet();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSuperReed()
 {
-	ToggleFeature(IDC_BTN_SuperReed, &CPvz::SuperReed);
+	ToggleFeature(IDC_BTN_SuperReed, &GhTrManager::SuperReed);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD()
 {
-	ToggleFeature(IDC_BTN_PowerFlowerNoCD, &CPvz::PowerFlowerNoCD);
+	ToggleFeature(IDC_BTN_PowerFlowerNoCD, &GhTrManager::PowerFlowerNoCD);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnAwayMax()
 {
-	ToggleFeature(IDC_BTN_AwayMax, &CPvz::AwayMax);
+	ToggleFeature(IDC_BTN_AwayMax, &GhTrManager::AwayMax);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnApplayerNoCD()
 {
-	ToggleFeature(IDC_BTN_ApplayerNoCD, &CPvz::ApplayerNoCD);
+	ToggleFeature(IDC_BTN_ApplayerNoCD, &GhTrManager::ApplayerNoCD);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnApplayerNoLag()
 {
-	ToggleFeature(IDC_BTN_ApplayerNoLag, &CPvz::ApplayerNoLag);
+	ToggleFeature(IDC_BTN_ApplayerNoLag, &GhTrManager::ApplayerNoLag);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPlantageNoCD()
 {
-	ToggleFeature(IDC_BTN_PlantageNoCD, &CPvz::PlantageNoCD);
+	ToggleFeature(IDC_BTN_PlantageNoCD, &GhTrManager::PlantageNoCD);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPeaNoCD()
 {
-	ToggleFeature(IDC_BTN_PeaNoCD, &CPvz::PeaNoCD);
+	ToggleFeature(IDC_BTN_PeaNoCD, &GhTrManager::PeaNoCD);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSunFlowerNoCD()
 {
-	ToggleFeature(IDC_BTN_SunFlowerNoCD, &CPvz::SunFlowerNoCD);
+	ToggleFeature(IDC_BTN_SunFlowerNoCD, &GhTrManager::SunFlowerNoCD);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnLingSDamage()
 {
-	ToggleFeature(IDC_BTN_LingSDamage, &CPvz::LingSDamage);
+	ToggleFeature(IDC_BTN_LingSDamage, &GhTrManager::LingSDamage);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnIgnoreSun()
 {
-	ToggleFeature(IDC_BTN_IgnoreSun, &CPvz::IgnoreSun);
+	ToggleFeature(IDC_BTN_IgnoreSun, &GhTrManager::IgnoreSun);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSummonCup()
 {
-		CPvz pvz = CPvz(); pvz.WriteConfig();
+		GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
 		pvz.SummonCup();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnLoursMC()
 {
-	ToggleFeature(IDC_BTN_LoursMC, &CPvz::LoursMC);
+	ToggleFeature(IDC_BTN_LoursMC, &GhTrManager::LoursMC);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnMeowFast()
 {
-	ToggleFeature(IDC_BTN_MeowFast, &CPvz::Fast);
+	ToggleFeature(IDC_BTN_MeowFast, &GhTrManager::Fast);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnCherryNo()
 {
-	ToggleFeature(IDC_BTN_CherryNo, &CPvz::CherryNo);
+	ToggleFeature(IDC_BTN_CherryNo, &GhTrManager::CherryNo);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnCherryFast()
 {
-	ToggleFeature(IDC_BTN_CherryFast, &CPvz::CherryFast);
+	ToggleFeature(IDC_BTN_CherryFast, &GhTrManager::CherryFast);
 }

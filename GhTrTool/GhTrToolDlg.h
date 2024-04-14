@@ -27,22 +27,22 @@ protected:
     CFont m_font;
     BOOL SwitchEnableSava=0;
     HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-    VOID OnClickMenuAbout();
-    VOID OnClickMenuShowIDList();
-    VOID OnClickMenuOpenSaveDir();
-    VOID OnClickMenuShowSaveFunction();
+    void OnClickMenuAbout();
+    void OnClickMenuShowIDList();
+    void OnClickMenuOpenSaveDir();
+    void OnClickMenuShowSaveFunction();
     virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
-    void ToggleFeature(UINT nID, void(CPvz::* featureFunc)(bool));
-    void PlantAtPositions(CPvz& pvz, DWORD dwXP, DWORD dwYP, DWORD dwID);
+    void ToggleFeature(UINT nID, void(GhTrManager::* featureFunc)(bool));
+    void PlantAtPositions(GhTrManager& pvz, DWORD dwXP, DWORD dwYP, DWORD dwID);
 	DECLARE_MESSAGE_MAP()
 public:
     afx_msg void OnBnClickedBtnSun();
-    afx_msg void OnBnClickedBtnSeedPacket();
+    afx_msg void OnBnClickedBtnModifyCardNumber();
     afx_msg void OnBnClickedBtnPlant();
-    afx_msg void OnBnClickedBtnSunNop();
+    afx_msg void OnBnClickedBtnPlantNoSubSun();
     afx_msg void OnBnClickedBtnNoCd();
     afx_msg void OnBnClickedBtnBGId();
     afx_msg void OnBnClickedBtnBuild();
@@ -80,7 +80,7 @@ public:
     afx_msg void OnBnClickedBtnNoUbBroken();
     afx_msg void OnBnClickedBtnSunNoDelay();
     afx_msg void OnBnClickedBtnBuildTheArray();
-    afx_msg void OnBnClickedBtnModifySeedPacket();
+    afx_msg void OnBnClickedBtnModifyCardData();
     afx_msg void OnBnClickedBtnDifficultySwitcher();
     afx_msg void OnBnClickedBtnConvertToWiki();
     afx_msg void OnBnClickedBtnClearPlant();

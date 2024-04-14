@@ -200,6 +200,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Constant.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="PlantID.h" />
     <ClInclude Include="Pvz.h" />

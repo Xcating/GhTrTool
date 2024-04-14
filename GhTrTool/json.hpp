@@ -274,7 +274,7 @@ struct nonesuch
 };
 
 template<class Default,
-         class AlwaysVoid,
+         class Alwaysvoid,
          template<class...> class Op,
          class... Args>
 struct detector
@@ -2596,7 +2596,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 #define NLOHMANN_BASIC_JSON_TPL_DECLARATION                                \
     template<template<typename, typename, typename...> class ObjectType,   \
              template<typename, typename...> class ArrayType,              \
-             class StringType, class BooleanType, class NumberIntegerType, \
+             class StringType, class booleanType, class NumberIntegerType, \
              class NumberUnsignedType, class NumberFloatType,              \
              template<typename> class AllocatorType,                       \
              template<typename, typename = void> class JSONSerializer,     \
@@ -2604,7 +2604,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
              class CustomBaseClass>
 
 #define NLOHMANN_BASIC_JSON_TPL                                            \
-    basic_json<ObjectType, ArrayType, StringType, BooleanType,             \
+    basic_json<ObjectType, ArrayType, StringType, booleanType,             \
     NumberIntegerType, NumberUnsignedType, NumberFloatType,                \
     AllocatorType, JSONSerializer, BinaryType, CustomBaseClass>
 
@@ -3399,7 +3399,7 @@ NLOHMANN_JSON_NAMESPACE_END
     template<template<typename U, typename V, typename... Args> class ObjectType =
     std::map,
     template<typename U, typename... Args> class ArrayType = std::vector,
-    class StringType = std::string, class BooleanType = bool,
+    class StringType = std::string, class booleanType = bool,
     class NumberIntegerType = std::int64_t,
     class NumberUnsignedType = std::uint64_t,
     class NumberFloatType = double,
@@ -4953,8 +4953,8 @@ inline void from_json(const BasicJsonType& j, ConstructibleObjectType& obj)
 }
 
 // overload for arithmetic types, not chosen for basic_json template arguments
-// (BooleanType, etc..); note: Is it really necessary to provide explicit
-// overloads for boolean_t etc. in case of a custom BooleanType which is not
+// (booleanType, etc..); note: Is it really necessary to provide explicit
+// overloads for boolean_t etc. in case of a custom booleanType which is not
 // an arithmetic type?
 template < typename BasicJsonType, typename ArithmeticType,
            enable_if_t <
@@ -5644,15 +5644,15 @@ inline void to_json(BasicJsonType& j, T b) noexcept
     external_constructor<value_t::boolean>::construct(j, b);
 }
 
-template < typename BasicJsonType, typename BoolRef,
+template < typename BasicJsonType, typename boolRef,
            enable_if_t <
-               ((std::is_same<std::vector<bool>::reference, BoolRef>::value
+               ((std::is_same<std::vector<bool>::reference, boolRef>::value
                  && !std::is_same <std::vector<bool>::reference, typename BasicJsonType::boolean_t&>::value)
-                || (std::is_same<std::vector<bool>::const_reference, BoolRef>::value
+                || (std::is_same<std::vector<bool>::const_reference, boolRef>::value
                     && !std::is_same <detail::uncvref_t<std::vector<bool>::const_reference>,
                                       typename BasicJsonType::boolean_t >::value))
-               && std::is_convertible<const BoolRef&, typename BasicJsonType::boolean_t>::value, int > = 0 >
-inline void to_json(BasicJsonType& j, const BoolRef& b) noexcept
+               && std::is_convertible<const boolRef&, typename BasicJsonType::boolean_t>::value, int > = 0 >
+inline void to_json(BasicJsonType& j, const boolRef& b) noexcept
 {
     external_constructor<value_t::boolean>::construct(j, static_cast<typename BasicJsonType::boolean_t>(b));
 }
@@ -19648,7 +19648,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief a type for a boolean
     /// @sa https://json.nlohmann.me/api/basic_json/boolean_t/
-    using boolean_t = BooleanType;
+    using boolean_t = booleanType;
 
     /// @brief a type for a number (integer)
     /// @sa https://json.nlohmann.me/api/basic_json/number_integer_t/
