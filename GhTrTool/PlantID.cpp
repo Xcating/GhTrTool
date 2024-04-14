@@ -44,6 +44,7 @@ BOOL PlantID::OnInitDialog()
         {_T("滇池牡丹"), _T("12")},
         {_T("导藓"), _T("13")},
         {_T("土豆地雷"), _T("14")},
+        {_T("淀粉海"), _T("15")},
     };
     // 插入列
     m_List.InsertColumn(0, _T("植物名称"), LVCFMT_LEFT, 100);

@@ -219,7 +219,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM l_param) {
 #else
 	std::wstring wstr =
 		(std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage "
-			<< L"ver.0.16m - [已被GhTrTool修改] [ver.0.11t] ["
+			<< L"ver.0.16m - [已被GhTrTool修改] [ver.0.11u] ["
 			<< millis << L"]")
 		.str();
 #endif

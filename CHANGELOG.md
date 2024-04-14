@@ -1,4 +1,4 @@
-# GhTrTool 0.11t ~ [2024-03-17]
+# GhTrTool 0.11u ~ [2024-03-17]
 ## 完整更新日志 
 ### 修复
 - "Unbalanced不碎档功能" 会让所有存档都显示Unbalanced难度的bug
