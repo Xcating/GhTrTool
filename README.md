@@ -6,9 +6,9 @@ PlantsVsZombies ~ GhTr *PersonGames Tools*
 
 ---
 ### [#]功能请求/bug反馈 Issues
-[+]需要什么功能请在[这里](https://github.com/Xcating/GhTrTool-issues/issues)提出，尽量会做
+[+]需要什么功能请在[这里](https://github.com/Xcating/GhTrTool/issues)提出，尽量会做
 
-[+]what *functions*  r needed, pls click [here](https://github.com/Xcating/GhTrTool-issues/issues) propose and **TRY** todo it as well as ***possible***
+[+]what *functions*  r needed, pls click [here](https://github.com/Xcating/GhTrTool/issues) propose and **TRY** todo it as well as ***possible***
 ### [#]修改 modified
 [+]修改了偏移，适配于GhTr.0.16m版本
 
