@@ -204,8 +204,15 @@ bool GhTrManager::CheckGamePid(DWORD dw_pid, bool is_message) {
  * @return bool 枚举是否继续
  */
 BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM l_param) {
+
 	DWORD dw_pid;
 	GetWindowThreadProcessId(hwnd, &dw_pid);
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dw_pid);
+	DWORD base_address = GetGamebase_address(hProcess);
+	DWORD target_address = base_address + GAME_BASE_OFFSET;
+	DWORD dwNum = 0;
+	ReadProcessMemory(hProcess, (LPCVOID)target_address, &dwNum, sizeof(DWORD), NULL);
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x80C), &dwNum, sizeof(DWORD), NULL);
 	auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(
 		std::chrono::system_clock::now().time_since_epoch())
 		.count();
@@ -219,8 +226,8 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM l_param) {
 #else
 	std::wstring wstr =
 		(std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage "
-			<< L"ver.0.16m - [已被GhTrTool修改] [ver.0.11u] ["
-			<< millis << L"]")
+			<< L"ver.0.16m - [已被GhTrTool修改] [ver.0.11v] ["
+			<< millis << L"]" << L" [Save" << dwNum<<L"]")
 		.str();
 #endif
 	if (dw_pid == l_param) {
@@ -639,7 +646,11 @@ void GhTrManager::WriteConfig()
 		CloseHandle(hProcess);
 		return;
 	}
-
+	DWORD base_address = GetGamebase_address(hProcess);
+	DWORD target_address = base_address + GAME_BASE_OFFSET;
+	DWORD dwNum = 0;
+	ReadProcessMemory(hProcess, (LPCVOID)target_address, &dwNum, sizeof(DWORD), NULL);
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x80C), &dwNum, sizeof(DWORD), NULL);
 	std::filesystem::path exe_path(sz_exe_path);
 	std::filesystem::path config_path = exe_path.parent_path() / "definition" / "config.json";
 
@@ -651,9 +662,35 @@ void GhTrManager::WriteConfig()
 		config_file_out << config_json.dump(4);
 		config_file_out.close();
 	}
-
 	EnumWindows(EnumWindowsProc, dw_pid);
 	CloseHandle(hProcess);
+	if (dwNum == 0)
+		return;
+	std::ostringstream file_path_stream;
+	file_path_stream << "C:\\ProgramData\\PerfectVoyage\\userdata\\save" << dwNum << "\\SaveInfor.ghtr";
+	std::string file_path = file_path_stream.str();
+	// 读取JSON文件
+	nlohmann::json j;
+	std::ifstream input_file(file_path);
+	if (input_file.is_open()) {
+		input_file >> j;
+		input_file.close();
+	}
+	// 修改Cheat为true，如果不存在则创建
+	j["Cheat"] = true;
+	auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::system_clock::now().time_since_epoch())
+		.count();
+	j["LastCheatTime"] = millis;
+	// 写入修改后的JSON到文件
+	std::ofstream output_file(file_path);
+	if (output_file.is_open()) {
+		output_file << j.dump(4); // 以漂亮打印的格式写入文件（缩进为4个空格）
+		output_file.close();
+	}
+	else {
+		MessageBoxA(NULL, "无法打开文件进行写入！请检查你的GhTr是否能正确的存档", "警告", MB_OK);
+	}
 }
 /**
  * 修改游戏中的阳光数量
@@ -1515,6 +1552,40 @@ void GhTrManager::ShowDiffBox(DWORD dwDiff)
 		MessageBox(NULL, L"将切换到失衡 Unbalanced模式", L"提示", MB_OK);
 		break;
 	}	
+}
+/**
+ * 切换是否可以创建Ub存档的变量
+ */
+void GhTrManager::ArrUb()
+{
+	// 定义JSON对象
+	nlohmann::json j;
+	// 读取JSON文件
+	std::ifstream input_file("C:\\ProgramData\\PerfectVoyage\\allusers.ghtr");
+	if (input_file.is_open()) {
+		input_file >> j;
+		input_file.close();
+	}
+	// 修改UbOpen为true，如果不存在则创建
+	if (j["UbOpen"])
+	{
+		j["UbOpen"] = false;
+		MessageBoxA(NULL, "成功[禁止]Unbalanced存档的创建，再次点击则允许", "提示", MB_OK);
+	}
+	else
+	{
+		j["UbOpen"] = true;
+		MessageBoxA(NULL, "成功[允许]Unbalanced存档的创建，再次点击则禁止", "提示", MB_OK);
+	}
+	// 写入修改后的JSON到文件
+	std::ofstream output_file("C:\\ProgramData\\PerfectVoyage\\allusers.ghtr");
+	if (output_file.is_open()) {
+		output_file << j.dump(4); // 以漂亮打印的格式写入文件（缩进为4个空格）
+		output_file.close();
+	}
+	else {
+		MessageBoxA(NULL, "无法打开文件进行写入！请检查你的GhTr是否能正确的存档", "警告", MB_OK);
+	}
 }
 /**
  * 切换当前存档难度

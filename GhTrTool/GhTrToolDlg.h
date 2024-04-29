@@ -89,6 +89,7 @@ public:
     afx_msg void OnBnClickedBtnFixCrashBug();
     afx_msg void OnBnClickedBtnToHongZhen();
     afx_msg void OnBnClickedBtnToDaoXiangJi();
+    afx_msg void OnBnClickedBtnArrUb();
     afx_msg void UpdateText();
     afx_msg void OnBnClickedBtnPlantIDList();
     void OnTimer(UINT_PTR nIDEvent);

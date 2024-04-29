@@ -118,6 +118,8 @@ public:
     void FixCrashBug();
     //切换至导向线
     void ToDaoXiangJi();
+    //切换是否可以创建Ub存档
+    void ArrUb();
     //显示难度提示信息
     void ShowDiffBox(DWORD dwDiff);
     //切换至红针线

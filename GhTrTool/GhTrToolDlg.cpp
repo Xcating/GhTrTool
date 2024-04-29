@@ -122,6 +122,7 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_ClearZombie, &CGhTrToolDlg::OnBnClickedBtnClearZombie)
 	ON_BN_CLICKED(IDC_BTN_FixCrashBug, &CGhTrToolDlg::OnBnClickedBtnFixCrashBug)
 	ON_BN_CLICKED(IDC_BTN_ToDaoXiangJi, &CGhTrToolDlg::OnBnClickedBtnToDaoXiangJi)
+	ON_BN_CLICKED(IDC_BTN_ArrUb, &CGhTrToolDlg::OnBnClickedBtnArrUb)
 	ON_BN_CLICKED(IDC_BTN_ToHongZhen, &CGhTrToolDlg::OnBnClickedBtnToHongZhen)
 	ON_BN_CLICKED(IDC_BTN_ClearPlant, &CGhTrToolDlg::OnBnClickedBtnClearPlant)
 	ON_BN_CLICKED(IDC_BTN_ClearBullet, &CGhTrToolDlg::OnBnClickedBtnClearBullet)
@@ -172,6 +173,7 @@ void CGhTrToolDlg::OnClickMenuShowSaveFunction()
 		GetDlgItem(IDC_BTN_DifficultySwitcher)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_EDIT_Diff)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_BTN_ToDaoXiangJi)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BTN_ArrUb)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_BTN_ToHongZhen)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_BTN_NoUbBroken)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_STATIC_DiffID)->ShowWindow(SW_SHOW);
@@ -183,6 +185,7 @@ void CGhTrToolDlg::OnClickMenuShowSaveFunction()
 		GetDlgItem(IDC_BTN_DifficultySwitcher)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_EDIT_Diff)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_BTN_ToDaoXiangJi)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_BTN_ArrUb)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_BTN_ToHongZhen)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_BTN_NoUbBroken)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_STATIC_DiffID)->ShowWindow(SW_HIDE);
@@ -537,6 +540,12 @@ void CGhTrToolDlg::OnBnClickedBtnToDaoXiangJi()
 {
 	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
 	pvz.ToDaoXiangJi();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnArrUb()
+{
+	GhTrManager pvz = GhTrManager();
+	pvz.ArrUb();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnToHongZhen()

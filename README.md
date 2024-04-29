@@ -1,5 +1,4 @@
 # GhTrTool
-#### If you are not Chinese? pls Use ***[English Version](https://github.com/Xcating/GhTrTool/releases/tag/0.11c-en-us)***
 
 植物大战僵尸GhTr同人游戏工具，娱乐学习
 PlantsVsZombies ~ GhTr *PersonGames Tools*
