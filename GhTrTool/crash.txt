@@ -1,0 +1,25 @@
+Unknown exception: (code 0xe06d7363) at address 757F0F82 in thread BAE0
+Module: KERNELBASE.dll
+Logical Address: 0001:0013FF82
+
+004FFA38 757F0F82 RaiseException+62
+Params: E06D7363 00000001 00000003 004FFA60
+
+StackWalk failed (error 299)
+
+EAX:004FF9E0 EBX:19930520 ECX:00000003 EDX:00000000 ESI:00BB3CB8 EDI:00BA9C04
+EIP:757F0F82 ESP:004FF9E0  EBP:004FFA38
+CS:0023 SS:002B DS:002B ES:002B FS:0053 GS:002B
+Flags:00200212
+
+Windows Ver: NT 6.2  Build 9200
+DDraw Ver: 
+DSound Ver: 
+
+Product: PerfectVoyage
+Version: 
+Time Loaded: 00:00:00
+Fullscreen: No
+Primary ThreadId: BAE0
+Times Played: 0
+

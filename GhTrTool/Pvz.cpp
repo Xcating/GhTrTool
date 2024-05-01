@@ -6,6 +6,7 @@
 #include <fstream>
 #include <Psapi.h>
 #include <sstream>
+#include <cstdlib>
 #include <string>
 #include <TlHelp32.h>
 
@@ -226,7 +227,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM l_param) {
 #else
 	std::wstring wstr =
 		(std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage "
-			<< L"ver.0.16m - [已被GhTrTool修改] [ver.0.11v] ["
+			<< L"ver.0.16m - [已被GhTrTool修改] [ver.0.11w] ["
 			<< millis << L"]" << L" [Save" << dwNum<<L"]")
 		.str();
 #endif
@@ -1558,33 +1559,26 @@ void GhTrManager::ShowDiffBox(DWORD dwDiff)
  */
 void GhTrManager::ArrUb()
 {
-	// 定义JSON对象
-	nlohmann::json j;
-	// 读取JSON文件
-	std::ifstream input_file("C:\\ProgramData\\PerfectVoyage\\allusers.ghtr");
-	if (input_file.is_open()) {
-		input_file >> j;
-		input_file.close();
-	}
-	// 修改UbOpen为true，如果不存在则创建
-	if (j["UbOpen"])
+	bool ifNoProcess=false;
+	DWORD dwPid = GetGamePid();
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+	DWORD base_address = GetGamebase_address(hProcess);
+	DWORD target_address = base_address + GAME_BASE_OFFSET;
+	DWORD dwNum = 0;
+	DWORD dwNumF = 0;
+	DWORD dwNumCheck = 0;
+	ReadProcessMemory(hProcess, (LPCVOID)target_address, &dwNum, sizeof(DWORD), NULL);
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x7EC), &dwNumCheck, sizeof(BYTE), NULL);
+	if (dwNumCheck == 0)
 	{
-		j["UbOpen"] = false;
-		MessageBoxA(NULL, "成功[禁止]Unbalanced存档的创建，再次点击则允许", "提示", MB_OK);
+		dwNumF = 1;
+		WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x7EC), &dwNumF, sizeof(BYTE), NULL);
+		MessageBox(NULL, L"成功{允许}创建Unbalanced存档的创建，再次点击禁止。", L"提示", MB_OK);
 	}
 	else
 	{
-		j["UbOpen"] = true;
-		MessageBoxA(NULL, "成功[允许]Unbalanced存档的创建，再次点击则禁止", "提示", MB_OK);
-	}
-	// 写入修改后的JSON到文件
-	std::ofstream output_file("C:\\ProgramData\\PerfectVoyage\\allusers.ghtr");
-	if (output_file.is_open()) {
-		output_file << j.dump(4); // 以漂亮打印的格式写入文件（缩进为4个空格）
-		output_file.close();
-	}
-	else {
-		MessageBoxA(NULL, "无法打开文件进行写入！请检查你的GhTr是否能正确的存档", "警告", MB_OK);
+		WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x7EC), &dwNumF, sizeof(BYTE), NULL);
+		MessageBox(NULL, L"成功{禁止}创建Unbalanced存档的创建，再次点击允许。", L"提示", MB_OK);
 	}
 }
 /**
