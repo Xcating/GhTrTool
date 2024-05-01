@@ -6,3 +6,5 @@
 - 地址常数化
 
 ![image](https://github.com/Xcating/GhTrTool/assets/82816129/0c7d40cd-d8d8-4367-838e-f3a12b841c3e)
+
+![image](https://github.com/Xcating/GhTrTool/assets/82816129/685daa33-4945-452a-8491-9440c166f619)

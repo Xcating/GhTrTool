@@ -15,7 +15,9 @@ PlantsVsZombies ~ GhTr *PersonGames Tools*
 ### [#]工具截图 Screenshot
 [+]工具版本：0.11w
 
-![image](https://github.com/Xcating/GhTrTool/assets/82816129/0c7d40cd-d8d8-4367-838e-f3a12b841c3e)
+[+]Tools Version: 0.11w
+![MainGUI](/Image/MainGUI.png "MainGUI")
+![GameTest](/Image/GameTest.png "GameTest")
 
 ---
 [![GhTrTool](https://github-readme-stats.vercel.app/api/pin/?username=Xcating&repo=GhTrTool&theme=dark)](https://github.com/Xcating/GhTrTool)
