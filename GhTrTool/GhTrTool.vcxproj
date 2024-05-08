@@ -202,8 +202,8 @@
   <ItemGroup>
     <ClInclude Include="Constant.h" />
     <ClInclude Include="json.hpp" />
-    <ClInclude Include="PlantID.h" />
-    <ClInclude Include="Pvz.h" />
+    <ClInclude Include="InfoDialog.h" />
+    <ClInclude Include="GhTr.h" />
     <ClInclude Include="GhTrTool.h" />
     <ClInclude Include="GhTrToolDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -212,8 +212,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PlantID.cpp" />
-    <ClCompile Include="Pvz.cpp" />
+    <ClCompile Include="InfoDialog.cpp" />
+    <ClCompile Include="GhTr.cpp" />
     <ClCompile Include="GhTrTool.cpp" />
     <ClCompile Include="GhTrToolDlg.cpp" />
     <ClCompile Include="stdafx.cpp">

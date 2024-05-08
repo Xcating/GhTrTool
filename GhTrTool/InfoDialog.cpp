@@ -1,26 +1,26 @@
-﻿// PlantID.cpp: 实现文件
+﻿// InfoDialog.cpp: 实现文件
 //
 
 #include "stdafx.h"
 #include "GhTrTool.h"
 #include "afxdialogex.h"
-#include "PlantID.h"
+#include "InfoDialog.h"
 
 
-// PlantID 对话框
+// InfoDialog 对话框
 
-IMPLEMENT_DYNAMIC(PlantID, CDialogEx)
+IMPLEMENT_DYNAMIC(InfoDialog, CDialogEx)
 
-PlantID::PlantID(CWnd* pParent /*=nullptr*/)
+InfoDialog::InfoDialog(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_PLANTID, pParent)
 {
 
 }
 
-PlantID::~PlantID()
+InfoDialog::~InfoDialog()
 {
 }
-BOOL PlantID::OnInitDialog()
+BOOL InfoDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
     // 定义植物名称和ID
@@ -104,7 +104,7 @@ BOOL PlantID::OnInitDialog()
     }
 	return TRUE;  // return TRUE unless you set the focus to a control
 }
-void PlantID::DoDataExchange(CDataExchange* pDX)
+void InfoDialog::DoDataExchange(CDataExchange* pDX)
 {
     CDialogEx::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_LIST1, m_List);
@@ -113,8 +113,8 @@ void PlantID::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(PlantID, CDialogEx)
+BEGIN_MESSAGE_MAP(InfoDialog, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// PlantID 消息处理程序
+// InfoDialog 消息处理程序

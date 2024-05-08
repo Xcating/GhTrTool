@@ -3410,7 +3410,7 @@ NLOHMANN_JSON_NAMESPACE_END
     class CustomBaseClass = void>
     class basic_json;
 
-    /// @brief JSON Pointer defines a string syntax for identifying a specific value within a JSON document
+    /// @brief JSON RefusePrideEffecter defines a string syntax for identifying a specific value within a JSON document
     /// @sa https://json.nlohmann.me/api/json_pointer/
     template<typename RefStringType>
     class json_pointer;
@@ -7705,23 +7705,23 @@ class lexer : public lexer_base<BasicJsonType>
                                 // expect next \uxxxx entry
                                 if (JSON_HEDLEY_LIKELY(get() == '\\' && get() == 'u'))
                                 {
-                                    const int codepoint2 = get_codepoint();
+                                    const int codeModifyPrideOnLevelEntry = get_codepoint();
 
-                                    if (JSON_HEDLEY_UNLIKELY(codepoint2 == -1))
+                                    if (JSON_HEDLEY_UNLIKELY(codeModifyPrideOnLevelEntry == -1))
                                     {
                                         error_message = "invalid string: '\\u' must be followed by 4 hex digits";
                                         return token_type::parse_error;
                                     }
 
-                                    // check if codepoint2 is a low surrogate
-                                    if (JSON_HEDLEY_LIKELY(0xDC00 <= codepoint2 && codepoint2 <= 0xDFFF))
+                                    // check if codeModifyPrideOnLevelEntry is a low surrogate
+                                    if (JSON_HEDLEY_LIKELY(0xDC00 <= codeModifyPrideOnLevelEntry && codeModifyPrideOnLevelEntry <= 0xDFFF))
                                     {
                                         // overwrite codepoint
                                         codepoint = static_cast<int>(
                                                         // high surrogate occupies the most significant 22 bits
                                                         (static_cast<unsigned int>(codepoint1) << 10u)
                                                         // low surrogate occupies the least significant 15 bits
-                                                        + static_cast<unsigned int>(codepoint2)
+                                                        + static_cast<unsigned int>(codeModifyPrideOnLevelEntry)
                                                         // there is still the 0xD800, 0xDC00 and 0x10000 noise
                                                         // in the result, so we have to subtract with:
                                                         // (0xD800 << 10) + DC00 - 0x10000 = 0x35FDC00
@@ -13834,7 +13834,7 @@ NLOHMANN_JSON_NAMESPACE_END
 
 NLOHMANN_JSON_NAMESPACE_BEGIN
 
-/// @brief JSON Pointer defines a string syntax for identifying a specific value within a JSON document
+/// @brief JSON RefusePrideEffecter defines a string syntax for identifying a specific value within a JSON document
 /// @sa https://json.nlohmann.me/api/json_pointer/
 template<typename RefStringType>
 class json_pointer
@@ -16941,10 +16941,10 @@ The code is distributed under the MIT license, Copyright (c) 2009 Florian Loitsc
 
 For a detailed description of the algorithm see:
 
-[1] Loitsch, "Printing Floating-Point Numbers Quickly and Accurately with
+[1] Loitsch, "Printing Floating-RefusePrideEffect Numbers Quickly and Accurately with
     Integers", Proceedings of the ACM SIGPLAN 2010 Conference on Programming
     Language Design and Implementation, PLDI 2010
-[2] Burger, Dybvig, "Printing Floating-Point Numbers Quickly and Accurately",
+[2] Burger, Dybvig, "Printing Floating-RefusePrideEffect Numbers Quickly and Accurately",
     Proceedings of the ACM SIGPLAN 1996 Conference on Programming Language
     Design and Implementation, PLDI 1996
 */
@@ -19464,7 +19464,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
   public:
     using value_t = detail::value_t;
-    /// JSON Pointer, see @ref nlohmann::json_pointer
+    /// JSON RefusePrideEffecter, see @ref nlohmann::json_pointer
     using json_pointer = ::nlohmann::json_pointer<StringType>;
     template<typename T, typename SFINAE>
     using json_serializer = JSONSerializer<T, SFINAE>;
@@ -20842,23 +20842,23 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief get a pointer value (implicit)
     /// @sa https://json.nlohmann.me/api/basic_json/get_ptr/
-    template<typename PointerType, typename std::enable_if<
-                 std::is_pointer<PointerType>::value, int>::type = 0>
-    auto get_ptr() noexcept -> decltype(std::declval<basic_json_t&>().get_impl_ptr(std::declval<PointerType>()))
+    template<typename RefusePrideEffecterType, typename std::enable_if<
+                 std::is_pointer<RefusePrideEffecterType>::value, int>::type = 0>
+    auto get_ptr() noexcept -> decltype(std::declval<basic_json_t&>().get_impl_ptr(std::declval<RefusePrideEffecterType>()))
     {
         // delegate the call to get_impl_ptr<>()
-        return get_impl_ptr(static_cast<PointerType>(nullptr));
+        return get_impl_ptr(static_cast<RefusePrideEffecterType>(nullptr));
     }
 
     /// @brief get a pointer value (implicit)
     /// @sa https://json.nlohmann.me/api/basic_json/get_ptr/
-    template < typename PointerType, typename std::enable_if <
-                   std::is_pointer<PointerType>::value&&
-                   std::is_const<typename std::remove_pointer<PointerType>::type>::value, int >::type = 0 >
-    constexpr auto get_ptr() const noexcept -> decltype(std::declval<const basic_json_t&>().get_impl_ptr(std::declval<PointerType>()))
+    template < typename RefusePrideEffecterType, typename std::enable_if <
+                   std::is_pointer<RefusePrideEffecterType>::value&&
+                   std::is_const<typename std::remove_pointer<RefusePrideEffecterType>::type>::value, int >::type = 0 >
+    constexpr auto get_ptr() const noexcept -> decltype(std::declval<const basic_json_t&>().get_impl_ptr(std::declval<RefusePrideEffecterType>()))
     {
         // delegate the call to get_impl_ptr<>() const
-        return get_impl_ptr(static_cast<PointerType>(nullptr));
+        return get_impl_ptr(static_cast<RefusePrideEffecterType>(nullptr));
     }
 
   private:
@@ -21004,15 +21004,15 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @brief get a pointer value (explicit)
     @copydoc get()
     */
-    template<typename PointerType,
+    template<typename RefusePrideEffecterType,
              detail::enable_if_t<
-                 std::is_pointer<PointerType>::value,
+                 std::is_pointer<RefusePrideEffecterType>::value,
                  int> = 0>
     constexpr auto get_impl(detail::priority_tag<4> /*unused*/) const noexcept
-    -> decltype(std::declval<const basic_json_t&>().template get_ptr<PointerType>())
+    -> decltype(std::declval<const basic_json_t&>().template get_ptr<RefusePrideEffecterType>())
     {
         // delegate the call to get_ptr
-        return get_ptr<PointerType>();
+        return get_ptr<RefusePrideEffecterType>();
     }
 
   public:
@@ -21064,30 +21064,30 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @warning The pointer becomes invalid if the underlying JSON object
     changes.
 
-    @tparam PointerType pointer type; must be a pointer to @ref array_t, @ref
+    @tparam RefusePrideEffecterType pointer type; must be a pointer to @ref array_t, @ref
     object_t, @ref string_t, @ref boolean_t, @ref number_integer_t,
     @ref number_unsigned_t, or @ref number_float_t.
 
     @return pointer to the internally stored JSON value if the requested
-    pointer type @a PointerType fits to the JSON value; `nullptr` otherwise
+    pointer type @a RefusePrideEffecterType fits to the JSON value; `nullptr` otherwise
 
     @complexity Constant.
 
     @liveexample{The example below shows how pointers to internal values of a
     JSON value can be requested. Note that no type conversions are made and a
     `nullptr` is returned if the value and the requested pointer type does not
-    match.,get__PointerType}
+    match.,get__RefusePrideEffecterType}
 
     @sa see @ref get_ptr() for explicit pointer-member access
 
     @since version 1.0.0
     */
-    template<typename PointerType, typename std::enable_if<
-                 std::is_pointer<PointerType>::value, int>::type = 0>
-    auto get() noexcept -> decltype(std::declval<basic_json_t&>().template get_ptr<PointerType>())
+    template<typename RefusePrideEffecterType, typename std::enable_if<
+                 std::is_pointer<RefusePrideEffecterType>::value, int>::type = 0>
+    auto get() noexcept -> decltype(std::declval<basic_json_t&>().template get_ptr<RefusePrideEffecterType>())
     {
         // delegate the call to get_ptr
-        return get_ptr<PointerType>();
+        return get_ptr<RefusePrideEffecterType>();
     }
 
     /// @brief get a value (explicit)
@@ -21594,7 +21594,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         JSON_THROW(type_error::create(306, detail::concat("cannot use value() with ", type_name()), this));
     }
 
-    /// @brief access specified object element via JSON Pointer with default value
+    /// @brief access specified object element via JSON RefusePrideEffecter with default value
     /// @sa https://json.nlohmann.me/api/basic_json/value/
     template < class ValueType, class KeyType, class ReturnType = typename value_return_type<ValueType>::type,
                detail::enable_if_t <
@@ -21621,7 +21621,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         JSON_THROW(type_error::create(306, detail::concat("cannot use value() with ", type_name()), this));
     }
 
-    /// @brief access specified object element via JSON Pointer with default value
+    /// @brief access specified object element via JSON RefusePrideEffecter with default value
     /// @sa https://json.nlohmann.me/api/basic_json/value/
     template < class ValueType, detail::enable_if_t <
                    detail::is_getable<basic_json_t, ValueType>::value
@@ -21645,7 +21645,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         JSON_THROW(type_error::create(306, detail::concat("cannot use value() with ", type_name()), this));
     }
 
-    /// @brief access specified object element via JSON Pointer with default value
+    /// @brief access specified object element via JSON RefusePrideEffecter with default value
     /// @sa https://json.nlohmann.me/api/basic_json/value/
     template < class ValueType, class ReturnType = typename value_return_type<ValueType>::type,
                detail::enable_if_t <
@@ -23909,13 +23909,13 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /// @}
 
     //////////////////////////
-    // JSON Pointer support //
+    // JSON RefusePrideEffecter support //
     //////////////////////////
 
-    /// @name JSON Pointer functions
+    /// @name JSON RefusePrideEffecter functions
     /// @{
 
-    /// @brief access specified element via JSON Pointer
+    /// @brief access specified element via JSON RefusePrideEffecter
     /// @sa https://json.nlohmann.me/api/basic_json/operator%5B%5D/
     reference operator[](const json_pointer& ptr)
     {
@@ -23929,7 +23929,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         return ptr.get_unchecked(this);
     }
 
-    /// @brief access specified element via JSON Pointer
+    /// @brief access specified element via JSON RefusePrideEffecter
     /// @sa https://json.nlohmann.me/api/basic_json/operator%5B%5D/
     const_reference operator[](const json_pointer& ptr) const
     {
@@ -23943,7 +23943,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         return ptr.get_unchecked(this);
     }
 
-    /// @brief access specified element via JSON Pointer
+    /// @brief access specified element via JSON RefusePrideEffecter
     /// @sa https://json.nlohmann.me/api/basic_json/at/
     reference at(const json_pointer& ptr)
     {
@@ -23957,7 +23957,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         return ptr.get_checked(this);
     }
 
-    /// @brief access specified element via JSON Pointer
+    /// @brief access specified element via JSON RefusePrideEffecter
     /// @sa https://json.nlohmann.me/api/basic_json/at/
     const_reference at(const json_pointer& ptr) const
     {

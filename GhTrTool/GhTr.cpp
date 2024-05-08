@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Constant.h"
 #include "json.hpp"
-#include "Pvz.h"
+#include "GhTr.h"
 #include <filesystem>
 #include <fstream>
 #include <Psapi.h>
@@ -668,6 +668,7 @@ void GhTrManager::WriteConfig()
 	if (dwNum == 0)
 		return;
 	std::ostringstream file_path_stream;
+
 	file_path_stream << "C:\\ProgramData\\PerfectVoyage\\userdata\\save" << dwNum << "\\SaveInfor.ghtr";
 	std::string file_path = file_path_stream.str();
 	// 读取JSON文件
@@ -721,7 +722,7 @@ void GhTrManager::ModifySunValue(DWORD dwSun)
  *
  * @param DWORD dwSP 要设置的卡槽数量
  */
-void GhTrManager::ModifyCardNumber(DWORD dwSP)
+void GhTrManager::ModifyEnableFrameDamageNumber(DWORD dwSP)
 {
 
 	DWORD dwPid = GetGamePid();
@@ -747,7 +748,7 @@ void GhTrManager::ModifyCardNumber(DWORD dwSP)
  * @param DWORD dwID 要替换的种子包ID
  * @param DWORD dwNum 要替换的卡槽编码
  */
-void GhTrManager::ModifyCardData(DWORD dwID,DWORD dwNum)
+void GhTrManager::ModifyEnableFrameDamageData(DWORD dwID,DWORD dwNum)
 {
 	dwNum--;
 	DWORD dwPid = GetGamePid();
@@ -773,7 +774,7 @@ void GhTrManager::ModifyCardData(DWORD dwID,DWORD dwNum)
  *
  * @param bool isFeatureEnabled 控制功能开关
  */
-void GhTrManager::PlantNoSubSun(bool isFeatureEnabled) {
+void GhTrManager::PlantWithoutSunReduction(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? GAME_PLANT_SUB_SUN_PATCH_OPCODE : GAME_PLANT_SUB_SUN_ORIGINAL_OPCODE;
@@ -784,7 +785,7 @@ void GhTrManager::PlantNoSubSun(bool isFeatureEnabled) {
  *
  * @param bool isFeatureEnabled 控制功能开关
  */
-void GhTrManager::NoCd(bool isFeatureEnabled) {
+void GhTrManager::DisableCooldowns(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = (isFeatureEnabled == 1) ? GAME_CARD_NO_CD_PATCH_OPCODE : GAME_CARD_NO_CD_ORIGINAL_OPCODE;
@@ -797,7 +798,7 @@ void GhTrManager::NoCd(bool isFeatureEnabled) {
  *
  * @param dwBGId 要设置的背景ID
  */
-void GhTrManager::ModifyBGIdValue(DWORD dwBGId)
+void GhTrManager::ChangeBackgroundID(DWORD dwBGId)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -826,7 +827,7 @@ void GhTrManager::Build(bool isFeatureEnabled) {
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::Auto(bool isFeatureEnabled)
+void GhTrManager::EnableAutoCollectSun(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -838,7 +839,7 @@ void GhTrManager::Auto(bool isFeatureEnabled)
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::Card(bool isFeatureEnabled) {
+void GhTrManager::EnableFrameDamage(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\x90\x90\x90\x90" : "\xC6\x46\x24\x01"; 
@@ -871,7 +872,7 @@ void GhTrManager::TheWorld(bool isFeatureEnabled) {
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::NoModelCD(bool isFeatureEnabled) {
+void GhTrManager::DisableSkillCooldown(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	ProtectAddress(dwPid, 0x43A);
@@ -887,7 +888,7 @@ void GhTrManager::NoModelCD(bool isFeatureEnabled) {
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::NoSunMax(bool isFeatureEnabled) {
+void GhTrManager::RemoveSunProductionLimit(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x89\x81\x84\x03\x00\x00";
@@ -898,7 +899,7 @@ void GhTrManager::NoSunMax(bool isFeatureEnabled) {
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::NoBuildTime(bool isFeatureEnabled){
+void GhTrManager::InstantObstacleDisappearance(bool isFeatureEnabled){
 	DWORD dwPid = GetGamePid(); 
 	const char* operational_code = (isFeatureEnabled == 1) ? "\xC7\x86\x94\x00\x00\x00\x00\x00\x00\x00\x90\x90\x90\x90" : "\x89\x86\x94\x00\x00\x00\x85\xC0\x0F\x85\xDC\x01\x00\x00";
 	WriteToMemory(dwPid, 0xA9D63, operational_code, 14);
@@ -908,7 +909,7 @@ void GhTrManager::NoBuildTime(bool isFeatureEnabled){
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::IgnoreSun(bool isFeatureEnabled) {
+void GhTrManager::PlantWithoutSunCost(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\xB8\x3F\x3F\x3F\x3F\x90" : "\x8B\x83\x84\x03\x00\x00";
@@ -919,7 +920,7 @@ void GhTrManager::IgnoreSun(bool isFeatureEnabled) {
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::Mowers(bool isFeatureEnabled) {
+void GhTrManager::DisableLawnMowerMovement(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\x90\x90\x90\x90\x90\x90\x90\x90":"\xF3\x0F\x11\x87\x84\x00\x00\x00";
@@ -929,7 +930,7 @@ void GhTrManager::Mowers(bool isFeatureEnabled) {
  * 召唤奖杯
  * 只在草坪中有效，如果未进入草坪，则会弹出提示
  */
-void GhTrManager::SummonCup() {
+void GhTrManager::CompleteLevelWithTrophy() {
 	DWORD dwPid = GetGamePid();
 	ProtectAddress(dwPid, 0x45E);
 	if (!CheckGamePid(dwPid, true)) return;
@@ -983,7 +984,7 @@ void GhTrManager::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::PeaSDamage(bool isFeatureEnabled)
+void GhTrManager::EnablePeashooterFrameDamage(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1005,7 +1006,7 @@ void GhTrManager::PeaSDamage(bool isFeatureEnabled)
  * @param isFeatureEnabled 控制功能开关
  * @return void 该函数不返回任何值
  */
-void GhTrManager::ZombieDC(bool isFeatureEnabled)
+void GhTrManager::ZombiesDropCardsOnDeath(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1068,7 +1069,7 @@ void GhTrManager::ZombieDC(bool isFeatureEnabled)
  * @param isFeatureEnabled 控制功能开关
  * @return void 该函数不返回任何值
  */
-void GhTrManager::NotSubvert(bool isFeatureEnabled)
+void GhTrManager::PreventPlantCharm(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1081,7 +1082,7 @@ void GhTrManager::NotSubvert(bool isFeatureEnabled)
  * @param isFeatureEnabled 控制功能开关
  * @return void 该函数不返回任何值
  */
-void GhTrManager::CherryFast(bool isFeatureEnabled)
+void GhTrManager::InstantCherryBombExplosion(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	ProtectAddress(dwPid, 0x5BD);
@@ -1097,7 +1098,7 @@ void GhTrManager::CherryFast(bool isFeatureEnabled)
  * @param isFeatureEnabled 控制功能开关
  * @return void 该函数不返回任何值
  */
-void GhTrManager::CherryNo(bool isFeatureEnabled)
+void GhTrManager::PreventCherryBombExplosion(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1110,7 +1111,7 @@ void GhTrManager::CherryNo(bool isFeatureEnabled)
  * @param isFeatureEnabled 控制功能开关
  * @return void 该函数不返回任何值
  */
-void GhTrManager::MeowFast(bool isFeatureEnabled)
+void GhTrManager::EnableInstantCascutaProjectile(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1123,7 +1124,7 @@ void GhTrManager::MeowFast(bool isFeatureEnabled)
  * @param isFeatureEnabled 控制功能开关
  * @return void 该函数不返回任何值
  */
-void GhTrManager::LoursMC(bool isFeatureEnabled)
+void GhTrManager::EnableCriticalHitsForLorus(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1137,7 +1138,7 @@ void GhTrManager::LoursMC(bool isFeatureEnabled)
  * @param isFeatureEnabled 控制功能开关
  * @return void 该函数不返回任何值
  */
-void GhTrManager::GodMode(bool isFeatureEnabled)
+void GhTrManager::MakePlantsInvincible(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1150,7 +1151,7 @@ void GhTrManager::GodMode(bool isFeatureEnabled)
  * @param isFeatureEnabled 控制功能开关
  * @return void 该函数不返回任何值
  */
-void GhTrManager::Point(bool isFeatureEnabled)
+void GhTrManager::RefusePrideEffect(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1181,7 +1182,7 @@ void GhTrManager::DX(bool isFeatureEnabled) //已废弃，不更新，但保留
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::Point2(bool isFeatureEnabled) //已废弃，不更新，但保留
+void GhTrManager::RefusePrideEffect2(bool isFeatureEnabled) //已废弃，不更新，但保留
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1198,7 +1199,7 @@ void GhTrManager::Point2(bool isFeatureEnabled) //已废弃，不更新，但保
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::LingSDamage(bool isFeatureEnabled)
+void GhTrManager::EnableOpticaltropFrameDamage(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1215,7 +1216,7 @@ void GhTrManager::LingSDamage(bool isFeatureEnabled)
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::ApplayerNoCD(bool isFeatureEnabled)
+void GhTrManager::ApplayerDisableCooldowns(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1229,7 +1230,7 @@ void GhTrManager::ApplayerNoCD(bool isFeatureEnabled)
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::ApplayerNoLag(bool isFeatureEnabled)
+void GhTrManager::RemoveApplayerDelay(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1241,7 +1242,7 @@ void GhTrManager::ApplayerNoLag(bool isFeatureEnabled)
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::PlantageNoCD(bool isFeatureEnabled)
+void GhTrManager::PlantageDisableCooldowns(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1255,7 +1256,7 @@ void GhTrManager::PlantageNoCD(bool isFeatureEnabled)
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::SunFlowerNoCD(bool isFeatureEnabled)
+void GhTrManager::SunFlowerDisableCooldowns(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1271,7 +1272,7 @@ void GhTrManager::SunFlowerNoCD(bool isFeatureEnabled)
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::PeaNoCD(bool isFeatureEnabled)
+void GhTrManager::PeaDisableCooldowns(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1283,7 +1284,7 @@ void GhTrManager::PeaNoCD(bool isFeatureEnabled)
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::SuperReed(bool isFeatureEnabled)
+void GhTrManager::EnhanceLightningReedAbility(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1297,7 +1298,7 @@ void GhTrManager::SuperReed(bool isFeatureEnabled)
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::PowerFlowerNoCD(bool isFeatureEnabled)
+void GhTrManager::PowerFlowerDisableCooldowns(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1309,7 +1310,7 @@ void GhTrManager::PowerFlowerNoCD(bool isFeatureEnabled)
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::AwayMax(bool isFeatureEnabled)
+void GhTrManager::MaintainMaximumPowerPlantSize(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1326,7 +1327,7 @@ void GhTrManager::AwayMax(bool isFeatureEnabled)
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::ItemNoDie(bool isFeatureEnabled)
+void GhTrManager::PreventItemDeterioration(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1338,7 +1339,7 @@ void GhTrManager::ItemNoDie(bool isFeatureEnabled)
  *
  * @param isFeatureEnabled 控制功能开关
  */
-void GhTrManager::SunNoDelay(bool isFeatureEnabled)
+void GhTrManager::InstantSunGeneration(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1361,7 +1362,7 @@ int GhTrManager::GenerateValidRandomID(const std::vector<int>& invalidIDs) {
 /**
  * 随机全屏布阵
  */
-void GhTrManager::BuildTheArray()
+void GhTrManager::DeployFormationInstantly()
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1403,7 +1404,7 @@ void GhTrManager::BuildTheArray()
 /**
  * 清空植物
  */
-void GhTrManager::ClearPlant()
+void GhTrManager::RemoveAllPlants()
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckLawn(dwPid))
@@ -1421,7 +1422,7 @@ void GhTrManager::ClearPlant()
 /**
  * 清空子弹
  */
-void GhTrManager::ClearBullet()
+void GhTrManager::RemoveAllProjectiles()
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1439,7 +1440,7 @@ void GhTrManager::ClearBullet()
 /**
  * 清空僵尸
  */
-void GhTrManager::ClearZombie()
+void GhTrManager::RemoveAllZombies()
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1465,7 +1466,7 @@ void GhTrManager::ClearZombie()
 /**
  * 修复新版本进关卡崩溃bug
  */
-void GhTrManager::FixCrashBug() //已废弃，不更新，但保留
+void GhTrManager::CorrectCrashIssue() //已废弃，不更新，但保留
 {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
@@ -1476,7 +1477,7 @@ void GhTrManager::FixCrashBug() //已废弃，不更新，但保留
 /**
  * 当前存档切换至红针花线
  */
-void GhTrManager::ToHongZhen()
+void GhTrManager::SwitchToRedStingerMode()
 {
 	std::filesystem::path configFilePath = GetConfigFilePath();
 	nlohmann::json configJson = ReadConfigFile(configFilePath);
@@ -1504,7 +1505,7 @@ void GhTrManager::ToHongZhen()
 /**
  * 当前存档切换至导向蓟线
  */
-void GhTrManager::ToDaoXiangJi()
+void GhTrManager::SwitchToHomingThistleMode()
 {
 	std::filesystem::path configFilePath = GetConfigFilePath();
 	nlohmann::json configJson = ReadConfigFile(configFilePath);
@@ -1534,7 +1535,7 @@ void GhTrManager::ToDaoXiangJi()
  *
  * @param dwDiff 难度的ID
  */
-void GhTrManager::ShowDiffBox(DWORD dwDiff)
+void GhTrManager::ShowDifficultyNotification(DWORD dwDiff)
 {
 	switch (dwDiff) {
 	case 0x0:
@@ -1557,7 +1558,7 @@ void GhTrManager::ShowDiffBox(DWORD dwDiff)
 /**
  * 切换是否可以创建Ub存档的变量
  */
-void GhTrManager::ArrUb()
+void GhTrManager::EnableCreationOfUbSaves()
 {
 	bool ifNoProcess=false;
 	DWORD dwPid = GetGamePid();
@@ -1609,7 +1610,7 @@ void GhTrManager::DifficultySwitcher(DWORD dwDiff)
 	configJson["isModifyArchive"] = true;
 	WriteConfigFile(configFilePath, configJson);
 
-	ShowDiffBox(dwDiff);
+	ShowDifficultyNotification(dwDiff);
 
 	DWORD dwNum = ReadTheMemory(hProcess, target_address);
 	dwNum = ReadTheMemory(hProcess, dwNum + 0x818);
@@ -1687,7 +1688,7 @@ void GhTrManager::ConvertToWiki(CString RawData)
 	SetClipboardText(outputData);
 	MessageBox(NULL, L"内容生成完毕，已复制到剪切板中", L"提示", MB_OK);
 }
-void GhTrManager::NoUbBroken(bool isFeatureEnabled)
+void GhTrManager::DisableUbSaveDestroy(bool isFeatureEnabled)
 {
 	DWORD dwPid = GetGamePid();
 	ProtectAddress(dwPid, 0x300);

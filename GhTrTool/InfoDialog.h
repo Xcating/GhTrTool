@@ -2,15 +2,15 @@
 #include "afxdialogex.h"
 
 
-// PlantID 对话框
+// InfoDialog 对话框
 
-class PlantID : public CDialogEx
+class InfoDialog : public CDialogEx
 {
-	DECLARE_DYNAMIC(PlantID)
+	DECLARE_DYNAMIC(InfoDialog)
 
 public:
-	PlantID(CWnd* pParent = nullptr);   // 标准构造函数
-	virtual ~PlantID();
+	InfoDialog(CWnd* pParent = nullptr);   // 标准构造函数
+	virtual ~InfoDialog();
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME

@@ -33,13 +33,13 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Pvz.h">
+    <ClInclude Include="GhTr.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="resource1.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="PlantID.h">
+    <ClInclude Include="InfoDialog.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="json.hpp">
@@ -59,10 +59,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Pvz.cpp">
+    <ClCompile Include="GhTr.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="PlantID.cpp">
+    <ClCompile Include="InfoDialog.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

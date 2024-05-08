@@ -11,7 +11,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-#include "PlantID.h"
+#include "InfoDialog.h"
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
 class CAboutDlg : public CDialogEx
@@ -72,64 +72,64 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_COMMAND(ID_SaveDir, &CGhTrToolDlg::OnClickMenuOpenSaveDir)
 	ON_COMMAND(ID_UpdateLog, &CGhTrToolDlg::OnClickMenuAbout)
 	ON_COMMAND(ID_ChangeSave, &CGhTrToolDlg::OnClickMenuShowSaveFunction)
-	ON_COMMAND(ID_PlantID, &CGhTrToolDlg::OnClickMenuShowIDList)
+	ON_COMMAND(ID_InfoDialog, &CGhTrToolDlg::OnClickMenuShowIDList)
 	ON_COMMAND(ID_BackGroundID, &CGhTrToolDlg::OnClickMenuShowIDList)
 	ON_COMMAND(ID_DiffID, &CGhTrToolDlg::OnClickMenuShowIDList)
     ON_BN_CLICKED(IDC_BTN_SUN, &CGhTrToolDlg::OnBnClickedBtnSun)
-	ON_BN_CLICKED(IDC_BTN_SP, &CGhTrToolDlg::OnBnClickedBtnModifyCardNumber)
-	ON_BN_CLICKED(IDC_BTN_ModifyCardData, &CGhTrToolDlg::OnBnClickedBtnModifyCardData)
+	ON_BN_CLICKED(IDC_BTN_SP, &CGhTrToolDlg::OnBnClickedBtnModifyEnableFrameDamageNumber)
+	ON_BN_CLICKED(IDC_BTN_ModifyEnableFrameDamageData, &CGhTrToolDlg::OnBnClickedBtnModifyEnableFrameDamageData)
 	ON_BN_CLICKED(IDC_BTN_DifficultySwitcher, &CGhTrToolDlg::OnBnClickedBtnDifficultySwitcher)
 	ON_BN_CLICKED(IDC_BTN_ConvertToWiki, &CGhTrToolDlg::OnBnClickedBtnConvertToWiki)
 	ON_BN_CLICKED(IDC_BTN_Plant, &CGhTrToolDlg::OnBnClickedBtnPlant)
-    ON_BN_CLICKED(IDC_BTN_SUN_NOP, &CGhTrToolDlg::OnBnClickedBtnPlantNoSubSun)
-    ON_BN_CLICKED(IDC_BTN_NO_CD, &CGhTrToolDlg::OnBnClickedBtnNoCd)
+    ON_BN_CLICKED(IDC_BTN_SUN_NOP, &CGhTrToolDlg::OnBnClickedBtnPlantWithoutSunReduction)
+    ON_BN_CLICKED(IDC_BTN_NO_CD, &CGhTrToolDlg::OnBnClickedBtnDisableCooldowns)
     ON_BN_CLICKED(IDC_BTN_BGId, &CGhTrToolDlg::OnBnClickedBtnBGId)
     ON_BN_CLICKED(IDC_BTN_BUILD, &CGhTrToolDlg::OnBnClickedBtnBuild)
-    ON_BN_CLICKED(IDC_BTN_AUTO, &CGhTrToolDlg::OnBnClickedBtnAuto)
-    ON_BN_CLICKED(IDC_BTN_CARD, &CGhTrToolDlg::OnBnClickedBtnCard)
+    ON_BN_CLICKED(IDC_BTN_AUTO, &CGhTrToolDlg::OnBnClickedBtnEnableAutoCollectSun)
+    ON_BN_CLICKED(IDC_BTN_CARD, &CGhTrToolDlg::OnBnClickedBtnEnableFrameDamage)
     ON_BN_CLICKED(IDC_BTN_Fast, &CGhTrToolDlg::OnBnClickedBtnFast)
     ON_BN_CLICKED(IDC_BTN_TheWorld, &CGhTrToolDlg::OnBnClickedBtnTheWorld)
-    ON_BN_CLICKED(IDC_BTN_NoModelCD, &CGhTrToolDlg::OnBnClickedBtnNoModelCD)
-    ON_BN_CLICKED(IDC_BTN_Mowers, &CGhTrToolDlg::OnBnClickedBtnMowers)
-	ON_BN_CLICKED(IDC_BTN_PeaSDamage, &CGhTrToolDlg::OnBnClickedBtnPeaSDamage)
-	ON_BN_CLICKED(IDC_BTN_NoBuildTime, &CGhTrToolDlg::OnBnClickedBtnNoBuildTime)
-	ON_BN_CLICKED(IDC_BTN_NOSUNMAX, &CGhTrToolDlg::OnBnClickedBtnNoSunMax)
-    ON_BN_CLICKED(IDC_BTN_ZombieDC, &CGhTrToolDlg::OnBnClickedBtnZombieDC)
-    ON_BN_CLICKED(IDC_BTN_NotSubvert, &CGhTrToolDlg::OnBnClickedBtnNotSubvert)
-    ON_BN_CLICKED(IDC_BTN_GodMode, &CGhTrToolDlg::OnBnClickedBtnGodMode)
-	ON_BN_CLICKED(IDC_BTN_ItemNoDie, &CGhTrToolDlg::OnBnClickedBtnItemNoDie)
-	ON_BN_CLICKED(IDC_BTN_NoUbBroken, &CGhTrToolDlg::OnBnClickedBtnNoUbBroken)
-	ON_BN_CLICKED(IDC_BTN_LingSDamage, &CGhTrToolDlg::OnBnClickedBtnLingSDamage)
-	ON_BN_CLICKED(IDC_BTN_IgnoreSun, &CGhTrToolDlg::OnBnClickedBtnIgnoreSun)
-	ON_BN_CLICKED(IDC_BTN_SummonCup, &CGhTrToolDlg::OnBnClickedBtnSummonCup)
-	ON_BN_CLICKED(IDC_BTN_LoursMC, &CGhTrToolDlg::OnBnClickedBtnLoursMC)
-	ON_BN_CLICKED(IDC_BTN_MeowFast, &CGhTrToolDlg::OnBnClickedBtnMeowFast)
-	ON_BN_CLICKED(IDC_BTN_POINT, &CGhTrToolDlg::OnBnClickedBtnPoint)
-	ON_BN_CLICKED(IDC_BTN_POINT2, &CGhTrToolDlg::OnBnClickedBtnPoint2)
+    ON_BN_CLICKED(IDC_BTN_DisableSkillCooldown, &CGhTrToolDlg::OnBnClickedBtnDisableSkillCooldown)
+    ON_BN_CLICKED(IDC_BTN_DisableLawnMowerMovement, &CGhTrToolDlg::OnBnClickedBtnDisableLawnMowerMovement)
+	ON_BN_CLICKED(IDC_BTN_EnablePeashooterFrameDamage, &CGhTrToolDlg::OnBnClickedBtnEnablePeashooterFrameDamage)
+	ON_BN_CLICKED(IDC_BTN_InstantObstacleDisappearance, &CGhTrToolDlg::OnBnClickedBtnInstantObstacleDisappearance)
+	ON_BN_CLICKED(IDC_BTN_NOSUNMAX, &CGhTrToolDlg::OnBnClickedBtnRemoveSunProductionLimit)
+    ON_BN_CLICKED(IDC_BTN_ZombiesDropCardsOnDeath, &CGhTrToolDlg::OnBnClickedBtnZombiesDropCardsOnDeath)
+    ON_BN_CLICKED(IDC_BTN_PreventPlantCharm, &CGhTrToolDlg::OnBnClickedBtnPreventPlantCharm)
+    ON_BN_CLICKED(IDC_BTN_MakePlantsInvincible, &CGhTrToolDlg::OnBnClickedBtnMakePlantsInvincible)
+	ON_BN_CLICKED(IDC_BTN_PreventItemDeterioration, &CGhTrToolDlg::OnBnClickedBtnPreventItemDeterioration)
+	ON_BN_CLICKED(IDC_BTN_DisableUbSaveDestroy, &CGhTrToolDlg::OnBnClickedBtnDisableUbSaveDestroy)
+	ON_BN_CLICKED(IDC_BTN_EnableOpticaltropFrameDamage, &CGhTrToolDlg::OnBnClickedBtnEnableOpticaltropFrameDamage)
+	ON_BN_CLICKED(IDC_BTN_PlantWithoutSunCost, &CGhTrToolDlg::OnBnClickedBtnPlantWithoutSunCost)
+	ON_BN_CLICKED(IDC_BTN_CompleteLevelWithTrophy, &CGhTrToolDlg::OnBnClickedBtnCompleteLevelWithTrophy)
+	ON_BN_CLICKED(IDC_BTN_EnableCriticalHitsForLorus, &CGhTrToolDlg::OnBnClickedBtnEnableCriticalHitsForLorus)
+	ON_BN_CLICKED(IDC_BTN_EnableInstantCascutaProjectile, &CGhTrToolDlg::OnBnClickedBtnEnableInstantCascutaProjectile)
+	ON_BN_CLICKED(IDC_BTN_POINT, &CGhTrToolDlg::OnBnClickedBtnRefusePrideEffect)
+	ON_BN_CLICKED(IDC_BTN_ModifyPrideOnLevelEntry, &CGhTrToolDlg::OnBnClickedBtnRefusePrideEffect2)
 	ON_BN_CLICKED(IDC_BTN_DX, &CGhTrToolDlg::OnBnClickedBtnDX)
-	ON_BN_CLICKED(IDC_BTN_CherryFast, &CGhTrToolDlg::OnBnClickedBtnCherryFast)
-	ON_BN_CLICKED(IDC_BTN_CherryNo, &CGhTrToolDlg::OnBnClickedBtnCherryNo)
-	ON_BN_CLICKED(IDC_BTN_ApplayerNoCD, &CGhTrToolDlg::OnBnClickedBtnApplayerNoCD)
-	ON_BN_CLICKED(IDC_BTN_ApplayerNoLag, &CGhTrToolDlg::OnBnClickedBtnApplayerNoLag)
-	ON_BN_CLICKED(IDC_BTN_PlantageNoCD, &CGhTrToolDlg::OnBnClickedBtnPlantageNoCD)
-	ON_BN_CLICKED(IDC_BTN_SunFlowerNoCD, &CGhTrToolDlg::OnBnClickedBtnSunFlowerNoCD)
-	ON_BN_CLICKED(IDC_BTN_PeaNoCD, &CGhTrToolDlg::OnBnClickedBtnPeaNoCD)
-	ON_BN_CLICKED(IDC_BTN_SuperReed, &CGhTrToolDlg::OnBnClickedBtnSuperReed)
-	ON_BN_CLICKED(IDC_BTN_PowerFlowerNoCD, &CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD)
-	ON_BN_CLICKED(IDC_BTN_AwayMax, &CGhTrToolDlg::OnBnClickedBtnAwayMax)
-	ON_BN_CLICKED(IDC_BTN_SunNoDelay, &CGhTrToolDlg::OnBnClickedBtnSunNoDelay)
-	ON_BN_CLICKED(IDC_BTN_BuildTheArray, &CGhTrToolDlg::OnBnClickedBtnBuildTheArray)
-	ON_BN_CLICKED(IDC_BTN_ClearZombie, &CGhTrToolDlg::OnBnClickedBtnClearZombie)
-	ON_BN_CLICKED(IDC_BTN_FixCrashBug, &CGhTrToolDlg::OnBnClickedBtnFixCrashBug)
-	ON_BN_CLICKED(IDC_BTN_ToDaoXiangJi, &CGhTrToolDlg::OnBnClickedBtnToDaoXiangJi)
-	ON_BN_CLICKED(IDC_BTN_ArrUb, &CGhTrToolDlg::OnBnClickedBtnArrUb)
-	ON_BN_CLICKED(IDC_BTN_ToHongZhen, &CGhTrToolDlg::OnBnClickedBtnToHongZhen)
-	ON_BN_CLICKED(IDC_BTN_ClearPlant, &CGhTrToolDlg::OnBnClickedBtnClearPlant)
-	ON_BN_CLICKED(IDC_BTN_ClearBullet, &CGhTrToolDlg::OnBnClickedBtnClearBullet)
-	ON_BN_CLICKED(IDC_BTN_Plant2, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
-	ON_BN_CLICKED(IDC_BTN_Plant3, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
-	ON_BN_CLICKED(IDC_BTN_Plant4, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
-	ON_BN_CLICKED(IDC_BTN_Plant5, &CGhTrToolDlg::OnBnClickedBtnPlantIDList)
+	ON_BN_CLICKED(IDC_BTN_InstantCherryBombExplosion, &CGhTrToolDlg::OnBnClickedBtnInstantCherryBombExplosion)
+	ON_BN_CLICKED(IDC_BTN_PreventCherryBombExplosion, &CGhTrToolDlg::OnBnClickedBtnPreventCherryBombExplosion)
+	ON_BN_CLICKED(IDC_BTN_ApplayerDisableCooldowns, &CGhTrToolDlg::OnBnClickedBtnApplayerDisableCooldowns)
+	ON_BN_CLICKED(IDC_BTN_RemoveApplayerDelay, &CGhTrToolDlg::OnBnClickedBtnRemoveApplayerDelay)
+	ON_BN_CLICKED(IDC_BTN_PlantageDisableCooldowns, &CGhTrToolDlg::OnBnClickedBtnPlantageDisableCooldowns)
+	ON_BN_CLICKED(IDC_BTN_SunFlowerDisableCooldowns, &CGhTrToolDlg::OnBnClickedBtnSunFlowerDisableCooldowns)
+	ON_BN_CLICKED(IDC_BTN_PeaDisableCooldowns, &CGhTrToolDlg::OnBnClickedBtnPeaDisableCooldowns)
+	ON_BN_CLICKED(IDC_BTN_EnhanceLightningReedAbility, &CGhTrToolDlg::OnBnClickedBtnEnhanceLightningReedAbility)
+	ON_BN_CLICKED(IDC_BTN_PowerFlowerDisableCooldowns, &CGhTrToolDlg::OnBnClickedBtnPowerFlowerDisableCooldowns)
+	ON_BN_CLICKED(IDC_BTN_MaintainMaximumPowerPlantSize, &CGhTrToolDlg::OnBnClickedBtnMaintainMaximumPowerPlantSize)
+	ON_BN_CLICKED(IDC_BTN_InstantSunGeneration, &CGhTrToolDlg::OnBnClickedBtnInstantSunGeneration)
+	ON_BN_CLICKED(IDC_BTN_DeployFormationInstantly, &CGhTrToolDlg::OnBnClickedBtnDeployFormationInstantly)
+	ON_BN_CLICKED(IDC_BTN_RemoveAllPlants, &CGhTrToolDlg::OnBnClickedBtnRemoveAllPlants)
+	ON_BN_CLICKED(IDC_BTN_CorrectCrashIssue, &CGhTrToolDlg::OnBnClickedBtnCorrectCrashIssue)
+	ON_BN_CLICKED(IDC_BTN_SwitchToHomingThistleMode, &CGhTrToolDlg::OnBnClickedBtnSwitchToHomingThistleMode)
+	ON_BN_CLICKED(IDC_BTN_EnableCreationOfUbSaves, &CGhTrToolDlg::OnBnClickedBtnEnableCreationOfUbSaves)
+	ON_BN_CLICKED(IDC_BTN_SwitchToRedStingerMode, &CGhTrToolDlg::OnBnClickedBtnSwitchToRedStingerMode)
+	ON_BN_CLICKED(IDC_BTN_RemoveAllZombies, &CGhTrToolDlg::OnBnClickedBtnRemoveAllZombies)
+	ON_BN_CLICKED(IDC_BTN_RemoveAllProjectiles, &CGhTrToolDlg::OnBnClickedBtnRemoveAllProjectiles)
+	ON_BN_CLICKED(IDC_BTN_Plant2, &CGhTrToolDlg::OnBnClickedBtnInfoDialogList)
+	ON_BN_CLICKED(IDC_BTN_Plant3, &CGhTrToolDlg::OnBnClickedBtnInfoDialogList)
+	ON_BN_CLICKED(IDC_BTN_Plant4, &CGhTrToolDlg::OnBnClickedBtnInfoDialogList)
+	ON_BN_CLICKED(IDC_BTN_Plant5, &CGhTrToolDlg::OnBnClickedBtnInfoDialogList)
 END_MESSAGE_MAP()
 // CGhTrToolDlg 消息处理程序
 HBRUSH CGhTrToolDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
@@ -156,7 +156,7 @@ void CGhTrToolDlg::OnClickMenuAbout()
 }
 void CGhTrToolDlg::OnClickMenuShowIDList()
 {
-	PlantID dlg;
+	InfoDialog dlg;
 	dlg.DoModal(); // 显示对话框
 }
 void CGhTrToolDlg::OnClickMenuOpenSaveDir()
@@ -165,17 +165,17 @@ void CGhTrToolDlg::OnClickMenuOpenSaveDir()
 }
 void CGhTrToolDlg::OnClickMenuShowSaveFunction()
 {
-	GhTrManager pvz = GhTrManager();
-	pvz.WriteConfig();
+	GhTrManager GhTr = GhTrManager();
+	GhTr.WriteConfig();
 	SwitchEnableSava = !SwitchEnableSava;
 	if (SwitchEnableSava)
 	{
 		GetDlgItem(IDC_BTN_DifficultySwitcher)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_EDIT_Diff)->ShowWindow(SW_SHOW);
-		GetDlgItem(IDC_BTN_ToDaoXiangJi)->ShowWindow(SW_SHOW);
-		GetDlgItem(IDC_BTN_ArrUb)->ShowWindow(SW_SHOW);
-		GetDlgItem(IDC_BTN_ToHongZhen)->ShowWindow(SW_SHOW);
-		GetDlgItem(IDC_BTN_NoUbBroken)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BTN_SwitchToHomingThistleMode)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BTN_EnableCreationOfUbSaves)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BTN_SwitchToRedStingerMode)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BTN_DisableUbSaveDestroy)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_STATIC_DiffID)->ShowWindow(SW_SHOW);
 		AfxMessageBox(_T("已显示该类功能，请谨慎使用，你的存档以及游戏已被标记！"), MB_ICONINFORMATION | MB_OK);
 	}
@@ -184,10 +184,10 @@ void CGhTrToolDlg::OnClickMenuShowSaveFunction()
 		      
 		GetDlgItem(IDC_BTN_DifficultySwitcher)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_EDIT_Diff)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_BTN_ToDaoXiangJi)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_BTN_ArrUb)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_BTN_ToHongZhen)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_BTN_NoUbBroken)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_BTN_SwitchToHomingThistleMode)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_BTN_EnableCreationOfUbSaves)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_BTN_SwitchToRedStingerMode)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_BTN_DisableUbSaveDestroy)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_STATIC_DiffID)->ShowWindow(SW_HIDE);
 		AfxMessageBox(_T("已禁用该类功能！"), MB_ICONINFORMATION | MB_OK);
 	}
@@ -196,7 +196,7 @@ BOOL CGhTrToolDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 	UpdateText();
-	GetDlgItem(IDC_BTN_NoUbBroken)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_DisableUbSaveDestroy)->ShowWindow(SW_HIDE);
 	CMenu* pMenu = new CMenu();
 	pMenu->LoadMenu(IDR_MENU1);  // 使用实际的菜单资源ID代替
 	SetMenu(pMenu);
@@ -278,44 +278,44 @@ HCURSOR CGhTrToolDlg::OnQueryDragIcon()
 }
 void CGhTrToolDlg::ToggleFeature(UINT nID, void (GhTrManager::* featureFunc)(bool))
 {
-	GhTrManager pvz;
+	GhTrManager GhTr;
 	CButton* pCheck = (CButton*)GetDlgItem(nID);
-	if (!pvz.CheckGamePid(pvz.GetGamePid(),false)) {
+	if (!GhTr.CheckGamePid(GhTr.GetGamePid(),false)) {
 		pCheck->SetCheck(BST_UNCHECKED);
 		return;
 	}
-	pvz.WriteConfig();
+	GhTr.WriteConfig();
 	bool isFeatureEnabled = pCheck->GetCheck() == BST_CHECKED;
-	(pvz.*featureFunc)(isFeatureEnabled);
+	(GhTr.*featureFunc)(isFeatureEnabled);
 }
-void CGhTrToolDlg::PlantAtPositions(GhTrManager& pvz, DWORD dwXP, DWORD dwYP, DWORD dwID) {
+void CGhTrToolDlg::PlantAtPositions(GhTrManager& GhTr, DWORD dwXP, DWORD dwYP, DWORD dwID) {
 	if (dwXP == 0 && dwYP == 0) {
 		for (int X = 1; X <= 9; ++X) {
 			for (int Y = 1; Y <= 5; ++Y) {
-				pvz.Plant(X, Y, dwID);
+				GhTr.Plant(X, Y, dwID);
 			}
 		}
 	}
 	else if (dwXP == 0) {
 		for (int X = 1; X <= 9; ++X) {
-			pvz.Plant(X, dwYP, dwID);
+			GhTr.Plant(X, dwYP, dwID);
 			Sleep(80);
 		}
 	}
 	else if (dwYP == 0) {
 		for (int Y = 1; Y <= 5; ++Y) {
-			pvz.Plant(dwXP, Y, dwID);
+			GhTr.Plant(dwXP, Y, dwID);
 			Sleep(80);
 		}
 	}
 	else {
-		pvz.Plant(dwXP, dwYP, dwID);
+		GhTr.Plant(dwXP, dwYP, dwID);
 	}
 }
 void CGhTrToolDlg::UpdateText()
 {
-	GhTrManager pvz = GhTrManager();
-	int pid = pvz.GetGamePid();
+	GhTrManager GhTr = GhTrManager();
+	int pid = GhTr.GetGamePid();
 	if (pid == -1)
 	{
 		m_bIsRed = 1;
@@ -337,84 +337,84 @@ void CGhTrToolDlg::OnTimer(UINT_PTR nIDEvent)
 	CDialogEx::OnTimer(nIDEvent);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnPlantIDList()
+void CGhTrToolDlg::OnBnClickedBtnInfoDialogList()
 {
-	PlantID dlg;
+	InfoDialog dlg;
 	dlg.DoModal(); // 显示对话框
 }
 
 void CGhTrToolDlg::OnBnClickedBtnSun()
 {
     DWORD dwSun = GetDlgItemInt(IDC_EDIT_SUN);
-    GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-    pvz.ModifySunValue(dwSun);
+    GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+    GhTr.ModifySunValue(dwSun);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnDifficultySwitcher()
 {
 	DWORD dwDiff = GetDlgItemInt(IDC_EDIT_Diff);
 
-	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-	pvz.DifficultySwitcher(dwDiff);
+	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+	GhTr.DifficultySwitcher(dwDiff);
 }
 void CGhTrToolDlg::OnBnClickedBtnConvertToWiki()
 {
 	CString strText;
 	GetDlgItemText(IDC_EDIT_JsonText, strText);
-	GhTrManager pvz = GhTrManager();
-	pvz.ConvertToWiki(strText);
+	GhTrManager GhTr = GhTrManager();
+	GhTr.ConvertToWiki(strText);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnModifyCardData()
+void CGhTrToolDlg::OnBnClickedBtnModifyEnableFrameDamageData()
 {
 	DWORD dwID = GetDlgItemInt(IDC_EDIT_SPID);
 	DWORD dwNum = GetDlgItemInt(IDC_EDIT_SPNUM);
-	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-	pvz.ModifyCardData(dwID , dwNum);
+	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+	GhTr.ModifyEnableFrameDamageData(dwID , dwNum);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnModifyCardNumber()
+void CGhTrToolDlg::OnBnClickedBtnModifyEnableFrameDamageNumber()
 {
 	DWORD dwSP = GetDlgItemInt(IDC_EDIT_SP2);
 
-	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-	pvz.ModifyCardNumber(dwSP);
+	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+	GhTr.ModifyEnableFrameDamageNumber(dwSP);
 }
 
 void CGhTrToolDlg::OnBnClickedBtnPlant() {
-	GhTrManager pvz = GhTrManager();
-	DWORD dwPid = pvz.GetGamePid();
+	GhTrManager GhTr = GhTrManager();
+	DWORD dwPid = GhTr.GetGamePid();
 	DWORD dwXP = GetDlgItemInt(IDC_EDIT_XP);
 	DWORD dwYP = GetDlgItemInt(IDC_EDIT_YP);
 	DWORD dwID = GetDlgItemInt(IDC_EDIT_ID);
-	DWORD dwPid2 = pvz.GetGamePid();
-	if (!pvz.CheckLawn(dwPid))
+	DWORD dwPid2 = GhTr.GetGamePid();
+	if (!GhTr.CheckLawn(dwPid))
 	{
 		MessageBoxA(NULL, "未进入战场", "提示", MB_OK);
 		return;
 	}
-	if (!pvz.CheckGamePid(dwPid2, true)) return;
-	pvz.WriteConfig();
-	PlantAtPositions(pvz, dwXP, dwYP, dwID);
+	if (!GhTr.CheckGamePid(dwPid2, true)) return;
+	GhTr.WriteConfig();
+	PlantAtPositions(GhTr, dwXP, dwYP, dwID);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnPlantNoSubSun()
+void CGhTrToolDlg::OnBnClickedBtnPlantWithoutSunReduction()
 {
-	ToggleFeature(IDC_BTN_SUN_NOP, &GhTrManager::PlantNoSubSun);
+	ToggleFeature(IDC_BTN_SUN_NOP, &GhTrManager::PlantWithoutSunReduction);
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnNoCd()
+void CGhTrToolDlg::OnBnClickedBtnDisableCooldowns()
 {
-	ToggleFeature(IDC_BTN_NO_CD, &GhTrManager::NoCd);
+	ToggleFeature(IDC_BTN_NO_CD, &GhTrManager::DisableCooldowns);
 }
 
 
 void CGhTrToolDlg::OnBnClickedBtnBGId()
 {
     DWORD dwBGId = GetDlgItemInt(IDC_EDIT_BGId);
-    GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-    pvz.ModifyBGIdValue(dwBGId);
+    GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+    GhTr.ChangeBackgroundID(dwBGId);
 }
 
 
@@ -424,24 +424,24 @@ void CGhTrToolDlg::OnBnClickedBtnBuild()
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnAuto()
+void CGhTrToolDlg::OnBnClickedBtnEnableAutoCollectSun()
 {
-	ToggleFeature(IDC_BTN_AUTO, &GhTrManager::Auto);
+	ToggleFeature(IDC_BTN_AUTO, &GhTrManager::EnableAutoCollectSun);
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnCard()
+void CGhTrToolDlg::OnBnClickedBtnEnableFrameDamage()
 {
-	ToggleFeature(IDC_BTN_CARD, &GhTrManager::Card);
+	ToggleFeature(IDC_BTN_CARD, &GhTrManager::EnableFrameDamage);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnPoint()
+void CGhTrToolDlg::OnBnClickedBtnRefusePrideEffect()
 {
-	ToggleFeature(IDC_BTN_POINT, &GhTrManager::Point);
+	ToggleFeature(IDC_BTN_POINT, &GhTrManager::RefusePrideEffect);
 }
-void CGhTrToolDlg::OnBnClickedBtnPoint2()
+void CGhTrToolDlg::OnBnClickedBtnRefusePrideEffect2()
 {
-	ToggleFeature(IDC_BTN_POINT2, &GhTrManager::Point2);
+	ToggleFeature(IDC_BTN_ModifyPrideOnLevelEntry, &GhTrManager::RefusePrideEffect2);
 }
 void CGhTrToolDlg::OnBnClickedBtnDX()
 {
@@ -460,185 +460,185 @@ void CGhTrToolDlg::OnBnClickedBtnTheWorld()
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnNoModelCD()
+void CGhTrToolDlg::OnBnClickedBtnDisableSkillCooldown()
 {
-	ToggleFeature(IDC_BTN_NoModelCD, &GhTrManager::NoModelCD);
+	ToggleFeature(IDC_BTN_DisableSkillCooldown, &GhTrManager::DisableSkillCooldown);
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnMowers()
+void CGhTrToolDlg::OnBnClickedBtnDisableLawnMowerMovement()
 {
-	ToggleFeature(IDC_BTN_Mowers, &GhTrManager::Mowers);
+	ToggleFeature(IDC_BTN_DisableLawnMowerMovement, &GhTrManager::DisableLawnMowerMovement);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnPeaSDamage()
+void CGhTrToolDlg::OnBnClickedBtnEnablePeashooterFrameDamage()
 {
-	ToggleFeature(IDC_BTN_PeaSDamage, &GhTrManager::PeaSDamage);
+	ToggleFeature(IDC_BTN_EnablePeashooterFrameDamage, &GhTrManager::EnablePeashooterFrameDamage);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnNoBuildTime()
+void CGhTrToolDlg::OnBnClickedBtnInstantObstacleDisappearance()
 {
-	ToggleFeature(IDC_BTN_NoBuildTime, &GhTrManager::NoBuildTime);
+	ToggleFeature(IDC_BTN_InstantObstacleDisappearance, &GhTrManager::InstantObstacleDisappearance);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnNoSunMax()
+void CGhTrToolDlg::OnBnClickedBtnRemoveSunProductionLimit()
 {
-	ToggleFeature(IDC_BTN_NOSUNMAX, &GhTrManager::NoSunMax);
+	ToggleFeature(IDC_BTN_NOSUNMAX, &GhTrManager::RemoveSunProductionLimit);
 }
 
-void CGhTrToolDlg::OnBnClickedBtnZombieDC()
+void CGhTrToolDlg::OnBnClickedBtnZombiesDropCardsOnDeath()
 {
-	ToggleFeature(IDC_BTN_ZombieDC, &GhTrManager::ZombieDC);
-}
-
-
-void CGhTrToolDlg::OnBnClickedBtnNotSubvert()
-{
-	ToggleFeature(IDC_BTN_NotSubvert, &GhTrManager::NotSubvert);
+	ToggleFeature(IDC_BTN_ZombiesDropCardsOnDeath, &GhTrManager::ZombiesDropCardsOnDeath);
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnGodMode()
+void CGhTrToolDlg::OnBnClickedBtnPreventPlantCharm()
 {
-	ToggleFeature(IDC_BTN_GodMode, &GhTrManager::GodMode);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnItemNoDie()
-{
-	ToggleFeature(IDC_BTN_ItemNoDie, &GhTrManager::ItemNoDie);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnNoUbBroken()
-{
-	ToggleFeature(IDC_BTN_NoUbBroken, &GhTrManager::NoUbBroken);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnSunNoDelay()
-{
-	ToggleFeature(IDC_BTN_SunNoDelay, &GhTrManager::SunNoDelay);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnBuildTheArray()
-{
-		GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-		pvz.BuildTheArray();
-}
-
-void CGhTrToolDlg::OnBnClickedBtnClearZombie()
-{
-	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-	pvz.ClearZombie();
-}
-
-void CGhTrToolDlg::OnBnClickedBtnFixCrashBug()
-{
-	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-	pvz.FixCrashBug();
-}
-
-void CGhTrToolDlg::OnBnClickedBtnToDaoXiangJi()
-{
-	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-	pvz.ToDaoXiangJi();
-}
-
-void CGhTrToolDlg::OnBnClickedBtnArrUb()
-{
-	GhTrManager pvz = GhTrManager();
-	pvz.ArrUb();
-}
-
-void CGhTrToolDlg::OnBnClickedBtnToHongZhen()
-{
-	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-	pvz.ToHongZhen();
-}
-
-void CGhTrToolDlg::OnBnClickedBtnClearPlant()
-{
-	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-	pvz.ClearPlant();
-}
-
-void CGhTrToolDlg::OnBnClickedBtnClearBullet()
-{
-	GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-	pvz.ClearBullet();
-}
-
-void CGhTrToolDlg::OnBnClickedBtnSuperReed()
-{
-	ToggleFeature(IDC_BTN_SuperReed, &GhTrManager::SuperReed);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnPowerFlowerNoCD()
-{
-	ToggleFeature(IDC_BTN_PowerFlowerNoCD, &GhTrManager::PowerFlowerNoCD);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnAwayMax()
-{
-	ToggleFeature(IDC_BTN_AwayMax, &GhTrManager::AwayMax);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnApplayerNoCD()
-{
-	ToggleFeature(IDC_BTN_ApplayerNoCD, &GhTrManager::ApplayerNoCD);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnApplayerNoLag()
-{
-	ToggleFeature(IDC_BTN_ApplayerNoLag, &GhTrManager::ApplayerNoLag);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnPlantageNoCD()
-{
-	ToggleFeature(IDC_BTN_PlantageNoCD, &GhTrManager::PlantageNoCD);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnPeaNoCD()
-{
-	ToggleFeature(IDC_BTN_PeaNoCD, &GhTrManager::PeaNoCD);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnSunFlowerNoCD()
-{
-	ToggleFeature(IDC_BTN_SunFlowerNoCD, &GhTrManager::SunFlowerNoCD);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnLingSDamage()
-{
-	ToggleFeature(IDC_BTN_LingSDamage, &GhTrManager::LingSDamage);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnIgnoreSun()
-{
-	ToggleFeature(IDC_BTN_IgnoreSun, &GhTrManager::IgnoreSun);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnSummonCup()
-{
-		GhTrManager pvz = GhTrManager(); pvz.WriteConfig();
-		pvz.SummonCup();
-}
-
-void CGhTrToolDlg::OnBnClickedBtnLoursMC()
-{
-	ToggleFeature(IDC_BTN_LoursMC, &GhTrManager::LoursMC);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnMeowFast()
-{
-	ToggleFeature(IDC_BTN_MeowFast, &GhTrManager::Fast);
-}
-
-void CGhTrToolDlg::OnBnClickedBtnCherryNo()
-{
-	ToggleFeature(IDC_BTN_CherryNo, &GhTrManager::CherryNo);
+	ToggleFeature(IDC_BTN_PreventPlantCharm, &GhTrManager::PreventPlantCharm);
 }
 
 
-void CGhTrToolDlg::OnBnClickedBtnCherryFast()
+void CGhTrToolDlg::OnBnClickedBtnMakePlantsInvincible()
 {
-	ToggleFeature(IDC_BTN_CherryFast, &GhTrManager::CherryFast);
+	ToggleFeature(IDC_BTN_MakePlantsInvincible, &GhTrManager::MakePlantsInvincible);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPreventItemDeterioration()
+{
+	ToggleFeature(IDC_BTN_PreventItemDeterioration, &GhTrManager::PreventItemDeterioration);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnDisableUbSaveDestroy()
+{
+	ToggleFeature(IDC_BTN_DisableUbSaveDestroy, &GhTrManager::DisableUbSaveDestroy);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnInstantSunGeneration()
+{
+	ToggleFeature(IDC_BTN_InstantSunGeneration, &GhTrManager::InstantSunGeneration);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnDeployFormationInstantly()
+{
+		GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+		GhTr.DeployFormationInstantly();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnRemoveAllPlants()
+{
+	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+	GhTr.RemoveAllPlants();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnCorrectCrashIssue()
+{
+	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+	GhTr.CorrectCrashIssue();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnSwitchToHomingThistleMode()
+{
+	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+	GhTr.SwitchToHomingThistleMode();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnEnableCreationOfUbSaves()
+{
+	GhTrManager GhTr = GhTrManager();
+	GhTr.EnableCreationOfUbSaves();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnSwitchToRedStingerMode()
+{
+	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+	GhTr.SwitchToRedStingerMode();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnRemoveAllZombies()
+{
+	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+	GhTr.RemoveAllZombies();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnRemoveAllProjectiles()
+{
+	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+	GhTr.RemoveAllProjectiles();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnEnhanceLightningReedAbility()
+{
+	ToggleFeature(IDC_BTN_EnhanceLightningReedAbility, &GhTrManager::EnhanceLightningReedAbility);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPowerFlowerDisableCooldowns()
+{
+	ToggleFeature(IDC_BTN_PowerFlowerDisableCooldowns, &GhTrManager::PowerFlowerDisableCooldowns);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnMaintainMaximumPowerPlantSize()
+{
+	ToggleFeature(IDC_BTN_MaintainMaximumPowerPlantSize, &GhTrManager::MaintainMaximumPowerPlantSize);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnApplayerDisableCooldowns()
+{
+	ToggleFeature(IDC_BTN_ApplayerDisableCooldowns, &GhTrManager::ApplayerDisableCooldowns);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnRemoveApplayerDelay()
+{
+	ToggleFeature(IDC_BTN_RemoveApplayerDelay, &GhTrManager::RemoveApplayerDelay);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPlantageDisableCooldowns()
+{
+	ToggleFeature(IDC_BTN_PlantageDisableCooldowns, &GhTrManager::PlantageDisableCooldowns);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPeaDisableCooldowns()
+{
+	ToggleFeature(IDC_BTN_PeaDisableCooldowns, &GhTrManager::PeaDisableCooldowns);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnSunFlowerDisableCooldowns()
+{
+	ToggleFeature(IDC_BTN_SunFlowerDisableCooldowns, &GhTrManager::SunFlowerDisableCooldowns);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnEnableOpticaltropFrameDamage()
+{
+	ToggleFeature(IDC_BTN_EnableOpticaltropFrameDamage, &GhTrManager::EnableOpticaltropFrameDamage);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPlantWithoutSunCost()
+{
+	ToggleFeature(IDC_BTN_PlantWithoutSunCost, &GhTrManager::PlantWithoutSunCost);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnCompleteLevelWithTrophy()
+{
+		GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+		GhTr.CompleteLevelWithTrophy();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnEnableCriticalHitsForLorus()
+{
+	ToggleFeature(IDC_BTN_EnableCriticalHitsForLorus, &GhTrManager::EnableCriticalHitsForLorus);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnEnableInstantCascutaProjectile()
+{
+	ToggleFeature(IDC_BTN_EnableInstantCascutaProjectile, &GhTrManager::Fast);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPreventCherryBombExplosion()
+{
+	ToggleFeature(IDC_BTN_PreventCherryBombExplosion, &GhTrManager::PreventCherryBombExplosion);
+}
+
+
+void CGhTrToolDlg::OnBnClickedBtnInstantCherryBombExplosion()
+{
+	ToggleFeature(IDC_BTN_InstantCherryBombExplosion, &GhTrManager::InstantCherryBombExplosion);
 }

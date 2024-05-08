@@ -127,7 +127,7 @@ ipch/
 # TFS 2012 Local Workspace
 $tf/
 
-# Guidance Automation Toolkit
+# Guidance EnableAutoCollectSunmation Toolkit
 *.gpState
 
 # ReSharper is a .NET coding add-in
@@ -161,7 +161,7 @@ nCrunchTemp_*
 
 # MightyMoose
 *.mm.*
-AutoTest.Net/
+EnableAutoCollectSunTest.Net/
 
 # Web workbench (sass)
 .sass-cache/
