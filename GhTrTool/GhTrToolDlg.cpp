@@ -170,10 +170,6 @@ void CGhTrToolDlg::OnClickMenuShowSaveFunction()
 	GhTrManager GhTr = GhTrManager();
 	GhTr.WriteConfig();
 	SwitchEnableSava = !SwitchEnableSava;
-	GetDlgItem(IDC_BTN_UnpackGrpFile)->ShowWindow(SW_HIDE);
-	#ifdef _DEBUG
-	GetDlgItem(IDC_BTN_UnpackGrpFile)->ShowWindow(SW_SHOW);
-	#endif
 	if (SwitchEnableSava)
 	{
 		GetDlgItem(IDC_BTN_DifficultySwitcher)->ShowWindow(SW_SHOW);
@@ -202,12 +198,13 @@ BOOL CGhTrToolDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 	UpdateText();
-	GetDlgItem(IDC_BTN_DisableUbSaveDestroy)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_BTN_UnpackGrpFile)->ShowWindow(SW_HIDE);
 	GetDlgItem(IDC_BTN_PackGrpFile)->ShowWindow(SW_HIDE);
-	#ifdef _DEBUG //仅供debug使用
-		GetDlgItem(IDC_BTN_UnpackGrpFile)->ShowWindow(SW_SHOW);
-		GetDlgItem(IDC_BTN_PackGrpFile)->ShowWindow(SW_SHOW);
+	GetDlgItem(IDC_STATIC_PACK)->ShowWindow(SW_HIDE);
+	#ifdef _DEBUG
+	GetDlgItem(IDC_BTN_UnpackGrpFile)->ShowWindow(SW_SHOW);
+	GetDlgItem(IDC_BTN_PackGrpFile)->ShowWindow(SW_SHOW);
+	GetDlgItem(IDC_STATIC_PACK)->ShowWindow(SW_SHOW);
 	#endif
 	CMenu* pMenu = new CMenu();
 	pMenu->LoadMenu(IDR_MENU1);  // 使用实际的菜单资源ID代替
