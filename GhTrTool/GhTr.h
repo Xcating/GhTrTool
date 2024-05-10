@@ -126,5 +126,9 @@ public:
     void SwitchToRedStingerMode();
     //Ub不碎档
     void DisableUbSaveDestroy(bool isFeatureEnabled);
+    //解包grp
+    void UnpackGrpFile();
+    //打包grp
+    void PackGrpFile();
 };
 

@@ -48,6 +48,9 @@
     <ClInclude Include="Constant.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Macro.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GhTrTool.cpp">

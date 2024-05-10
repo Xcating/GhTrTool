@@ -99,6 +99,8 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BTN_MakePlantsInvincible, &CGhTrToolDlg::OnBnClickedBtnMakePlantsInvincible)
 	ON_BN_CLICKED(IDC_BTN_PreventItemDeterioration, &CGhTrToolDlg::OnBnClickedBtnPreventItemDeterioration)
 	ON_BN_CLICKED(IDC_BTN_DisableUbSaveDestroy, &CGhTrToolDlg::OnBnClickedBtnDisableUbSaveDestroy)
+	ON_BN_CLICKED(IDC_BTN_UnpackGrpFile, &CGhTrToolDlg::OnBnClickedBtnUnpackGrpFile)
+	ON_BN_CLICKED(IDC_BTN_PackGrpFile, &CGhTrToolDlg::OnBnClickedBtnPackGrpFile)
 	ON_BN_CLICKED(IDC_BTN_EnableOpticaltropFrameDamage, &CGhTrToolDlg::OnBnClickedBtnEnableOpticaltropFrameDamage)
 	ON_BN_CLICKED(IDC_BTN_PlantWithoutSunCost, &CGhTrToolDlg::OnBnClickedBtnPlantWithoutSunCost)
 	ON_BN_CLICKED(IDC_BTN_CompleteLevelWithTrophy, &CGhTrToolDlg::OnBnClickedBtnCompleteLevelWithTrophy)
@@ -168,6 +170,10 @@ void CGhTrToolDlg::OnClickMenuShowSaveFunction()
 	GhTrManager GhTr = GhTrManager();
 	GhTr.WriteConfig();
 	SwitchEnableSava = !SwitchEnableSava;
+	GetDlgItem(IDC_BTN_UnpackGrpFile)->ShowWindow(SW_HIDE);
+	#ifdef _DEBUG
+	GetDlgItem(IDC_BTN_UnpackGrpFile)->ShowWindow(SW_SHOW);
+	#endif
 	if (SwitchEnableSava)
 	{
 		GetDlgItem(IDC_BTN_DifficultySwitcher)->ShowWindow(SW_SHOW);
@@ -197,6 +203,12 @@ BOOL CGhTrToolDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 	UpdateText();
 	GetDlgItem(IDC_BTN_DisableUbSaveDestroy)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_UnpackGrpFile)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_PackGrpFile)->ShowWindow(SW_HIDE);
+	#ifdef _DEBUG //仅供debug使用
+		GetDlgItem(IDC_BTN_UnpackGrpFile)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BTN_PackGrpFile)->ShowWindow(SW_SHOW);
+	#endif
 	CMenu* pMenu = new CMenu();
 	pMenu->LoadMenu(IDR_MENU1);  // 使用实际的菜单资源ID代替
 	SetMenu(pMenu);
@@ -511,6 +523,18 @@ void CGhTrToolDlg::OnBnClickedBtnPreventItemDeterioration()
 void CGhTrToolDlg::OnBnClickedBtnDisableUbSaveDestroy()
 {
 	ToggleFeature(IDC_BTN_DisableUbSaveDestroy, &GhTrManager::DisableUbSaveDestroy);
+}
+
+void CGhTrToolDlg::OnBnClickedBtnUnpackGrpFile()
+{
+	GhTrManager GhTr = GhTrManager();
+	GhTr.UnpackGrpFile();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnPackGrpFile()
+{
+	GhTrManager GhTr = GhTrManager();
+	GhTr.PackGrpFile();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnInstantSunGeneration()

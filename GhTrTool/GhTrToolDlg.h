@@ -78,6 +78,8 @@ public:
     afx_msg void OnBnClickedBtnMaintainMaximumPowerPlantSize();
     afx_msg void OnBnClickedBtnPreventItemDeterioration();
     afx_msg void OnBnClickedBtnDisableUbSaveDestroy();
+    afx_msg void OnBnClickedBtnUnpackGrpFile();
+    afx_msg void OnBnClickedBtnPackGrpFile();
     afx_msg void OnBnClickedBtnInstantSunGeneration();
     afx_msg void OnBnClickedBtnDeployFormationInstantly();
     afx_msg void OnBnClickedBtnModifyEnableFrameDamageData();

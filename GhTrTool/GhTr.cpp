@@ -1,18 +1,20 @@
 ﻿#include "stdafx.h"
 #include "Constant.h"
-#include "json.hpp"
 #include "GhTr.h"
+#include "json.hpp"
+#include"Macro.h"
+#include <chrono>
+#include <corecrt_io.h>
+#include <cstdlib>
+#include <ctime>
+#include<cwchar>
+#include <direct.h>
 #include <filesystem>
 #include <fstream>
 #include <Psapi.h>
 #include <sstream>
-#include <cstdlib>
 #include <string>
 #include <TlHelp32.h>
-
-const wchar_t* GAME_TITLE = L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16m";
-const wchar_t* GAME_PROCESS_NAME_CAPITAL = L"PlantsVsZombies.exe";
-const wchar_t* GAME_PROCESS_NAME_LOWER = L"plantsvszombies.exe";
 
 GhTrManager::GhTrManager()
 {
@@ -1722,4 +1724,297 @@ void GhTrManager::DisableUbSaveDestroy(bool isFeatureEnabled)
 	if (isFeatureEnabled == 1) WriteJump(dwPid, 0xFA5A0, 0x3C1);
 	WriteJump(dwPid, 0x3D8, 0xFA5A9);
 	WriteJump(dwPid, 0x3E3, 0xFA5A9);
+}
+void GhTrManager::UnpackGrpFile()
+{
+	CFileDialog fileDlg(TRUE, NULL, NULL, OFN_HIDEREADONLY | OFN_FILEMUSTEXIST, _T("GhTr Resource Pack (*.grp;*.pak)|*.grp;*.pak||"), NULL);
+	if (fileDlg.DoModal() != IDOK)
+		return;
+	CString filePath = fileDlg.GetPathName();
+	CString fileName = fileDlg.GetFileTitle();
+	CTime currentTime = CTime::GetCurrentTime();
+	time_t unixTimeStamp = currentTime.GetTime();
+	CString unpackFolderName;
+	unpackFolderName.Format(_T(".\\Unpack%lu"), (unsigned long)unixTimeStamp);
+	if (!CreateDirectory(unpackFolderName, NULL))
+	{
+
+		MessageBox(NULL, _T("无法创建输出文件夹，请检查目录下是否有同名文件夹 [FOLDER_CORRUPTION]"), _T("错误"), MB_ICONERROR);
+		return;
+	}
+	FILE* fpMainPak = _wfopen(filePath, _T("rb"));
+	if (NULL == fpMainPak)
+	{
+		MessageBox(NULL, _T("无法打开你选择的文件，请在本程序开源页面发起议题 [FILE_CORRUPTION]"), _T("错误"), MB_ICONERROR);
+		return;
+	}
+	fseek(fpMainPak, 0, SEEK_END);
+	long sizeMainPak = ftell(fpMainPak);
+	rewind(fpMainPak);
+	if (!(sizeMainPak > 0)) {
+		MessageBox(NULL, _T("您的grp文件校验错误，请确认文件无损坏 [SIZE_ERROR]"), _T("错误"), MB_ICONERROR);
+		return;
+	}
+	byte_t* pMainPak = (byte_t*)malloc(sizeMainPak);
+	if (NULL == pMainPak) {
+		MessageBox(NULL, _T("无法申请足够的RAM内存空间存入输入文件 [MEMORY_ERROR]"), _T("错误"), MB_ICONERROR);
+		//释放空间
+		free(pMainPak);
+		pMainPak = NULL;
+		return;
+	}
+	if (fread(pMainPak, sizeof(byte_t), sizeMainPak, fpMainPak) != sizeMainPak) {
+		MessageBox(NULL, _T("无法申请足够的RAM内存空间存入输出文件 [MEMORY_ERROR]"), _T("错误"), MB_ICONERROR);
+		//释放空间
+		free(pMainPak);
+		pMainPak = NULL;
+		return;
+	}
+	fclose(fpMainPak);
+	fpMainPak = NULL;
+	for (int i = 0; i < sizeMainPak; i += 1)
+		pMainPak[i] ^= (byte_t)(0xAA ^ 0x41);
+	for (int i = 0; i < sizeMainPak; i += 1)
+		pMainPak[i] = swapNibbles(pMainPak[i]);
+	FileInfoNode headNode;
+	headNode.pNext = NULL;
+	FileInfoNode* pNode = &headNode;
+	unsigned int byteIndex = 0;
+	while (1) {
+		byteIndex += 8;
+		if (0 != pMainPak[byteIndex]) {
+			byteIndex += 1;
+			break;
+		}
+		pNode->pNext = (FileInfoNode*)malloc(sizeof(FileInfoNode));
+		pNode = pNode->pNext;
+		if (NULL == pNode) {
+			MessageBox(NULL, _T("无法申请足够的RAM内存空间存入节点 [MEMORY_ERROR]"), _T("错误"), MB_ICONERROR);
+			//释放空间
+			pNode = headNode.pNext;
+			headNode.pNext = NULL;
+			while (pNode != NULL) {
+				FileInfoNode* pNextNode = pNode->pNext;
+				free(pNode->pPathname);
+				free(pNode);
+				pNode = pNextNode;
+			}
+			free(pMainPak);
+			pMainPak = NULL;
+			return;
+		}
+		if (pNode != NULL) {
+			pNode->pNext = NULL;
+		}
+		byteIndex += 1;
+		pNode->pPathname = (char*)malloc(pMainPak[byteIndex] + 1);
+		if (NULL == pNode->pPathname) {
+			MessageBox(NULL, _T("无法申请足够的RAM内存空间链接节点 [MEMORY_ERROR]"), _T("错误"), MB_ICONERROR);
+			//释放空间
+			pNode = headNode.pNext;
+			headNode.pNext = NULL;
+			while (pNode != NULL) {
+				FileInfoNode* pNextNode = pNode->pNext;
+				free(pNode->pPathname);
+				free(pNode);
+				pNode = pNextNode;
+			}
+			free(pMainPak);
+			pMainPak = NULL;
+			return;
+		}
+		if (pNode != NULL) {
+			(pNode->pPathname)[pMainPak[byteIndex]] = '\0';
+		}
+		for (int i = 0; i < pMainPak[byteIndex]; i += 1)
+			(pNode->pPathname)[i] = pMainPak[byteIndex + 1 + i];
+		byteIndex += 1 + pMainPak[byteIndex];
+		pNode->fileSize = *((unsigned int*)(pMainPak + byteIndex));
+		byteIndex += 4;
+	}
+	{
+		unsigned int totalSize = 0;
+		for (pNode = headNode.pNext; pNode != NULL; pNode = pNode->pNext)
+			totalSize += pNode->fileSize;
+		if (totalSize != sizeMainPak - byteIndex) {
+			MessageBox(NULL, _T("文件校验失败 [SIZE_ERROR]"), _T("错误"), MB_ICONERROR);
+		}
+	}
+	for (pNode = headNode.pNext; pNode != NULL; pNode = pNode->pNext)
+	{
+		CString outputFilePath = unpackFolderName + _T("\\") + CString(pNode->pPathname);
+		{
+			char* pSlash = pNode->pPathname;
+
+			while (1) {
+				while (!(*pSlash == '\\' || *pSlash == '\0'))
+					pSlash += 1;
+				if (*pSlash == '\0')
+					break;
+				*pSlash = '\0';
+				CString folderPath = unpackFolderName + _T("\\") + CString(pNode->pPathname);
+				std::filesystem::path dir(folderPath.GetString());
+				std::filesystem::create_directories(dir);
+				*pSlash = '\\';
+				pSlash += 1;
+			}
+		}
+		std::ofstream ofs(outputFilePath, std::ios::binary);
+		ofs.write(reinterpret_cast<char*>(pMainPak + byteIndex), pNode->fileSize);
+		ofs.close();
+		byteIndex += pNode->fileSize;
+	}
+	//释放空间
+	pNode = headNode.pNext;
+	headNode.pNext = NULL;
+	while (pNode != NULL) {
+		FileInfoNode* pNextNode = pNode->pNext;
+		free(pNode->pPathname);
+		free(pNode);
+		pNode = pNextNode;
+	}
+	free(pMainPak);
+	pMainPak = NULL;
+	MessageBox(NULL, L"解包成功！点击确认打开文件夹",L"提示", MB_OK);
+	OpenFolder(unpackFolderName);
+	return;
+}
+
+void GhTrManager::PackGrpFile()
+{
+	std::filesystem::path folderPath = SelectFolder();
+	DWORD fa = GetFileAttributesW(folderPath.c_str());
+	if ((fa == INVALID_FILE_ATTRIBUTES) || !(fa & FILE_ATTRIBUTE_DIRECTORY))
+		return;
+	unsigned int files_count = 0;         // 文件总数
+	std::vector<std::wstring> files_name; // pak 里保存的路径
+	std::vector<int> files_size;          // 大小
+	std::vector<FILETIME> files_time;     // 时间
+	find_files(folderPath, files_name, files_size, files_time);
+	files_count = files_name.size();
+	time_t now = time(0);
+	std::wstring dst_file = L"main_" + std::to_wstring(now) + L".grp";
+	HANDLE hfw = CreateFileW(dst_file.c_str(), GENERIC_WRITE, FILE_SHARE_READ, 
+		nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	DWORD write_size = 0;
+	unsigned long file_header_magic;
+	unsigned long file_header_version;
+	file_header_magic = MAGIC_NUM;
+	file_header_version = VERSION_NUM;
+	file_header_magic = swapBytesInLong(file_header_magic);
+	file_header_version = swapBytesInLong(file_header_version);
+	file_header_magic ^= XOR_KEY;
+	file_header_version ^= XOR_KEY;
+	WriteFile(hfw, (void*)&file_header_magic, sizeof(unsigned long), &write_size, nullptr);
+	if (write_size != sizeof(unsigned long))
+	{
+		CloseHandle(hfw);
+		return;
+	}
+
+	WriteFile(hfw, (void*)&file_header_version, sizeof(unsigned long), &write_size, nullptr);
+	if (write_size != sizeof(unsigned long))
+	{
+		CloseHandle(hfw);
+		return;
+	}
+	unsigned char eof_flag;   // 结束标志
+	unsigned char name_width; // 文件名长度
+	char file_name[256];      // 文件名
+	int file_size;            // 大小
+	FILETIME file_time;       // 时间
+	for (size_t i = 0; i < files_count; i++)
+	{
+		eof_flag = (unsigned char)(0x00);
+		std::string file_name_str = utf8_encode(files_name.at(i));
+		unsigned int name_size = file_name_str.size();
+		name_width = static_cast<unsigned char>(name_size);
+		for (size_t i = 0; i < name_size; i++)
+			file_name[i] = file_name_str.at(i);
+		file_name[name_size] = 0;
+		file_size = files_size.at(i);
+		file_time = files_time.at(i);
+		unsigned int struct_size = sizeof(unsigned char) 
+			+ sizeof(unsigned char)
+			+ name_size
+			+ sizeof(int)
+			+ sizeof(FILETIME);
+		char* buff = new char[struct_size];
+		unsigned int index = 0;
+		buff[index] = eof_flag;
+		index += sizeof(unsigned char);
+		buff[index] = name_width;
+		index += sizeof(unsigned char);
+		for (size_t j = 0; j < name_size; j++)
+			buff[index + j] = file_name[j];
+		index += name_size;
+		(int&)buff[index] = file_size;
+		index += sizeof(int);
+		(FILETIME&)buff[index] = file_time;
+		index += sizeof(FILETIME);
+		assert(index == struct_size);
+		for (size_t k = 0; k < struct_size; k++)
+		{
+			buff[k] = swapNibbles(buff[k]);
+			buff[k] = buff[k] ^ (byte_t)(0xAA ^ 0x41);
+		}
+		WriteFile(hfw, buff, struct_size, &write_size, nullptr);
+		if (write_size != struct_size)
+		{
+			CloseHandle(hfw);
+			delete[] buff;
+			return;
+		}
+		delete[] buff;
+	}
+	eof_flag = (unsigned char)(0x80);
+	eof_flag = swapNibbles(eof_flag);
+	eof_flag ^= (byte_t)(0xAA ^ 0x41);
+	WriteFile(hfw, (void*)&eof_flag, sizeof(unsigned char), &write_size, nullptr);
+	if (write_size != sizeof(unsigned char))
+	{
+		CloseHandle(hfw);
+		return;
+	}
+	std::wstring folderWstring = folderPath.wstring();
+	for (size_t i = 0; i < files_count; i++)
+	{
+		auto file_path = folderWstring + L"\\" + files_name.at(i);
+		HANDLE hfr = CreateFileW(file_path.c_str(), GENERIC_READ, FILE_SHARE_READ, //
+			nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+		if (hfr == INVALID_HANDLE_VALUE)
+		{
+			CloseHandle(hfw);
+			return;
+		}
+		unsigned int size = files_size.at(i);
+		DWORD read_size = 0;
+		char* buffer = new char[size];
+		BOOL ret = ReadFile(hfr, buffer, size, &read_size, nullptr);
+		if (ret == FALSE || read_size != size)
+		{
+			CloseHandle(hfw);
+			CloseHandle(hfr);
+			delete[] buffer;
+			return;
+		}
+		CloseHandle(hfr);
+		for (size_t i = 0; i < size; ++i)
+		{
+			buffer[i] = swapNibbles(buffer[i]);
+			buffer[i] = buffer[i] ^ (byte_t)(0xAA ^ 0x41);
+		}
+		DWORD write_size = 0;
+		WriteFile(hfw, buffer, size, &write_size, nullptr);
+		if (write_size != size)
+		{
+			CloseHandle(hfw);
+			delete[] buffer;
+			return;
+		}
+		delete[] buffer;
+	}
+	CloseHandle(hfw);
+	MessageBox(NULL, L"打包成功，点击确认选择文件", L"提示", MB_OK);
+	OpenFolderAndSelectItem(dst_file);
 }
