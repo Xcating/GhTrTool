@@ -35,6 +35,7 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+    void DebugOnlyMessageBox();
     void ToggleFeature(UINT nID, void(GhTrManager::* featureFunc)(bool));
     void PlantAtPositions(GhTrManager& GhTr, DWORD dwXP, DWORD dwYP, DWORD dwID);
 	DECLARE_MESSAGE_MAP()
@@ -78,8 +79,10 @@ public:
     afx_msg void OnBnClickedBtnMaintainMaximumPowerPlantSize();
     afx_msg void OnBnClickedBtnPreventItemDeterioration();
     afx_msg void OnBnClickedBtnDisableUbSaveDestroy();
+#ifdef _DEBUG
     afx_msg void OnBnClickedBtnUnpackGrpFile();
     afx_msg void OnBnClickedBtnPackGrpFile();
+#endif
     afx_msg void OnBnClickedBtnInstantSunGeneration();
     afx_msg void OnBnClickedBtnDeployFormationInstantly();
     afx_msg void OnBnClickedBtnModifyEnableFrameDamageData();

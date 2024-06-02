@@ -99,8 +99,13 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BTN_MakePlantsInvincible, &CGhTrToolDlg::OnBnClickedBtnMakePlantsInvincible)
 	ON_BN_CLICKED(IDC_BTN_PreventItemDeterioration, &CGhTrToolDlg::OnBnClickedBtnPreventItemDeterioration)
 	ON_BN_CLICKED(IDC_BTN_DisableUbSaveDestroy, &CGhTrToolDlg::OnBnClickedBtnDisableUbSaveDestroy)
+#ifdef _DEBUG
 	ON_BN_CLICKED(IDC_BTN_UnpackGrpFile, &CGhTrToolDlg::OnBnClickedBtnUnpackGrpFile)
 	ON_BN_CLICKED(IDC_BTN_PackGrpFile, &CGhTrToolDlg::OnBnClickedBtnPackGrpFile)
+#else
+	ON_BN_CLICKED(IDC_BTN_UnpackGrpFile, &CGhTrToolDlg::DebugOnlyMessageBox)
+	ON_BN_CLICKED(IDC_BTN_PackGrpFile, &CGhTrToolDlg::DebugOnlyMessageBox)
+#endif
 	ON_BN_CLICKED(IDC_BTN_EnableOpticaltropFrameDamage, &CGhTrToolDlg::OnBnClickedBtnEnableOpticaltropFrameDamage)
 	ON_BN_CLICKED(IDC_BTN_PlantWithoutSunCost, &CGhTrToolDlg::OnBnClickedBtnPlantWithoutSunCost)
 	ON_BN_CLICKED(IDC_BTN_CompleteLevelWithTrophy, &CGhTrToolDlg::OnBnClickedBtnCompleteLevelWithTrophy)
@@ -198,14 +203,15 @@ BOOL CGhTrToolDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 	UpdateText();
-	GetDlgItem(IDC_BTN_UnpackGrpFile)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_BTN_PackGrpFile)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_STATIC_PACK)->ShowWindow(SW_HIDE);
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	GetDlgItem(IDC_BTN_UnpackGrpFile)->ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_BTN_PackGrpFile)->ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_STATIC_PACK)->ShowWindow(SW_SHOW);
-	#endif
+#else
+	GetDlgItem(IDC_BTN_UnpackGrpFile)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_BTN_PackGrpFile)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_STATIC_PACK)->ShowWindow(SW_HIDE);
+#endif
 	CMenu* pMenu = new CMenu();
 	pMenu->LoadMenu(IDR_MENU1);  // 使用实际的菜单资源ID代替
 	SetMenu(pMenu);
@@ -285,6 +291,13 @@ HCURSOR CGhTrToolDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
+#ifdef _DEBUG
+#else
+void CGhTrToolDlg::DebugOnlyMessageBox()
+{
+	MessageBoxA(NULL, "该功能仅供DEBUG使用，RELEASE编译模式无法使用。", "提示", MB_OK | MB_ICONERROR);
+}
+#endif
 void CGhTrToolDlg::ToggleFeature(UINT nID, void (GhTrManager::* featureFunc)(bool))
 {
 	GhTrManager GhTr;
@@ -521,6 +534,7 @@ void CGhTrToolDlg::OnBnClickedBtnDisableUbSaveDestroy()
 {
 	ToggleFeature(IDC_BTN_DisableUbSaveDestroy, &GhTrManager::DisableUbSaveDestroy);
 }
+#ifdef _DEBUG
 
 void CGhTrToolDlg::OnBnClickedBtnUnpackGrpFile()
 {
@@ -533,7 +547,7 @@ void CGhTrToolDlg::OnBnClickedBtnPackGrpFile()
 	GhTrManager GhTr = GhTrManager();
 	GhTr.PackGrpFile();
 }
-
+#endif
 void CGhTrToolDlg::OnBnClickedBtnInstantSunGeneration()
 {
 	ToggleFeature(IDC_BTN_InstantSunGeneration, &GhTrManager::InstantSunGeneration);

@@ -11,14 +11,18 @@ struct FileInfoNode {
 	}
 };
 
-const wchar_t* GAME_TITLE = L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16m";
+const wchar_t* GAME_TITLE = L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16n";
 const wchar_t* GAME_PROCESS_NAME_CAPITAL = L"PlantsVsZombies.exe";
 const wchar_t* GAME_PROCESS_NAME_LOWER = L"plantsvszombies.exe";
 
 constexpr auto MAGIC_NUM = 0xC04AC0BA;
 constexpr auto VERSION_NUM = (0xFFFFFFFF ^ 0xFFFFFFFF);
 constexpr auto XOR_KEY = (0xFFFFFFFF ^ 0x14141414);
-
+/**
+ * 转码UTF8
+ *
+ * @param wstr 目标转换字符串
+ */
 std::string utf8_encode(const std::wstring& wstr)
 {
 	if (wstr.empty())
@@ -28,7 +32,11 @@ std::string utf8_encode(const std::wstring& wstr)
 	WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &str[0], size_needed, nullptr, nullptr);
 	return str;
 }
-
+/**
+ * 解码UTF8
+ *
+ * @param str 目标转换字符串
+ */
 std::wstring utf8_decode(const std::string& str)
 {
 	if (str.empty())
@@ -38,6 +46,14 @@ std::wstring utf8_decode(const std::string& str)
 	MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstr[0], size_needed);
 	return wstr;
 }
+/**
+ * 查找文件夹内所有文件并建表
+ *
+ * @param find_path 查找的目录
+ * @param files_name 文件名数组
+ * @param files_size 文件大小数组
+ * @param files_time 文件修改时间数组
+ */
 void find_files(const std::wstring find_path,
 	std::vector<std::wstring>& files_name,
 	std::vector<int>& files_size,
@@ -80,6 +96,11 @@ void find_files(const std::wstring find_path,
 		FindClose(hf);
 	}
 }
+/**
+ * 创建目标解包路径文件夹
+ *
+ * @param path 要创建的目录地址
+ */
 bool create_path(const std::wstring& path)
 {
 	if (path == L"")
@@ -94,7 +115,10 @@ bool create_path(const std::wstring& path)
 		return false;
 	return CreateDirectoryW(path.c_str(), nullptr);
 }
-
+/**
+ * 弹出选择文件夹对话框
+ *
+ */
 std::filesystem::path SelectFolder()
 {
 	CFolderPickerDialog folderPickerDialog(NULL, OFN_ENABLESIZING | OFN_OVERWRITEPROMPT, NULL, 0);
@@ -105,9 +129,19 @@ std::filesystem::path SelectFolder()
 	}
 	return resultPath;
 }
+/**
+ * 交换字节顺序
+ *
+ * @param x 要交换的字节
+ */
 unsigned char swapNibbles(unsigned char x) {
 	return (x << 4) | (x >> 4);
 }
+/**
+ * 交换DWORD所有字节的顺序
+ *
+ * @param val 要交换的DWORD变量
+ */
 unsigned long swapBytesInLong(unsigned long val) {
 	unsigned long result = 0;
 	result |= (unsigned long)swapNibbles((unsigned char)(val & 0xFF)) << 24;
@@ -116,10 +150,20 @@ unsigned long swapBytesInLong(unsigned long val) {
 	result |= (unsigned long)swapNibbles((unsigned char)((val >> 24) & 0xFF));
 	return result;
 }
-void OpenFolder(const CString& unpackFolderName)
+/**
+ * 打开一个文件夹
+ *
+ * @param FolderName 要打开的文件夹地址
+ */
+void OpenFolder(const CString& FolderName)
 {
-	ShellExecute(NULL, _T("open"), LPCTSTR(unpackFolderName), NULL, NULL, SW_SHOWDEFAULT);
+	ShellExecute(NULL, _T("open"), LPCTSTR(FolderName), NULL, NULL, SW_SHOWDEFAULT);
 }
+/**
+ * 打开一个文件夹并选中文件
+ *
+ * @param itemName 要选中的文件地址
+ */
 void OpenFolderAndSelectItem(const std::wstring& itemName)
 {
 	wchar_t buffer[MAX_PATH];

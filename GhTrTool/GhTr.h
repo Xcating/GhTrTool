@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <filesystem>
 #include "json.hpp"
-#define GAME_NAME L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16m"
+#define GAME_NAME L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.16n"
 
 class GhTrManager
 {
@@ -126,9 +126,11 @@ public:
     void SwitchToRedStingerMode();
     //Ub不碎档
     void DisableUbSaveDestroy(bool isFeatureEnabled);
+#ifdef _DEBUG
     //解包grp
     void UnpackGrpFile();
     //打包grp
     void PackGrpFile();
+#endif
 };
 
