@@ -1716,6 +1716,10 @@ void GhTrManager::DisableUbSaveDestroy(bool isFeatureEnabled)
 	WriteToMemory(dwPid, 0x620, operational_code3, 38);
 	WriteJump(dwPid, 0x641, 0xD288A);
 	if (isFeatureEnabled == 1)WriteJump(dwPid, 0xD2883, 0x620);
+	const char* operational_code4 = (isFeatureEnabled == 1) ? "\x83\x7F\x08\x05" : "\x83\x7F\x08\x04";
+	WriteToMemory(dwPid, 0xD28A0, operational_code4, 4);
+	const char* operational_code5 = (isFeatureEnabled == 1) ? "\x83\x7F\x08\x05" : "\x83\x7F\x08\x04";
+	WriteToMemory(dwPid, 0xD28B7, operational_code5, 4);
 }
 #ifdef _DEBUG
 /**
