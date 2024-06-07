@@ -668,6 +668,7 @@ void GhTrManager::WriteConfig()
 	CloseHandle(hProcess);
 	if (dwNum == 0)
 		return;
+	/*
 	std::ostringstream file_path_stream;
 
 	file_path_stream << "C:\\ProgramData\\PerfectVoyage\\userdata\\save" << dwNum << "\\SaveInfor.ghtr";
@@ -686,7 +687,6 @@ void GhTrManager::WriteConfig()
 		.count();
 	j["LastCheatTime"] = millis;
 	// 写入修改后的JSON到文件
-	/*
 	std::ofstream output_file(file_path);
 	if (output_file.is_open()) {
 		output_file << j.dump(4); // 以漂亮打印的格式写入文件（缩进为4个空格）
