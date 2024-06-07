@@ -36,7 +36,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
     void DebugOnlyMessageBox();
-    void ToggleFeature(UINT nID, void(GhTrManager::* featureFunc)(bool));
+    void ToggleFeature(UINT nID, void(GhTrManager::* featureFunc)(bool), bool isWriteConfig);
     void PlantAtPositions(GhTrManager& GhTr, DWORD dwXP, DWORD dwYP, DWORD dwID);
 	DECLARE_MESSAGE_MAP()
 public:
@@ -91,6 +91,7 @@ public:
     afx_msg void OnBnClickedBtnRemoveAllPlants();
     afx_msg void OnBnClickedBtnRemoveAllProjectiles();
     afx_msg void OnBnClickedBtnRemoveAllZombies();
+    afx_msg void OnBnClickedBtnRemoveAllChessFlag();
     afx_msg void OnBnClickedBtnCorrectCrashIssue();
     afx_msg void OnBnClickedBtnSwitchToRedStingerMode();
     afx_msg void OnBnClickedBtnSwitchToHomingThistleMode();

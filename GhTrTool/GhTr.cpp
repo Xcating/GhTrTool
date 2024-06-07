@@ -223,13 +223,13 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM l_param) {
 	std::wstring wstr =
 		(std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage "
 			<< L"ver.0.16n - [Debug] [已被GhTrTool修改] "
-			<< L"[βver.0.11x] ["
+			<< L"[βver.0.11y] ["
 			<< millis << L"]")
 		.str();
 #else
 	std::wstring wstr =
 		(std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage "
-			<< L"ver.0.16n - [已被GhTrTool修改] [ver.0.11x] ["
+			<< L"ver.0.16n - [已被GhTrTool修改] [ver.0.11y] ["
 			<< millis << L"]" << L" [Save" << dwNum<<L"]")
 		.str();
 #endif
@@ -656,7 +656,6 @@ void GhTrManager::WriteConfig()
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x80C), &dwNum, sizeof(DWORD), NULL);
 	std::filesystem::path exe_path(sz_exe_path);
 	std::filesystem::path config_path = exe_path.parent_path() / "definition" / "config.json";
-
 	// 在definition/config.json 写入GhTr信息
 	nlohmann::json config_json;
 	if (!std::filesystem::exists(config_path)) {
@@ -687,6 +686,7 @@ void GhTrManager::WriteConfig()
 		.count();
 	j["LastCheatTime"] = millis;
 	// 写入修改后的JSON到文件
+	/*
 	std::ofstream output_file(file_path);
 	if (output_file.is_open()) {
 		output_file << j.dump(4); // 以漂亮打印的格式写入文件（缩进为4个空格）
@@ -695,6 +695,7 @@ void GhTrManager::WriteConfig()
 	else {
 		MessageBoxA(NULL, "无法打开文件进行写入！请检查你的GhTr是否能正确的存档", "警告", MB_OK);
 	}
+	*/
 }
 /**
  * 修改游戏中的阳光数量
@@ -1418,10 +1419,10 @@ void GhTrManager::RemoveAllPlants()
 	}
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = "\xC6\x47\x2F\x00";
-	WriteToMemory(dwPid, 0x9B824, operational_code1, 4);
+	WriteToMemory(dwPid, 0x9B5D4, operational_code1, 4);
 	Sleep(10);
 	operational_code1 = "\x80\x7F\x2F\x00";
-	WriteToMemory(dwPid, 0x9B824, operational_code1, 4);
+	WriteToMemory(dwPid, 0x9B5D4, operational_code1, 4);
 }
 /**
  * 清空子弹
@@ -1455,6 +1456,32 @@ void GhTrManager::RemoveAllZombies()
 	}
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	const char* operational_code1 = "\xC6\x47\x2F\x01";
+	WriteToMemory(dwPid, 0x9B644, operational_code1, 4);
+	Sleep(10);
+	operational_code1 = "\x80\x7F\x2F\x00 ";
+	WriteToMemory(dwPid, 0x9B644, operational_code1, 4);
+	DWORD base_address = GetGamebase_address(hProcess);
+	DWORD target_address = base_address + GAME_BASE_OFFSET;
+	DWORD dwNum = 0;
+	DWORD dwTimer = 0x0;
+	ReadProcessMemory(hProcess, (LPCVOID)target_address, &dwNum, sizeof(DWORD), NULL); 
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + GAME_BOARD_OFFSET), &dwNum, sizeof(DWORD), NULL); 
+	bool result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x400), &dwTimer, sizeof(DWORD), NULL); 
+}
+/**
+ * 清空雪原地砖的所有旗子儿
+ */
+void GhTrManager::RemoveAllChessFlag()
+{
+	DWORD dwPid = GetGamePid();
+	if (!CheckGamePid(dwPid, true)) return;
+	if (!CheckLawn(dwPid))
+	{
+		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
+		return;
+	}
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
+	const char* operational_code1 = "\xC6\x47\x2F\x01";
 	WriteToMemory(dwPid, 0x9B824, operational_code1, 4);
 	Sleep(10);
 	operational_code1 = "\x80\x7F\x2F\x00 ";
@@ -1463,9 +1490,9 @@ void GhTrManager::RemoveAllZombies()
 	DWORD target_address = base_address + GAME_BASE_OFFSET;
 	DWORD dwNum = 0;
 	DWORD dwTimer = 0x0;
-	ReadProcessMemory(hProcess, (LPCVOID)target_address, &dwNum, sizeof(DWORD), NULL); 
-	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + GAME_BOARD_OFFSET), &dwNum, sizeof(DWORD), NULL); 
-	bool result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x400), &dwTimer, sizeof(DWORD), NULL); 
+	ReadProcessMemory(hProcess, (LPCVOID)target_address, &dwNum, sizeof(DWORD), NULL);
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + GAME_BOARD_OFFSET), &dwNum, sizeof(DWORD), NULL);
+	bool result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x400), &dwTimer, sizeof(DWORD), NULL);
 }
 /**
  * 修复新版本进关卡崩溃bug
@@ -1491,7 +1518,7 @@ void GhTrManager::SwitchToRedStingerMode()
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD base_address = GetGamebase_address(hProcess);
 	DWORD target_address = base_address + GAME_BASE_OFFSET;
-
+	/*
 	int response = 0;
 	if (!std::filesystem::exists(configFilePath)) {
 		MessageBox(NULL, L"使用该功能前，请先备份存档本功能会污染你的存档！！！", L"提示", MB_OK);
@@ -1501,7 +1528,7 @@ void GhTrManager::SwitchToRedStingerMode()
 
 	configJson["isModifyArchive"] = true;
 	WriteConfigFile(configFilePath, configJson);
-
+	*/
 	DWORD dwNum = ReadTheMemory(hProcess, target_address);
 	dwNum = ReadTheMemory(hProcess, dwNum + 0x818);
 	bool result = WriteByteMemory(hProcess, dwNum + 0x4, 0x1);
@@ -1519,7 +1546,7 @@ void GhTrManager::SwitchToHomingThistleMode()
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	DWORD base_address = GetGamebase_address(hProcess);
 	DWORD target_address = base_address + GAME_BASE_OFFSET;
-
+	/*
 	int response = 0;
 	if (!std::filesystem::exists(configFilePath)) {
 		MessageBox(NULL, L"使用该功能前，请先备份存档本功能会污染你的存档！！！", L"提示", MB_OK);
@@ -1529,7 +1556,7 @@ void GhTrManager::SwitchToHomingThistleMode()
 
 	configJson["isModifyArchive"] = true;
 	WriteConfigFile(configFilePath, configJson);
-
+	*/
 	DWORD dwNum = ReadTheMemory(hProcess, target_address);
 	dwNum = ReadTheMemory(hProcess, dwNum + 0x818);
 	bool result = WriteByteMemory(hProcess, dwNum + 0x4, 0x0);

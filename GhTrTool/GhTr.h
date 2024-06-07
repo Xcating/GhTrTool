@@ -113,6 +113,8 @@ public:
     //清空植物
     void RemoveAllZombies();
     //清空子弹
+    void RemoveAllChessFlag();
+    //清空雪原国际象棋旗子
     void RemoveAllProjectiles();
     //修复崩溃bug
     void CorrectCrashIssue();

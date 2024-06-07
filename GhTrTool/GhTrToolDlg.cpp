@@ -132,6 +132,7 @@ BEGIN_MESSAGE_MAP(CGhTrToolDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_EnableCreationOfUbSaves, &CGhTrToolDlg::OnBnClickedBtnEnableCreationOfUbSaves)
 	ON_BN_CLICKED(IDC_BTN_SwitchToRedStingerMode, &CGhTrToolDlg::OnBnClickedBtnSwitchToRedStingerMode)
 	ON_BN_CLICKED(IDC_BTN_RemoveAllZombies, &CGhTrToolDlg::OnBnClickedBtnRemoveAllZombies)
+	ON_BN_CLICKED(IDC_BTN_RemoveAllChessFlag, &CGhTrToolDlg::OnBnClickedBtnRemoveAllChessFlag)
 	ON_BN_CLICKED(IDC_BTN_RemoveAllProjectiles, &CGhTrToolDlg::OnBnClickedBtnRemoveAllProjectiles)
 	ON_BN_CLICKED(IDC_BTN_Plant2, &CGhTrToolDlg::OnBnClickedBtnInfoDialogList)
 	ON_BN_CLICKED(IDC_BTN_Plant3, &CGhTrToolDlg::OnBnClickedBtnInfoDialogList)
@@ -173,7 +174,7 @@ void CGhTrToolDlg::OnClickMenuOpenSaveDir()
 void CGhTrToolDlg::OnClickMenuShowSaveFunction()
 {
 	GhTrManager GhTr = GhTrManager();
-	GhTr.WriteConfig();
+	//GhTr.WriteConfig();
 	SwitchEnableSava = !SwitchEnableSava;
 	if (SwitchEnableSava)
 	{
@@ -184,7 +185,7 @@ void CGhTrToolDlg::OnClickMenuShowSaveFunction()
 		GetDlgItem(IDC_BTN_SwitchToRedStingerMode)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_BTN_DisableUbSaveDestroy)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_STATIC_DiffID)->ShowWindow(SW_SHOW);
-		AfxMessageBox(_T("已显示该类功能，请谨慎使用，你的存档以及游戏已被标记！"), MB_ICONINFORMATION | MB_OK);
+		AfxMessageBox(_T("已显示该类功能，请谨慎使用！"), MB_ICONINFORMATION | MB_OK);
 	}
 	else
 	{
@@ -298,7 +299,7 @@ void CGhTrToolDlg::DebugOnlyMessageBox()
 	MessageBoxA(NULL, "该功能仅供DEBUG使用，RELEASE编译模式无法使用。", "提示", MB_OK | MB_ICONERROR);
 }
 #endif
-void CGhTrToolDlg::ToggleFeature(UINT nID, void (GhTrManager::* featureFunc)(bool))
+void CGhTrToolDlg::ToggleFeature(UINT nID, void (GhTrManager::* featureFunc)(bool), bool isWriteConfig=1)
 {
 	GhTrManager GhTr;
 	CButton* pCheck = (CButton*)GetDlgItem(nID);
@@ -306,7 +307,7 @@ void CGhTrToolDlg::ToggleFeature(UINT nID, void (GhTrManager::* featureFunc)(boo
 		pCheck->SetCheck(BST_UNCHECKED);
 		return;
 	}
-	GhTr.WriteConfig();
+	if(isWriteConfig) GhTr.WriteConfig();
 	bool isFeatureEnabled = pCheck->GetCheck() == BST_CHECKED;
 	(GhTr.*featureFunc)(isFeatureEnabled);
 }
@@ -478,7 +479,7 @@ void CGhTrToolDlg::OnBnClickedBtnFast()
 
 void CGhTrToolDlg::OnBnClickedBtnTheWorld()
 {
-	ToggleFeature(IDC_BTN_TheWorld, &GhTrManager::TheWorld);
+	ToggleFeature(IDC_BTN_TheWorld, &GhTrManager::TheWorld , false);
 }
 
 
@@ -573,7 +574,7 @@ void CGhTrToolDlg::OnBnClickedBtnCorrectCrashIssue()
 
 void CGhTrToolDlg::OnBnClickedBtnSwitchToHomingThistleMode()
 {
-	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+	GhTrManager GhTr = GhTrManager();
 	GhTr.SwitchToHomingThistleMode();
 }
 
@@ -585,7 +586,7 @@ void CGhTrToolDlg::OnBnClickedBtnEnableCreationOfUbSaves()
 
 void CGhTrToolDlg::OnBnClickedBtnSwitchToRedStingerMode()
 {
-	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+	GhTrManager GhTr = GhTrManager();
 	GhTr.SwitchToRedStingerMode();
 }
 
@@ -593,6 +594,12 @@ void CGhTrToolDlg::OnBnClickedBtnRemoveAllZombies()
 {
 	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
 	GhTr.RemoveAllZombies();
+}
+
+void CGhTrToolDlg::OnBnClickedBtnRemoveAllChessFlag()
+{
+	GhTrManager GhTr = GhTrManager(); GhTr.WriteConfig();
+	GhTr.RemoveAllChessFlag();
 }
 
 void CGhTrToolDlg::OnBnClickedBtnRemoveAllProjectiles()
