@@ -869,6 +869,8 @@ void GhTrManager::TheWorld(bool isFeatureEnabled) {
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\x90\x90\x90" : "\x83\xF8\x32";
 	WriteToMemory(dwPid, 0x9CB32, operational_code, 3);
+	const char* operational_code1 = (isFeatureEnabled == 1) ? "\xEB\x17" : "\x74\x17";
+	WriteToMemory(dwPid, 0x17751B, operational_code1, 2);
 }
 /**
  * 无主动技能冷却
