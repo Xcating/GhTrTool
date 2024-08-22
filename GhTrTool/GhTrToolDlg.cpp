@@ -30,6 +30,8 @@ public:
 // 实现
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnStnClickedMfclink1();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -42,6 +44,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+	ON_STN_CLICKED(IDC_MFCLINK1, &CAboutDlg::OnStnClickedMfclink1)
 END_MESSAGE_MAP()
 
 
@@ -683,4 +686,9 @@ void CGhTrToolDlg::OnBnClickedBtnPreventCherryBombExplosion()
 void CGhTrToolDlg::OnBnClickedBtnInstantCherryBombExplosion()
 {
 	ToggleFeature(IDC_BTN_InstantCherryBombExplosion, &GhTrManager::InstantCherryBombExplosion);
+}
+
+void CAboutDlg::OnStnClickedMfclink1()
+{
+	// TODO: 在此添加控件通知处理程序代码
 }
