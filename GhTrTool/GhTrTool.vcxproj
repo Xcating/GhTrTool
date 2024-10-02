@@ -201,9 +201,6 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Constant.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="InfoDialog.h" />

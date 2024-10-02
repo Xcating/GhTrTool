@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <filesystem>
 #include "json.hpp"
-#define GAME_NAME L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.17a Experiment-1"
+#define GAME_NAME L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.17b"
 
 class GhTrManager
 {

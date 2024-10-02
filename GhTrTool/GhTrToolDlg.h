@@ -100,4 +100,5 @@ public:
     afx_msg void OnBnClickedBtnInfoDialogList();
     void OnTimer(UINT_PTR nIDEvent);
     CEdit m_edit;
+    afx_msg void OnBnClickedStaticPack();
 };

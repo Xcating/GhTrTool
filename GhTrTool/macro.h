@@ -11,7 +11,7 @@ struct FileInfoNode {
 	}
 };
 
-const wchar_t* GAME_TITLE = L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.17a Experiment-1";
+const wchar_t* GAME_TITLE = L"Plants Vs Zombies GhTr ~ Perfect Voyage ver.0.17b";
 const wchar_t* GAME_PROCESS_NAME_CAPITAL = L"PlantsVsZombies.exe";
 const wchar_t* GAME_PROCESS_NAME_LOWER = L"plantsvszombies.exe";
 
