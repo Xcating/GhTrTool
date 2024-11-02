@@ -222,14 +222,14 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM l_param) {
 #ifdef _DEBUG
 	std::wstring wstr =
 		(std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage "
-			<< L"ver.0.17b - [Debug] [已被GhTrTool修改] "
-			<< L"[βver.0.12a] ["
+			<< L"ver.0.17c - [Debug] [已被GhTrTool修改] "
+			<< L"[βver.0.12b] ["
 			<< millis << L"]")
 		.str();
 #else
 	std::wstring wstr =
 		(std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage "
-			<< L"ver.0.17b - [已被GhTrTool修改] [ver.0.12a] ["
+			<< L"ver.0.17c - [已被GhTrTool修改] [ver.0.12b] ["
 			<< millis << L"]" << L" [Save" << dwNum<<L"]")
 		.str();
 #endif
@@ -822,8 +822,8 @@ void GhTrManager::ChangeBackgroundID(DWORD dwBGId)
 void GhTrManager::Build(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
-	const char* operational_code = (isFeatureEnabled == 1) ? "\x90\x90\x90\x90\x90\x90\x90" : "\xFF\x24\x85\x94\xD4\x6D\x00";
-	WriteToMemory(dwPid, 0x9D1D5, operational_code, 7);
+	const char* operational_code = (isFeatureEnabled == 1) ? "\x90\x90\x90\x90\x90\x90\x90" : "\xFF\x24\x85\xE4\xDC\x35\x00";
+	WriteToMemory(dwPid, 0x9DA25, operational_code, 7);
 }
 /**
  * 自动收集阳光
@@ -835,7 +835,7 @@ void GhTrManager::EnableAutoCollectSun(bool isFeatureEnabled)
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\x90\x90\x90\x90\x90\x90":"\x0F\x84\xC4\x01\x00\x00";
-	WriteToMemory(dwPid, 0xBF00E, operational_code, 6);
+	WriteToMemory(dwPid, 0xC16BE, operational_code, 6);
 }
 /**
  * 全部帧伤
@@ -846,7 +846,7 @@ void GhTrManager::EnableFrameDamage(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\x90\x90\x90\x90" : "\xC6\x46\x24\x01"; 
-	WriteToMemory(dwPid, 0xAC6EE, operational_code, 4);
+	WriteToMemory(dwPid, 0xADB0E, operational_code, 4);
 }
 /**
  * 加速僵尸出动
@@ -856,8 +856,8 @@ void GhTrManager::EnableFrameDamage(bool isFeatureEnabled) {
 void GhTrManager::Fast(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
-	const char* operational_code = (isFeatureEnabled == 1) ? "\x89\x96\x00\x04\x00\x00":"\x89\x8E\x00\x04\x00\x00";
-	WriteToMemory(dwPid, 0xA3771, operational_code, 6);
+	const char* operational_code = (isFeatureEnabled == 1) ? "\x89\x96\xDC\x04\x00\x00":"\x89\x8E\xDC\x04\x00\x00";
+	WriteToMemory(dwPid, 0xA4861, operational_code, 6);
 }
 /**
  * 更好的高级暂停
@@ -879,12 +879,12 @@ void GhTrManager::DisableSkillCooldown(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	ProtectAddress(dwPid, 0x43A);
-	const char* operational_code = (isFeatureEnabled == 1) ? "\xE9\x00\x00\x00\x00\x66\x90" : "\x0F\xBF\x87\xC4\x03\x00\x00";
-	WriteToMemory(dwPid, 0x94952, operational_code, 7);
-	const char* operational_code2 = "\x66\xC7\x87\xC4\x03\x00\x00\x00\x00\x0F\xBF\x87\xC4\x03\x00\x00\xE9\xD4\x16\x29\xFF";
+	const char* operational_code = (isFeatureEnabled == 1) ? "\xE9\x00\x00\x00\x00\x66\x90" : "\x0F\xBF\x87\x9C\x04\x00\x00";
+	WriteToMemory(dwPid, 0xA41F6, operational_code, 7);
+	const char* operational_code2 = "\x66\xC7\x87\x9C\x04\x00\x00\x00\x00\x0F\xBF\x87\x9C\x04\x00\x00\xE9\xD4\x16\x29\xFF";
 	WriteToMemory(dwPid, 0x43A, operational_code2, 21);
-	if (isFeatureEnabled == 1)WriteJump(dwPid, 0x94952, 0x43A);
-	WriteJump(dwPid, 0x44A , 0x94959);
+	if (isFeatureEnabled == 1)WriteJump(dwPid, 0xA41F6, 0x43A);
+	WriteJump(dwPid, 0x44A , 0xA41FD);
 }
 /**
  * 无限制阳光
@@ -895,7 +895,7 @@ void GhTrManager::RemoveSunProductionLimit(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x89\x81\x84\x03\x00\x00";
-	WriteToMemory(dwPid, 0x927DD, operational_code, 6);
+	WriteToMemory(dwPid, 0x92C9D, operational_code, 6);
 }
 /**
  * Building秒消失
@@ -905,7 +905,7 @@ void GhTrManager::RemoveSunProductionLimit(bool isFeatureEnabled) {
 void GhTrManager::InstantObstacleDisappearance(bool isFeatureEnabled){
 	DWORD dwPid = GetGamePid(); 
 	const char* operational_code = (isFeatureEnabled == 1) ? "\xC7\x86\x94\x00\x00\x00\x00\x00\x00\x00\x90\x90\x90\x90" : "\x89\x86\x94\x00\x00\x00\x85\xC0\x0F\x85\xDC\x01\x00\x00";
-	WriteToMemory(dwPid, 0xA93F3, operational_code, 14);
+	WriteToMemory(dwPid, 0xAA663, operational_code, 14);
 }
 /**
  * 忽略阳光
@@ -916,7 +916,7 @@ void GhTrManager::PlantWithoutSunCost(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\xB8\x3F\x3F\x3F\x3F\x90" : "\x8B\x83\x84\x03\x00\x00";
-	WriteToMemory(dwPid, 0x92CAA, operational_code, 6);
+	WriteToMemory(dwPid, 0x931AA, operational_code, 6);
 }
 /**
  * 割草机不动
@@ -927,7 +927,7 @@ void GhTrManager::DisableLawnMowerMovement(bool isFeatureEnabled) {
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\x90\x90\x90\x90\x90\x90\x90\x90":"\xF3\x0F\x11\x87\x84\x00\x00\x00";
-	WriteToMemory(dwPid, 0xD4CF2, operational_code, 8);
+	WriteToMemory(dwPid, 0xD7B02, operational_code, 8);
 }
 /**
  * 召唤奖杯
@@ -948,8 +948,16 @@ void GhTrManager::CompleteLevelWithTrophy() {
 	DWORD ebase_address = ReadTheMemory(hProcess,base_address+GAME_BASE_OFFSET);
 	WriteToMemory(dwPid, 0x45E, shellcode, 37);
 	WriteMovECX(dwPid, ebase_address +GAME_BOARD_OFFSET, 0x45E + 0x7);
-	WriteCall(dwPid,0x45E + 0x1D, 0x9D9F0);
+	WriteCall(dwPid,0x45E + 0x1D, 0x9E240);
 	RunTheMemory(dwPid, 0x45E);
+	/*push ebx
+push esi
+push edi
+mov edi,ecx
+mov ebx,[edi+000000F8]
+mov eax,[edi+00000100]
+cmp eax,ebx
+*/
 }
 /**
  * 在游戏中种植指定植物
@@ -976,7 +984,7 @@ void GhTrManager::Plant(DWORD dwXP, DWORD dwYP, DWORD dwID)
 	DWORD value = ReadTheMemory(hProcess, ebase_address + 0x320);
 	WriteToMemory(dwPid, 0x348, shellcode, 22);
 	WriteMovECX(dwPid, value + 0x7C, 0x348 + 0x5);
-	WriteCall(dwPid, 0x348 + 0xF, 0x9EA60);
+	WriteCall(dwPid, 0x348 + 0xF, 0x9F2B0);
 	WritePush(dwPid, dwXP, 0x348 + 0xD);
 	WritePush(dwPid, dwYP, 0x348 + 0xB);
 	WritePush(dwPid, dwID, 0x348 + 0x3);
@@ -993,15 +1001,15 @@ void GhTrManager::EnablePeashooterFrameDamage(bool isFeatureEnabled)
 	if (!CheckGamePid(dwPid, true)) return;
 	ProtectAddress(dwPid, 0x52F);
 	const char* operational_code1 = (isFeatureEnabled == 1) ? "\xE9\x00\x00\x00\x00\x90" : "\xC6\x46\x24\x01\x75\x16";
-	WriteToMemory(dwPid, 0xAC6EE, operational_code1, 6);
+	WriteToMemory(dwPid, 0xADB0E, operational_code1, 6);
 	const char* operational_code2 = "\x80\x7E\x08\x01\x0F\x84\x2A\x55\x9C\xFE\x80\x7E\x08\x02\x0F\x84\x20\x55\x9C\xFE\x80\x7E\x08\x03\x0F\x84\x16\x55\x9C\xFE\xC6\x46\x24\x01\x0F\x85\x22\x55\x9C\xFE\xE9\x07\x55\x9C\xFE";
 	WriteToMemory(dwPid, 0x52F, operational_code2, 45);
-	if(isFeatureEnabled == 1) WriteJump(dwPid, 0xAC6EE, 0x52F);
-	WriteConditionJump(dwPid,0x52F + 0x4,0xAC6F3,true); //-1
-	WriteConditionJump(dwPid, 0x52F + 0xE, 0xAC6F3, true);
-	WriteConditionJump(dwPid, 0x52F + 0x18, 0xAC6F3, true);
-	WriteConditionJump(dwPid, 0x52F + 0x22, 0xAC70A, false);
-	WriteJump(dwPid, 0x52F + 0x28, 0xAC6F4);
+	if(isFeatureEnabled == 1) WriteJump(dwPid, 0xADB0E, 0x52F);
+	WriteConditionJump(dwPid,0x52F + 0x4,0xADB12,true); //-1
+	WriteConditionJump(dwPid, 0x52F + 0xE, 0xADB12, true);
+	WriteConditionJump(dwPid, 0x52F + 0x18, 0xADB12, true);
+	WriteConditionJump(dwPid, 0x52F + 0x22, 0xADB29, false); //-1
+	WriteJump(dwPid, 0x52F + 0x28, 0xADB13);
 }
 /**
  * 改变僵尸死亡时是否掉落卡片
@@ -1079,7 +1087,7 @@ void GhTrManager::PreventPlantCharm(bool isFeatureEnabled)
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\x90\x90\x90" : "\x89\x46\x10";
-	WriteToMemory(dwPid, 0xDD04F, operational_code, 3);
+	WriteToMemory(dwPid, 0xE02CF, operational_code, 3);
 }
 /**
  * 改变樱桃炸弹的爆炸速度，使之可以瞬间爆炸
@@ -1093,9 +1101,9 @@ void GhTrManager::InstantCherryBombExplosion(bool isFeatureEnabled)
 	ProtectAddress(dwPid, 0x5BD);
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = (isFeatureEnabled == 1) ? "\xC7\x87\x98\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x98\x00\x00\x00\x64\x00\x00\x00";
-	WriteToMemory(dwPid, 0xADBBB, operational_code1,10);
+	WriteToMemory(dwPid, 0xAF37B, operational_code1,10);
 	const char* operational_code2 = (isFeatureEnabled == 1) ? "\xC7\x87\x98\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x98\x00\x00\x00\x64\x00\x00\x00";
-	WriteToMemory(dwPid, 0xAD987, operational_code2, 10);
+	WriteToMemory(dwPid, 0xAF147, operational_code2, 10);
 }
 /**
  * 防止樱桃炸弹爆炸
@@ -1108,7 +1116,7 @@ void GhTrManager::PreventCherryBombExplosion(bool isFeatureEnabled)
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = (isFeatureEnabled == 1) ? "\xE9\xE7\x01\x00\x00\x90" : "\x0F\x8F\xE6\x01\x00\x00";
-	WriteToMemory(dwPid, 0xAD9F6, operational_code1, 6);
+	WriteToMemory(dwPid, 0xAF1B6, operational_code1, 6);
 }
 /**
  * 加快猫丝子的效果
@@ -1121,7 +1129,7 @@ void GhTrManager::EnableInstantCascutaProjectile(bool isFeatureEnabled)
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = (isFeatureEnabled == 1) ? "\xC7\x87\x98\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x98\x00\x00\x00\x2C\x01\x00\x00";
-	WriteToMemory(dwPid, 0xAF8C0, operational_code1, 10);
+	WriteToMemory(dwPid, 0xB10F0, operational_code1, 10);
 }
 /**
  * 荷鲁斯每次攻击都暴击
@@ -1149,7 +1157,7 @@ void GhTrManager::MakePlantsInvincible(bool isFeatureEnabled)
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\x90\x90" :"\x2B\xC7";
-	WriteToMemory(dwPid, 0xDD0E2, operational_code, 2);
+	WriteToMemory(dwPid, 0xE0362, operational_code, 2);
 }
 /**
  * 取消荣光骄傲状态
@@ -1162,7 +1170,7 @@ void GhTrManager::RefusePrideEffect(bool isFeatureEnabled)
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code = (isFeatureEnabled == 1) ? "\x31\xD2\x90":"\xC1\xEA\x1F";
-	WriteToMemory(dwPid, 0xE8785, operational_code, 3);
+	WriteToMemory(dwPid, 0xEBE65, operational_code, 3);
 }
 /**
  * 导藓批量种植效果的开关
@@ -1211,11 +1219,11 @@ void GhTrManager::EnableOpticaltropFrameDamage(bool isFeatureEnabled)
 	if (!CheckGamePid(dwPid, true)) return;
 	ProtectAddress(dwPid, 0x7F1);
 	const char* operational_code1 = (isFeatureEnabled == 1) ? "\xE9\x00\x00\x00\x00\x0F\x1F\x00" : "\x8B\x47\x38\xB9\x96\x00\x00\x00";
-	WriteToMemory(dwPid, 0xAB850, operational_code1, 8);
+	WriteToMemory(dwPid, 0xACC70, operational_code1, 8);
 	const char* operational_code2 = "\xB8\x02\x00\x00\x00\xB9\x96\x00\x00\x00\xE9\x96\x4B\x84\xFE";
 	WriteToMemory(dwPid, 0x7F1, operational_code2, 15);
-	WriteJump(dwPid, 0x7F1+0xA, 0xAB858);
-	if (isFeatureEnabled == 1)WriteJump(dwPid, 0xAB850, 0x7F1);
+	WriteJump(dwPid, 0x7F1+0xA, 0xACC78);
+	if (isFeatureEnabled == 1)WriteJump(dwPid, 0xACC70, 0x7F1);
 }
 /**
  * 苹果鼓瑟手无冷却
@@ -1227,9 +1235,9 @@ void GhTrManager::ApplayerDisableCooldowns(bool isFeatureEnabled)
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = (isFeatureEnabled == 1) ? "\xC7\x81\x98\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x81\x98\x00\x00\x00\xB0\x04\x00\x00";
-	WriteToMemory(dwPid, 0x8E630, operational_code1, 10);
+	WriteToMemory(dwPid, 0x8E770, operational_code1, 10);
 	const char* operational_code2 = (isFeatureEnabled == 1) ? "\xC7\x87\x98\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x98\x00\x00\x00\x60\x09\x00\x00";
-	WriteToMemory(dwPid, 0x8E778, operational_code2, 10);
+	WriteToMemory(dwPid, 0x8EA21, operational_code2, 10);
 }
 /**
  * 苹果鼓瑟手无延迟
@@ -1241,7 +1249,7 @@ void GhTrManager::RemoveApplayerDelay(bool isFeatureEnabled)
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = (isFeatureEnabled == 1) ? "\xC7\x87\x98\x00\x00\x00\x00\x00\x00\x00" : "\xC7\x87\x98\x00\x00\x00\x2C\x01\x00\x00";
-	WriteToMemory(dwPid, 0x8E7CA, operational_code1, 10);
+	WriteToMemory(dwPid, 0x8EA8C, operational_code1, 10);
 }
 /**
  * 车前草无延迟无冷却
@@ -1253,9 +1261,9 @@ void GhTrManager::PlantageDisableCooldowns(bool isFeatureEnabled)
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = (isFeatureEnabled == 1) ? "\xC7\x86\x98\x00\x00\x00\x05\x00\x00\x00" : "\xC7\x86\x98\x00\x00\x00\xD0\x07\x00\x00";
-	WriteToMemory(dwPid, 0xDCE96, operational_code1, 10);
+	WriteToMemory(dwPid, 0xE00E6, operational_code1, 10);
 	const char* operational_code2 = (isFeatureEnabled == 1) ? "\xC7\x86\x98\x00\x00\x00\x92\x00\x00\x00" : "\xC7\x86\x98\x00\x00\x00\xFA\x00\x00\x00";
-	WriteToMemory(dwPid, 0xDCA69, operational_code2, 10);
+	WriteToMemory(dwPid, 0xDFCB9, operational_code2, 10);
 }
 /**
  * 向日葵无冷却
@@ -1282,6 +1290,8 @@ void GhTrManager::SunFlowerDisableCooldowns(bool isFeatureEnabled)
  */
 void GhTrManager::PeaDisableCooldowns(bool isFeatureEnabled)
 {
+	MessageBox(NULL, L"该功能已废弃，无法使用", L"提示", MB_OK);
+	return;
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = (isFeatureEnabled == 1) ? "\x90\x90\x90\x90\x90\x90" : "\x0F\x85\x60\x03\x00\x00";
@@ -1346,7 +1356,7 @@ void GhTrManager::PreventItemDeterioration(bool isFeatureEnabled)
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = (isFeatureEnabled == 1) ? "\x90\x90\x90" : "\x83\xC0\xFF";
-	WriteToMemory(dwPid, 0xBEEE1, operational_code1, 3);
+	WriteToMemory(dwPid, 0xC1591, operational_code1, 3);
 }
 /**
  * 天上掉阳光无延迟
@@ -1383,17 +1393,17 @@ void GhTrManager::DeployFormationInstantly()
 	DWORD dwPid = GetGamePid();
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = "\xC6\x47\x2F\x00";
-	WriteToMemory(dwPid, 0x9EAE4, operational_code1, 4);
+	WriteToMemory(dwPid, 0x9F334, operational_code1, 4);
 	Sleep(10);
 	operational_code1 = "\x80\x7F\x2F\x00";
-	WriteToMemory(dwPid, 0x9EAE4, operational_code1, 4);
+	WriteToMemory(dwPid, 0x9F334, operational_code1, 4);
 	for (int X = 1; X <= 9; ++X) {
 		Sleep(80);
 		for (int Y = 1; Y <= 5; ++Y) {
 			Sleep(80);
 			int ID;
 			do {
-				ID = rand() % 15; // 生成1~15范围内的随机ID
+				ID = rand() % 19; // 生成1~15范围内的随机ID
 			} while (ID == 2 || ID == 6);
 			if (ID == 4 || ID == 9 || ID == 13)
 			{
@@ -1430,10 +1440,10 @@ void GhTrManager::RemoveAllPlants()
 	}
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = "\xC6\x47\x2F\x00";
-	WriteToMemory(dwPid, 0x9EAE4, operational_code1, 4);
+	WriteToMemory(dwPid, 0x9F334, operational_code1, 4);
 	Sleep(10);
 	operational_code1 = "\x80\x7F\x2F\x00";
-	WriteToMemory(dwPid, 0x9EAE4, operational_code1, 4);
+	WriteToMemory(dwPid, 0x9F334, operational_code1, 4);
 }
 /**
  * 清空子弹
@@ -1447,11 +1457,11 @@ void GhTrManager::RemoveAllProjectiles()
 		MessageBox(NULL, L"未进入战场", L"提示", MB_OK);
 		return;
 	}
-	const char* operational_code1 = "\xC6\x42\x24\x01";
-	WriteToMemory(dwPid, 0x93948, operational_code1, 4);
+	const char* operational_code1 = "\xC6\x47\x24\x01";
+	WriteToMemory(dwPid, 0x9F41C, operational_code1, 4);
 	Sleep(10);
-	operational_code1 = "\x80\x7A\x24\x00";
-	WriteToMemory(dwPid, 0x93948, operational_code1, 4);
+	operational_code1 = "\x80\x7F\x24\x00";
+	WriteToMemory(dwPid, 0x9F41C, operational_code1, 4);
 }
 /**
  * 清空僵尸
@@ -1467,17 +1477,17 @@ void GhTrManager::RemoveAllZombies()
 	}
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPid);
 	const char* operational_code1 = "\xC6\x47\x2F\x01";
-	WriteToMemory(dwPid, 0x9EB54, operational_code1, 4);
+	WriteToMemory(dwPid, 0x9F3A4, operational_code1, 4);
 	Sleep(10);
 	operational_code1 = "\x80\x7F\x2F\x00 ";
-	WriteToMemory(dwPid, 0x9EB54, operational_code1, 4);
+	WriteToMemory(dwPid, 0x9F3A4, operational_code1, 4);
 	DWORD base_address = GetGamebase_address(hProcess);
 	DWORD target_address = base_address + GAME_BASE_OFFSET;
 	DWORD dwNum = 0;
 	DWORD dwTimer = 0x0;
 	ReadProcessMemory(hProcess, (LPCVOID)target_address, &dwNum, sizeof(DWORD), NULL); 
 	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + GAME_BOARD_OFFSET), &dwNum, sizeof(DWORD), NULL); 
-	bool result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x400), &dwTimer, sizeof(DWORD), NULL); 
+	bool result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x4DC), &dwTimer, sizeof(DWORD), NULL); 
 }
 /**
  * 清空雪原地砖的所有旗子儿
@@ -1536,7 +1546,7 @@ void GhTrManager::SwitchToRedStingerMode()
 	WriteConfigFile(configFilePath, configJson);
 	*/
 	DWORD dwNum = ReadTheMemory(hProcess, target_address);
-	dwNum = ReadTheMemory(hProcess, dwNum + 0x840);
+	dwNum = ReadTheMemory(hProcess, dwNum + 0x844);
 	bool result = WriteByteMemory(hProcess, dwNum + 0x4, 0x1);
 }
 /**
@@ -1564,7 +1574,7 @@ void GhTrManager::SwitchToHomingThistleMode()
 	WriteConfigFile(configFilePath, configJson);
 	*/
 	DWORD dwNum = ReadTheMemory(hProcess, target_address);
-	dwNum = ReadTheMemory(hProcess, dwNum + 0x840);
+	dwNum = ReadTheMemory(hProcess, dwNum + 0x844);
 	bool result = WriteByteMemory(hProcess, dwNum + 0x4, 0x0);
 }
 /**
@@ -1606,16 +1616,16 @@ void GhTrManager::EnableCreationOfUbSaves()
 	DWORD dwNumF = 0;
 	DWORD dwNumCheck = 0;
 	ReadProcessMemory(hProcess, (LPCVOID)target_address, &dwNum, sizeof(DWORD), NULL);
-	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x814), &dwNumCheck, sizeof(BYTE), NULL);
+	ReadProcessMemory(hProcess, (LPCVOID)(dwNum + 0x818), &dwNumCheck, sizeof(BYTE), NULL);
 	if (dwNumCheck == 0)
 	{
 		dwNumF = 1;
-		WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x814), &dwNumF, sizeof(BYTE), NULL);
+		WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x818), &dwNumF, sizeof(BYTE), NULL);
 		MessageBox(NULL, L"成功{允许}创建Unbalanced存档的创建，再次点击禁止。", L"提示", MB_OK);
 	}
 	else
 	{
-		WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x814), &dwNumF, sizeof(BYTE), NULL);
+		WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x818), &dwNumF, sizeof(BYTE), NULL);
 		MessageBox(NULL, L"成功{禁止}创建Unbalanced存档的创建，再次点击允许。", L"提示", MB_OK);
 	}
 }
@@ -1650,7 +1660,7 @@ void GhTrManager::DifficultySwitcher(DWORD dwDiff)
 	ShowDifficultyNotification(dwDiff);
 
 	DWORD dwNum = ReadTheMemory(hProcess, target_address);
-	dwNum = ReadTheMemory(hProcess, dwNum + 0x840);
+	dwNum = ReadTheMemory(hProcess, dwNum + 0x844);
 	bool result = WriteProcessMemory(hProcess, (LPVOID)(dwNum + 0x20), &dwDiff, sizeof(DWORD), NULL);
 }
 /**
@@ -1742,17 +1752,17 @@ void GhTrManager::DisableUbSaveDestroy(bool isFeatureEnabled)
 	ProtectAddress(dwPid, 0x300);
 	if (!CheckGamePid(dwPid, true)) return;
 	const char* operational_code1 = (isFeatureEnabled == 1) ? "\x83\x7F\x20\x05" : "\x83\x7F\x20\xFE";
-	WriteToMemory(dwPid, 0xE2094, operational_code1, 4);
+	WriteToMemory(dwPid, 0xE53E4, operational_code1, 4);
 	const char* operational_code2 = (isFeatureEnabled == 1) ? "\xE9\x00\x00\x00\x00\x90\x90\x90\x90" : "\x89\x47\x20\x8B\x85\x6C\xFF\xFF\xFF";
-	WriteToMemory(dwPid, 0xDF88D, operational_code2, 9);
+	WriteToMemory(dwPid, 0xE2BDD, operational_code2, 9);
 	const char* operational_code3 = "\x83\xF8\xFE\x90\x0F\x85\x0C\x00\x00\x00\xC7\x47\x20\x04\x00\x00\x00\xE9\x07\x00\x00\x00\x89\x47\x20\x90\x90\x90\x90\x8B\x85\x6C\xFF\xFF\xFF\xE9\x64\x28\xDB\xFE";
 	WriteToMemory(dwPid, 0x620, operational_code3, 40);
-	WriteJump(dwPid, 0x643, 0xDF896);
-	if (isFeatureEnabled == 1)WriteJump(dwPid, 0xDF88D, 0x620);
+	WriteJump(dwPid, 0x643, 0xE2BE6);
+	if (isFeatureEnabled == 1)WriteJump(dwPid, 0xE2BDD, 0x620);
 	const char* operational_code4 = (isFeatureEnabled == 1) ? "\x83\x7F\x20\x05" : "\x83\x7F\x20\x04";
-	WriteToMemory(dwPid, 0xDF97F, operational_code4, 4);
+	WriteToMemory(dwPid, 0xE2CCF, operational_code4, 4);
 	const char* operational_code5 = (isFeatureEnabled == 1) ? "\x83\x7F\x20\x05" : "\x83\x7F\x20\x04";
-	WriteToMemory(dwPid, 0xDF997, operational_code5, 4);
+	WriteToMemory(dwPid, 0xE2CE7, operational_code5, 4);
 }
 #ifdef _DEBUG
 /**

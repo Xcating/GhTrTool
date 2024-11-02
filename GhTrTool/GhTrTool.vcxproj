@@ -101,6 +101,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <UACUIAccess>false</UACUIAccess>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
