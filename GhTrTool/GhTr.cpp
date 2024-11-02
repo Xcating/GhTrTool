@@ -223,13 +223,13 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM l_param) {
 	std::wstring wstr =
 		(std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage "
 			<< L"ver.0.17c - [Debug] [已被GhTrTool修改] "
-			<< L"[βver.0.12b] ["
+			<< L"[βver.0.12c] ["
 			<< millis << L"]")
 		.str();
 #else
 	std::wstring wstr =
 		(std::wstringstream() << L"Plants Vs Zombies GhTr ~ Perfect Voyage "
-			<< L"ver.0.17c - [已被GhTrTool修改] [ver.0.12b] ["
+			<< L"ver.0.17c - [已被GhTrTool修改] [ver.0.12c] ["
 			<< millis << L"]" << L" [Save" << dwNum<<L"]")
 		.str();
 #endif

@@ -13,9 +13,9 @@ PlantsVsZombies ~ GhTr *PersonGames Tools*
 
 [+]Modify offset handling to support GhTr 0.17c version
 ### [#]工具截图 Screenshot
-[+]工具版本：0.12b
+[+]工具版本：0.12c
 
-[+]Tools Version: 0.12b
+[+]Tools Version: 0.12c
 ![MainGUI](/Image/MainGUI.png "MainGUI")
 ![GameTest](/Image/GameTest.png "GameTest")
 
